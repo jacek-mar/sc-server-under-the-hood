@@ -1,0 +1,33 @@
+# Private working material — never publish
+sc-server-files/
+random-materials/
+_user_notes/
+
+# Local scratch / tooling output
+scratch/
+*.tmp
+*.log
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+
+# Project virtual environment (all Python runs go through it)
+.venv/
+
+# Extraction / experiment workspace (game assets, never published)
+work/
+
+# Stray output file of a local helper run
+--help
+
+# Tools: only the read-only operator helpers listed in tools/README.md are published.
+tools/*
+!tools/queue_lint.py
+!tools/defname_check.py
+!tools/data_drift_check.py
+!tools/security_audit.py
+!tools/extract_cvars.py
+!tools/cvar_translations.json
+!tools/requirements.txt
+!tools/README.md

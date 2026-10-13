@@ -1,0 +1,77 @@
+# Server data files (`cloud/data/*.xml`, `*.lua`, `*.gbin`)
+
+> Status: **Stage 1 — first-pass catalogue** from reading file heads.
+> Full schemas are a Stage 2 task. All XML here is **generated** from Lua
+> definitions by `prepare_shared.bat`; edit the Lua source and regenerate
+> unless noted.
+
+| File | Root / structure | What it controls | Notes |
+|------|------------------|------------------|-------|
+| `store.xml` (15 MB) | `<Items><Item id price basePrice premiumPrice tokenPrice eventPrice tradePremiumPrice type requiredRank race requiredAccountAura …/>` | Complete store/item catalogue; prices in 5 currencies | `id` = *storeItemId* used by DB and loot tables |
+| `store_rules.xml` | `<Rules><Rule type="def" defName newDefName credits silent …/>` | Item rewrite/migration rules (e.g. SpyDrone T1 → T2) | |
+| `defmod_rules.xml`, `defmod_rules_new.xml` | rule list | Def modification rules; **both inert** (commented template / export output, no executable reads them); the live rule file is `store_rules.xml` - see [store-zones-rules-semantics](store-zones-rules-semantics.md) | `_new` is 162 KB |
+| `autogen.xml`, `autogen_special_values.xml` | defs + `AutogenElementsNum=118` | Procedurally generated item defs | |
+| `atlas_special_values.xml` | `AtlasVersion=1`, `AtlasElementsNum=1205` | UI atlas version/size sync | |
+| `special_values.xml` | scalar elements | `GoldExchangeRate 400`, salvage factors, buyback modifiers, `MailTrading tax 0.1`, `NickNameChangeCost 3000`, `FactionChangeCostPerRank 30000`, credit packs… | **Economy knobs**, edit directly |
+| `aux_limits.xml` | `ReputationRank` (18 thresholds), caps | `VesselExpPoolCap 5 000 000`, `CreditsCap 400 000 000`, `TokensCap 10 000`, `EventCreditsCap 300`, ship level XP table | Caps for editing DB values safely; **generated** by `prepare_shared` from `shared/reputation.lua` and other shared Lua (see [pipeline](../08-reverse-engineering/config-pipeline-and-limiters.md)) |
+| `offers.xml` | `<Offers><Group><Offer offerId priority cooldown bundle/aura><Condition param compare value/>` | In-game promo offers; enabled via `cvars.sv_offerEnable` | |
+| `battle_pass.xml` | `<battle_pass><stage><reward gold bundle cost/>` | Battle-pass reward ladder | Time windows from Lua (`battlePassStart`) |
+| `loot_tables.xml` | `<LootTable defName><entry storeItemId dropChance/>` | Drop tables | Only 3 PvE tables (`PVE_T1_PassiveSet`, `PVE_T2_ActiveSet`, `PVE_T4_ActiveSet`); the `SetLootRules` names (`RareT1…`, `CommonRanks_*`) resolve against the Lua `LootTable` set, not this file (corrected 2026-10-12) |
+| `quests.xml` (286 KB), `ship_quests.xml`, `clan_quests.xml` | `<QuestGroups><QuestGroup id cooldownInHours…><quest id/>` | Quest groups & cooldowns | clan quests empty |
+| `skills.xml` | `<Talents><TalentGroup requiredShipRank talent0..2/>` | Pilot talent tree | |
+| `achievements.xml`, `medals.xml`, `titles.xml`, `stickers.xml`, `account_auras.xml` | id lists | Meta-progression content | titles include "Developer", "Tester"… |
+| `slot_machines.xml` | `<Machine name currency currency_amount><Combination><Reward type>` | Gamble machines (e.g. `SimpleSilver`) | |
+| `zones.xml` (44 KB) | `<SpaceZones StartZoneForRace0..4 ClanShipZoneForRace…><Zone id name levelName minAccountRank maxPlayers universeType stellarSystem …><Reward …/>` | Open-world zone table | Start zones per faction |
+| `universe.xml` | `conflictDurationTime=50 civilianZoneCost=1000 civilianZoneDuration=43200 moveCoefFar/Close` + `NewYearStages` (days 0,7,11,13,17,22,27) | Universe war timings | |
+| `war.xml` | `warClanReviveCost=10000 warBaseReward=10000` | Clan war | |
+| `karma.xml` | levels 1000/15000/50000/150000/500000 | Karma tiers | |
+| `faction_rep.xml` | default rep `0,0,0,0,-50000`, max 50000 | Faction reputation defaults | 5th faction hostile |
+| `tournaments.xml` | `enable=1 roundsNum=3 …`; two schedules (`d=0 h=17`, `d=6 h=16`), ranks 7–9, `BotsT3E` presets; round rewards ×0/0.5/1/2; finish gold 0/150/250/400 | Tournament calendar and rewards | Day/hour in server time |
+| `starter_pack.xml` | `credits=0 goldCredits=0 tokenCredits=0`, vessel `Ship_Race1_M_T1` in battle slot | New-account grant | Combine with `gold_on_start` cvar |
+| `regions.xml` | `RU`, `EU`, `US`, `AS` country lists | GeoIP country → matchmaking region | Used with `geo.gbin` |
+| `geo.gbin` (379 KB) | binary | GeoIP DB (inferred) | format unknown |
+| `league_equipment_lists.xml` | lists | League (competitive) allowed/forbidden equipment | |
+| `clan_emblems.xml`, `clan_ship.xml` | | Clan emblems; clan dreadnought build data | |
+| `vessel_custom_elements.xml` (1.4 MB), `…_rules.xml`, `vessel_presets.xml` | | Ship cosmetics, rules and prebuilt presets | |
+| `bot_preset_exclusion_lists.xml` | `<ExclusionDefs><Def name/>` | Defs bots may not use | Mirrors `botPresetForbiddenDefs` |
+| `cloud.xml` | see [config-system](config-system.md) | Topology | Hand-edited, not generated |
+| `stat_server_cfg.xml` | `<Provider alias addr><Stream name/>` | StatServer metric providers on ports 4000–4008 | |
+| `default_platform_config.lua` | Lua | Master policy | see [config-system](config-system.md) |
+| `sstring.flog` | binary/log | string-table log (unknown) | |
+| `chat/stop-list.txt`, `chat/white-list.txt` | word lists | Chat filter | |
+
+## Lua sources consumed by the server (in `data/gamedata`)
+
+`gamedata/shared/*.lua` (80 files) holds the tables that become XML:
+`def_ids.lua`, `loot_tables.lua`, `quests*.lua`, `battle_pass.lua`,
+`clan_*.lua`, `login_rewards.lua`, `module_presets.lua`,
+`module_upgrade_chain.lua`, `league_equipment_lists.lua`, `account_rank.lua`,
+`karma.lua`, `faction_rep.lua`, `adventures.lua`, `adventure_stages.lua`,
+`green_nodes_price.lua`, `lobby_settings.lua`, `pve_missions/`, …
+`gamedata/def/*.lua` (169 files): ship/module/effect/AI definitions,
+`gameplaysettings.lua`, `designers_constants.lua`, `client_lua_rpc_allowlist.lua`.
+
+**Who reads which file (static, 2026-10-13):** the per-file table is
+generated in [gamedata-readers.md](gamedata-readers.md)
+Summary:
+
+* Only the client (`game.exe`) and the battle server (`DedicatedServer.exe`,
+  also the `prepare_shared` tool) load `data/gamedata` directly;
+  `ScriptsServer.exe` reads `shared/zones.lua` and `designers_constants.lua`
+  and `AdventureServer.exe` reads `shared/adventures.lua` through their pak
+  scripts. **The other 19 service executables never touch `data/gamedata`** -
+  they get game data from the `cloud/data` XML files, which is why a Lua edit
+  needs `prepare_shared` before the Shard, MatchMaker etc. see it.
+* `def/`, `spell/` and `shared/` (255 files) are definition trees read by
+  client and battle server (*inferred*); 188 of them also feed a generated
+  XML. Their definition *names* are part of the battle server's entity-defs
+  check ([hub-protocol-and-framing](../08-reverse-engineering/hub-protocol-and-framing.md) §6a).
+* Client-presentation files (tooltips, `ui_properties2.lua`, slides, `eula.lua`,
+  `role_descriptions.lua`, `shop_info.lua`) are used only by the client;
+  server-only edits there have no effect, client-only edits are harmless to
+  the server.
+* 27 files have no static evidence (mostly the 22 `cam_ship_*.cfg` camera
+  presets, plus `automats.lua`, `developer.lua`, `test_balance.lua`,
+  `materials/samples.lua`, `materials/material_list.mel`).
+* Runtime lab S11-R1 (what `prepare_shared` rewrites) will turn the
+  generated-XML pairing from *inferred* into *observed*.
