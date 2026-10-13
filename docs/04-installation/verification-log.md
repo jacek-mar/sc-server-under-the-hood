@@ -319,3 +319,49 @@ state.
 Gotchas: a helper script named `con.py` hangs Python (Windows device name
 `CON` - same trap as the V-10 test id); Shard/MatchMaker consoles drop
 2-3 of 4 new connections before authentication - retry.
+
+## V-12 - allied bots in Special Operations (PvE raids) (2026-10-13)
+
+Question: can a stock node add **allied** bots to a Special Operations
+battle? "Special Operations" (game wiki S14, page `SPECIAL_OPERATIONS`:
+10-12-ship operations Alien Destroyer, Defiler, Return to Eden) are the
+**PvE raids** of the server config, not the 4-player PvE missions. Node copy
+of V-9, one client on the host PC, one test account (uid 1). The database
+was backed up first (cold copy + `mongodump`); the account was prepared by
+direct DB edit with the node stopped (`accountRank` 1 -> 7, credits added);
+two ships were bought in the client with `store_allowAllItemsForBying = 1`.
+Each variant was applied to the platform Lua from the pristine file, with
+`mm_decisionLog = 33`; the node was restarted for every variant. Verdict
+from the battle-server log: game-session document and "MM teams
+composition" (bots listed in the player's team).
+
+**Gates (static, then observed):**
+
+| Gate | Where | Value |
+|---|---|---|
+| Client menu lock | `data/ui/scripts/work/uigamedefs.lua`, `UI.rankLocks` (account rank) | raid **7**, PvE missions 4, custom game 5, PvP 3 |
+| Raid by ship rank | `cloud/data/aux_limits.xml` `/PVEMissions/Mission raid="1"` | `pve_raid_waterharvest_t3/t4/t5` ship rank 7-9 / 10-12 / 13-17 (Alien Destroyer); `pve_raid` 10-17 (Defiler); `pve_planetoidraid` 13-17 (Return to Eden) - names matched to the wiki by rank band and day *(inferred)* |
+| Raid schedule | `aux_limits.xml` `RaidSchedule` (generated from `RaidSchedule` in `data/gamedata/shared/pve_missions/base.lua`, a file the client also has) | `Period start/finish` = **hour of the week** 0-167, hour 0 = Monday 00:00 (UTC vs. local time not distinguished - the test host ran at UTC+2, so even hours agree); one raid level per **even** hour; Mon/Thu Return to Eden, Tue/Sat Alien Destroyer, Wed/Fri Defiler, Sunday rotates - matches the wiki's "one hour, with one-hour breaks" |
+| Ship rank vs account rank | `aux_limits.xml` `LockRank` | ship ranks 1-10 need account rank 1, 11-15 need 5, 16-18 need 10 |
+| Solo entry | `mm_raidSquadFilter` (shipped 0 = anyone); the per-queue `squadFilter = 4` (wings only) is commented out | on the live service operations were for groups of 10-12 ships (wiki; `mm_raidMinWingSize` ships as 10); a stock node lets one player start a raid |
+
+**Results** *(observed)*, all `pve_raid_waterharvest_t3`, one player, rank-9 ship:
+
+| Test | Change | Game-session document / DS start line | Allied bots |
+|---|---|---|---|
+| SO-0 | stock raid queue (`special = { pve_raid = 1, gameMode = 7 }`) | `gameMode 7`, `pve_raid 1`, `maxPlayers 12`, **`botsCount 0`**, `queueSpec 5`; `botCount 0`, `gameDuration 1200` | 0 |
+| SO-1 | raid queue `botsCount = 3` | `botsCount 0` - the queue value is **replaced** (the V-9 coop battle got 2 bots from a queue without `botsCount`, so the MatchMaker computes bot counts itself; whether a queue `botsCount` is honoured in any mode is untested) | 0 |
+| SO-2 | raid queue `botsCount = 3, botsInTeam1 = 3` | `botsCount 0`, `botsInTeam1 3` (passed through) | 0 |
+| SO-4 | DS cvars `sv_numBots 3`, `sv_botsInTeam1 3`, `sv_forceBotTeam 1` in `ConfigureDediServer()` | `botsCount 0`, `botCount 0` (the DS log does not show cvar assignments) | 0 |
+| SO-3 | `lobby_reqPlayersPvEMin = 1` | the PvE custom-game list offers **missions only, no raids**; the bot selector (8/12/16/20/24) appears for **PvP** custom games only; a PvE lobby shows capacity 1/4 | - |
+
+Conclusion: on a stock node **no configuration route adds bots to a
+Special Operations battle** - the MatchMaker sets the raid game's
+`botsCount` to 0 regardless of the queue, and the client offers neither
+raids nor bots in PvE custom games. Whether the battle server would spawn
+allies in `gameMode 7` with a non-zero count is open (Q50).
+
+Gotchas: setting the host clock **back** while the node runs stalls the
+login queue (the LoadBalancer accepts clients, never hands them on; the
+client reports heavy load) until the node is restarted; battle-log file
+times then run backwards, so pick battle logs by number, not by time.

@@ -180,6 +180,22 @@ seconds) — a possible AI-update limit of one DedicatedServer process ⚠.
 **Q: PvE mission level stays 1.** Stock behaviour per community: clearing a
 mission opens the next level. Whether a server key forces it is open.
 
+**Q: Special Operations are locked / which one runs when?** Special
+Operations are the PvE **raids** (`raidQueue`, `pve_raid = 1`). The client
+opens the entry at **account rank 7** (`UI.rankLocks` in
+`data/ui/scripts/work/uigamedefs.lua`; PvE missions 4, custom games 5); the
+operation you get follows your **ship rank** (Alien Destroyer 7-9 / 10-12 /
+13-17, Defiler 10-17, Return to Eden 13-17) and the weekly **raid schedule**
+in `cloud/data/aux_limits.xml` (one operation per even hour of the week).
+A stock node lets **one player** start a raid (`mm_raidSquadFilter` 0).
+*(file-verified + observed, [V-12](../04-installation/verification-log.md))*
+
+**Q: Can I add bots to Special Operations?** **Not by configuration.** The
+MatchMaker sets the raid game's bot count to 0 whatever the queue says;
+battle-server cvars did not change it, and PvE custom games offer neither
+raids nor a bot option (the 8-24 bot selector exists for PvP custom games
+only). *(observed, V-12; open: Q50)*
+
 **Q: After-battle loot says "Nothing found" / skips.** Several operators hit
 this on local and public nodes. Reported partial cause: loot-table def names
 with and without a `_v3` suffix (`_1_3` vs `_1_3_v3`) in

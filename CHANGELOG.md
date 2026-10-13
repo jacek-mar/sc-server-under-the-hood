@@ -80,6 +80,10 @@ verification on Windows, Linux and LAN setups continues.
   [data-files](docs/05-configuration/data-files.md); case-sensitivity scan
   for Linux hosting (LX-5); static findings for DLC crediting (Q44) and the
   `address.cfg` location (Q46).
+- **Special Operations (PvE raids)** ([V-12](docs/04-installation/verification-log.md)):
+  access gates (client rank locks, ship-rank bands, weekly raid schedule,
+  solo entry) and a lab test showing that no configuration route adds
+  allied bots to a raid; new open question Q50.
 
 ### Changed
 - Premium time: `accounts.premiumTill` is the expiry as a Unix timestamp in
