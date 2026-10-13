@@ -53,7 +53,17 @@ verification on Windows, Linux and LAN setups continues.
   each cross-checked against the shipped files; latest additions: which
   edits need the same files on every client (definition names), the
   "Experimental destroyer" is an AI boss, Galactic Standards = `goldCredits`;
-  new open question Q49 (AI/boss hulls as player ships).
+  new open question Q49 (AI/boss hulls as player ships), since extended with
+  a static comparison; craft recipe files, module slots bound to model bones,
+  the PvE custom-game player minimum, and what admin roles change.
+- Further static findings: how definitions get display names (most have none;
+  set `uiName` and add a client string) in
+  [data-files](docs/05-configuration/data-files.md); what a client may send to
+  the battle server (an allowlisted Lua-RPC channel with no ship/stat values)
+  in the [security chapter](docs/07-administration/security.md); the
+  LeaderboardServer's Redis layout and the ScriptsServer event loop in the
+  reverse-engineering notes; the client will not run in a Remote Desktop
+  session; and the cloud message header's request/response id fields.
 - Operator tool [`tools/ref_lint.py`](tools/ref_lint.py): finds references to
   definitions that do not exist; with `--reference` it shows only what an
   edit introduced ([config-validation-tools](docs/07-administration/config-validation-tools.md) §2b).

@@ -157,6 +157,21 @@ privilege check next to `AccessPrivileges.cpp`):
   is also what `auth_infinitePremiumForRoles` (shipped `gm;support`) matches.
 * Not yet observed: when the Shard re-reads `admRoles` after a direct edit
   (at start-up for sure; a periodic reload is not proven).
+* **What a role shows in the game client** *(static, client UI scripts,
+  2026-10-13)*: the only account-privilege checks in the shipped client are
+  in the chat moderation UI (`data/ui/scripts/work/uigamefuncs.lua`,
+  `data/ui/scripts/windows/complaintwnd.lua`, via
+  `MasterServer_CheckAccessPrivilege`). An account with `mute`, `ban`,
+  `mutePermanent` or `banPermanent` gets an extra **punishment** entry in a
+  player's chat context menu; it opens the complaint window in punishment
+  mode with a duration list and **Mute**/**Ban** buttons (a permanent
+  duration needs the `*Permanent` privilege). No client script checks
+  `gmView`, `observeGames` or the other privileges, and there is no GM
+  panel. Consequence: on a stock node (`web_adm.admRoles` empty) an account
+  with `admRole: "gm"` or `"support"` has **no privileges** and sees nothing
+  new except infinite premium; give the role privileges first (above), or
+  use `root` *(inferred: `root` gets all privileges in the Shard, so it
+  should see the punishment entry too - not observed)*.
 
 ## 4b. Broadcast mail: the `adminMail` collection *(static, 2026-10-13; delivery not yet tested)*
 

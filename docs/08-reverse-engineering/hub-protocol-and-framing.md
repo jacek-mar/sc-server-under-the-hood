@@ -36,12 +36,22 @@ prints it in this order:
 | Offset | Size | Field | Notes |
 |--------|------|-------|-------|
 | 0 | u32 | payload length | network byte order (`ntohl`) |
-| 4 | u16 | field A | request/correlation id *(inferred; used by `FindRequestDesc`)* |
-| 6 | u16 | field B | *(inferred)* second id/flag |
+| 4 | u16 | **request id** | non-zero when the sender expects an answer; 0 in answers and one-way messages *(static, 2026-10-13)* |
+| 6 | u16 | **response-to id** | in an answer: the request id it answers; 0 otherwise *(static, 2026-10-13)* |
 | 8 | u64 | source address | printed as hex service id (`%I64X`) |
 | 16 | u64 | destination address | |
 | 24 | u8 | **routing rule** | `routing.hrr.*`, table below |
 | 25 | u16 | **command** | the "command" printed by `OnMessageToHub: Unknown command %d` |
+
+**Request/answer pairing** *(static, `Hub.exe` reply builders around VA
+0x40e360 and 0x40e55b, 2026-10-13)*: the Hub answers by reusing the request
+message in place - it copies the request id (offset 4) into the response-to
+field (offset 6), clears the request id, moves the source address into the
+destination, clears the source and sets routing rule 2 (`TO_ADDR`). This is
+the same request-id / response-to scheme as MongoDB's `requestID` /
+`responseTo`. In memory the fields sit 8 bytes later (dump order: length
+`+8`, request id `+0xc`, response-to `+0xe`, source `+0x10`, destination
+`+0x18`, rule `+0x20`, command `+0x21`).
 
 Service addresses are 64-bit ids; the *service type* is derived from the
 address (`ExtractServiceType`, `ExtractServiceType(addr) == ST_HUB`), the
@@ -240,8 +250,8 @@ defs must ship the same def files to every client.
 
 * Not to be confused: `TMEndpoint::OnMessage: FindRequestDesc failed, reqId = %d, respId = %d` (in every service) belongs to the engine's own **MongoDB wire-protocol client** (`TargeMongo\TMEndpoint.cpp`, checks `OP_REPLY`, i.e. MongoDB `requestID`/`responseTo`), not to the TGP or cloud channel.
 
-* ~~Which u16 is opcode / request id / response id~~ **TGP pinned (2026-10-13, §4)**; for the cloud header the roles of fields A/B (offsets 4/6) are
-  still inferred - needs a capture or `net_dumpCloudMsg` output.
+* ~~Which u16 is opcode / request id / response id~~ **TGP pinned (2026-10-13, §4)**; cloud header fields A/B (offsets 4/6) pinned as request id / response-to id
+  (2026-10-13, §2); a `net_dumpCloudMsg` trace would confirm it at runtime.
 * Handshake/authentication on the TGP channel (key exchange, `SCMD_*` ordering)
   - `CRYPTO` use found in S-21; needs capture (WP-2).
 * The `ProtoServer` peer protocol: who uses it (statsystem vs. nodes).

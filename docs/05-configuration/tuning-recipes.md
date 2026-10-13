@@ -256,6 +256,16 @@ Leads and file checks; see the "batch 007" digest (J1-J12) in the
   `goldCredits` and `amount`; documents need `pickedBy: 0`; requester with
   `admRole` `root`) - see [admin-tasks-howto](../07-administration/admin-tasks-howto.md).
 
+## Additions from batch 010 (2026-10-13)
+
+| Goal | Where | Evidence |
+|------|-------|----------|
+| Start a PvE **custom game** (lobby) with fewer than 3 players | `cvars.lobby_reqPlayersPvEMin = 3` (and `lobby_reqPlayersPvEMax = 4`) in `ConfigureLobbyServer()`, `cloud/data/default_platform_config.lua` lines 1832/1834. Set in the platform Lua, so `lobby_server_local.cfg` cannot override it; edit the Lua and restart (whether a live console assignment takes effect for this cvar is untested, see [settings-reload-map](settings-reload-map.md)) | file-verified; reported by a host: `1` lets one player start a PvE lobby, but no allied bots join ⚠. Static (2026-10-13): custom-game bots are a lobby setting - the client's advanced options (`data/ui/scripts/windows/gameplaycustomwnd.lua`) offer 0/8/12/16/20/24 bots and a bot skill preset (`botsCount`, `botPresetName`), the LobbyServer counts `botsInTeam1`/`botsInTeam2`; the older per-lobby bot picker is commented out. Whether bots are added to PvE missions is not proven |
+| Change **craft recipes** (blueprints, parts) | `data/gamedata/def/ex/craft.lua`: `BP_*` definitions with `craft_result` and `craft_ingredients[n]` (`def`, `count`); ships built from parts: `craftable_reagents` in `def/ex/ship.lua`. `cloud/data/store.xml` holds the compiled recipes (`<Ingr resource=... amount=...>`) - regenerate it with `prepare_shared` instead of editing it | file-verified; `Iridium_plate` is the "Metal blank" resource, not iridium |
+| Change **ship prices** | `data/gamedata/def/ex/prices_ship.lua` (stats, special module and recipe are in `def/ex/ship.lua`) | file-verified (files exist); edit order Lua -> `prepare_shared` |
+| Put a different model on a hull | The hull class binds each module slot to a **named bone** of its model (`slot_bones` in `data/gamedata/def/objects/ships.lua`, e.g. `PRIMARY_WEAPON_01 = "gun"`, `ACTIVE_01 = "gun_1"`), plus `weapon_slots` and `fire_sectors`. A model without the expected bones cannot mount those weapons or modules | file-verified fields; consequence *(inferred)*, matching a host's report (dreadnought model on a destroyer: flies, no weapons or modules) |
+| Alien/boss hulls as player ships | AI hulls are in `def/ex/ow_bot_preset.lua` and `def/ex/pvebot_preset.lua` (`ship4bot = true`, `_Mob` modules, `avtomat` AI behaviour). Reported: some move, others (e.g. `Ship_OW_Boss_Manta`) neither move nor turn although speed and engine values are set | lead ⚠ -> Q49 |
+
 ## Still to verify (candidates for Stage 3 experiments)
 
 1. Does `store_allowAllItemsForBying = 1` make *every* def purchasable?

@@ -17,6 +17,12 @@ and creates the account on first login. Our own test used a Steam copy
 ([verification-log](../04-installation/verification-log.md) V-5); running a
 copied depot without Steam is still open (Q20).
 
+**Q: The game says "this application does not support remote session".**
+*(static, `win64/game.exe` start-up code)* The client refuses to start
+inside a Remote Desktop session; no switch disables the check. Start it
+on the machine's local (console) desktop. The server services are not
+affected.
+
 **Q: I log in on "localhost" and get a fresh level-1 account — where is my old
 progress?** *(community; matches architecture)* The official database is gone;
 every node has its own MongoDB and every account is created empty. Progress can
@@ -309,6 +315,31 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   `goldCredits`. Grant it with the `give` admin task
   ([admin-tasks-howto](admin-tasks-howto.md)).
 
+### Batch 010 additions (2026-10-13)
+
+* **What do the `gm` and `support` roles do in the game?** Setting
+  `accounts.admRole` shows nothing new in the client. The role matters to the
+  Shard: it decides which admin tasks the account may request (privileges
+  from `web_adm.admRoles`; `root` is always allowed), and
+  `auth_infinitePremiumForRoles` (shipped `gm;support`) gives those roles
+  infinite premium ([admin-tasks-howto](admin-tasks-howto.md) §4a). In the
+  client, only the chat moderation UI checks privileges: with `mute`/`ban`
+  a player's chat context menu gets a punishment entry (Mute/Ban with a
+  duration). There is no GM panel. On a stock node `web_adm.admRoles` is
+  empty, so `gm` and `support` have no privileges until you assign them.
+  *(static)*
+* **Can I start a PvE custom game alone?** Lower
+  `cvars.lobby_reqPlayersPvEMin` (shipped 3) in `ConfigureLobbyServer()` of
+  the platform Lua. A host reports that `1` works but no allied bots join
+  ([tuning-recipes](../05-configuration/tuning-recipes.md), batch 010).
+  *(file-verified key; effect reported)*
+* **Should a server's website write rewards straight into MongoDB?** Direct
+  edits reach the player only after a new login (Q32), and a service that
+  holds the account in memory might write its own copy back ⚠ (not tested).
+  The admin-task queue (`give`, `adminMail`) is the interface the Shard
+  itself applies ([admin-tasks-howto](admin-tasks-howto.md)). *(observed for
+  the admin tasks, V-10/V-11)*
+
 ## Modding
 
 **Q: I added a new ship or item. Do players need my files?** Yes. Adding or
@@ -391,6 +422,22 @@ and `botPresetNames` are set, the tier table wins; a list is a random pick.
 have no store UI and no prices; add the defs to the account in the DB, or
 change the craft recipe (`def/ex/craft.lua`). See
 [tuning-recipes](../05-configuration/tuning-recipes.md) (batch 005) and Q34.
+
+**Q: Where are the craft recipes?** *(file-verified, b010 N3)* Blueprints:
+`BP_*` definitions in `data/gamedata/def/ex/craft.lua` (`craft_result`,
+`craft_ingredients` with `def` and `count`); ships built from parts:
+`craftable_reagents` in `def/ex/ship.lua`. `store.xml` only holds the
+compiled copy - edit the Lua, then run `prepare_shared`. `Iridium_plate` is
+the "Metal blank" resource, not iridium.
+
+**Q: My new item/ship shows a blank or raw-text name.** *(file, B-8)* Definitions have no automatic naming: set the def's `uiName` (and `uiDesc`) to string keys and add those keys to the client string table `strings/<language>/string.txt` on **every** player's install. Most definitions in the game carry no name on purpose (they are internal parts); only player-visible items do. See [data-files](../05-configuration/data-files.md) "Definition display names".
+
+**Q: I put another model on a ship and it has no weapons or modules.**
+*(file-verified fields, b010 N6)* Each hull class binds every module slot to a
+named bone of its model (`slot_bones` in `data/gamedata/def/objects/ships.lua`,
+for example `gun`, `gun_1`), next to `weapon_slots` and `fire_sectors`. If the
+new model lacks those bones, the slots have nowhere to mount *(inferred)*.
+Boss and alien hulls added as player ships may not move at all (Q49).
 
 **Q: I changed the store and the server no longer starts.** An invalid or
 mistyped def name is the usual cause (check names with

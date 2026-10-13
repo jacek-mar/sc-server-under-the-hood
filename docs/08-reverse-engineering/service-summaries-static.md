@@ -105,6 +105,30 @@ init failures and leaderboards stay empty/stale; this matches the
 `db_redisHost` line being commented out in `cloud/data/common.cfg`
 (config-system.md).
 
+**Redis data layout** *(static, strings and code references, 2026-10-13)*:
+
+* Connection: cvar `db_redisHost` (`<host>:<port>|connpool=<n>`; the shipped
+  `common.cfg` line 2 has `127.0.0.1:6379|connpool=5` commented out). Empty =
+  `Persistence: db_redisHost is empty, Redis support is disabled` and every
+  command is ignored (`RedisCommand: Redis support is disabled, commands will
+  be ignored`). A separate optional **Redis logger** (`db_redisLoggerHost`,
+  `redis_logger_enabled`, `redis_logger_prefix`) appends log lines with
+  `RPUSH`.
+* Every leaderboard is a Redis **sorted set** (commands `ZADD`, `ZINCRBY`,
+  `ZREM`, `ZRANGE`, `ZREVRANGE`, `ZCARD`); the member is the entity id as a
+  decimal string (`uid`, `cid` or league-team id, format `%I64u`), the score
+  is the value. The key is the leaderboard name; clan-member leaderboards
+  keep one set per clan under **`<leaderboard>:<cid>`** (format `%s:%s`).
+* Server-side Lua scripts (`EVAL`) implement decay (re-`ZADD` every member
+  with `floor(score * factor)`), keep-maximum and keep-minimum updates, and
+  rank + score lookups (`ZRANK`/`ZREVRANK` + `ZSCORE`).
+* Deleting a leaderboard's data scans `KEYS <leaderboard>:*` and deletes the
+  matches (`DEL`) - `KEYS` blocks Redis on large databases, so give the node
+  its own Redis instance or database.
+* Practical: Redis holds only leaderboard scores (and the optional log
+  lists); descriptions and rewards state stay in MongoDB. Clearing Redis
+  resets the boards, nothing else *(inferred)*.
+
 ## 5. `ZoneCoordinator.exe` (type 14, in `cloud.xml`)
 
 *(static: strings unique to this executable compared with the other cloud

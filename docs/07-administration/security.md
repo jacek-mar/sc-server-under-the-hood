@@ -144,6 +144,19 @@ These belong in Q14 (protocol).
   simulation *(inferred from architecture)*; no anti-cheat module was found
   in the node. Cheating risk is mostly client-side modification — see
   [administration](administration.md#5-security) "Modified clients".
+* **What a client can send to the battle server** *(static, 2026-10-13)*:
+  client and battle server communicate over a **named Lua-RPC channel**
+  (`ClientLuaRpc` / `ServerLuaRpc`, engine-level). Client→server calls are
+  restricted to an **allowlist** loaded from
+  `data/gamedata/client_lua_rpc_allowlist.lua` (34 entries in the shipped
+  build); the battle server rejects anything else and logs `Blocked client
+  lua rpc '<name>' from server`. The allowlisted calls are all event, effect,
+  task and mini-game-sync helpers (for example `CL_AddTask`, `CL_EffectStart`,
+  `CL_SetPlaylist`, `CL_BALL_SYNC`, `ShowWow`); **none carries ship, module,
+  hull or damage values**. This matches the observed authority split (V-10):
+  ship and module values used in battle come from the server's own `def/ex`
+  data, not from the client. A host that edits `client_lua_rpc_allowlist.lua`
+  widens this surface — keep it as shipped.
 * **Chat**: `ChatServer` on 3815; moderation relies on `bannedTill`/chat ban
   fields in the DB *(file, schema)*; no automated filter shipped (community).
 

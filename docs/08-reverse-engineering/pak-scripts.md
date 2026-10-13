@@ -54,6 +54,47 @@ ScriptsServer hooks: `OnZoneHasConflictChanged`, `OnZoneIsCivilianChanged`,
 `OnNewData`, `OnStart`; config: `config_testTimeModifier`, `RNDSeed`,
 `enableOriginalQuests`, `disableQuests`.
 
+### How the ScriptsServer event loop works *(disassembly, 2026-10-13)*
+
+The 40 functions in `scripts_server/main.lua` are the global event engine
+(no event *content* — that is in `scripts/general/events*.lua` and
+`default_platform_config.lua`). Mechanics recovered from the bytecode:
+
+* **State lives per zone.** `ScriptsServer.zones[<id>].activeEvents[<name>]`
+  holds each running event's live state. On start the engine walks every
+  zone and every active event; if the matching `Events[<name>]` definition is
+  gone it calls `ScriptsServer.RemoveEvent`, and it copies the definition's
+  `disableOriginalQuests` / `enableOriginalQuests` flag into the zone's
+  `disableQuests`. Then it seeds the RNG (`RNDSeed`, once, from
+  `GetU64Time`).
+* **Event processors.** `EVENTS_PROCESSORS` maps an event kind to a pair of
+  handlers. Two kinds are built in:
+  * **timer events** (`CommonTimerEventStart` / `CommonTimerEventUpdate`):
+    run for a fixed duration from `startTime`;
+  * **parameter events** (`CommonParamEventStart` / `CommonParamEventUpdate`):
+    carry a numeric `actualParam` that grows by `growParamPerMinute` each
+    minute, clamped between `minActualParam`/`maxActualParam` and shaped by
+    `softMinimum`/`softMaximum` and a `power` curve; `initEventParam` /
+    `nextEventInitParam` set the starting and follow-up values. These are the
+    "escalation" meters behind faction ownership/expansion events.
+* **Per-tick update.** `OnUpdate` advances every active event by the elapsed
+  real time (`GetU64Time`, scaled by the debug `testTimeModifier` /
+  `SetTimerScale`), calls the processor's update, and raises
+  `NotifyEventStateChanged` when a phase boundary is crossed. `OnNewData`
+  re-reads definitions; `HasActiveEventInZone` is the query used by other
+  scripts.
+* **Faction ownership events** (`OwnershipStart` / `OwnershipUpdate`) are a
+  specialisation driven by zone owner/race/conflict changes, which is why the
+  hooks above feed it.
+
+Operator relevance: event cadence is wall-clock based and resumes from stored
+per-zone state, so stopping and restarting the ScriptsServer continues events
+rather than restarting them; the only global speed lever is the debug time
+modifier. Forcing or disabling events is done through `forceEvents` /
+`ConfigureGlobalEvents` in the platform config
+([zone-events](../05-configuration/zone-events.md)), not by editing this
+bytecode.
+
 ## 3. Starting a battle server directly from the executable (autotest harness)
 
 `autotests.cfg` / `autotest.cfg` document a minimal **headless dedicated
