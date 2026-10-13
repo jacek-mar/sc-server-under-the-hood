@@ -28,6 +28,7 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S12/S15 b006 | Batch 006: partial JSON exports `Star_Conflict_Preservation_Project_006.eng-json-part` (302 msgs incl. a 2-message release thread, 147 new, 2026-10-11 19:13 → 2026-10-12 09:05) and `...006.ru-json-part` (951 msgs, 485 new, 2026-10-11 13:52 → 2026-10-12 09:15) | `random-materials/Star_Conflict_Preservation_Project_006.*-json-part/` | C | Digest "batch 006" below; Q44-Q46, Q3/Q32/Q36 amended |
 | S12/S15 b007 | Batch 007: partial JSON exports `Star_Conflict_Preservation_Project_007.eng-json-part` (64 msgs, 54 new, 2026-10-12 09:19 → 16:15) and `...007.ru-json-part` (229 msgs, 222 new, 09:16 → 16:10); continue batch 006 without a gap | `random-materials/Star_Conflict_Preservation_Project_007.*-json-part/` | C | Digest "batch 007" below (J1-J12); Q24, Q36, Q40, Q46 amended; S-07 note |
 | S12/S15 b008 | Batch 008: partial JSON exports `Star_Conflict_Preservation_Project_008.eng-json-part` (83 msgs, 73 new, 2026-10-12 16:50 → 21:03) and `...008.ru-json-part` (255 msgs, 205 new, 16:12 → 21:18); both overlap batch 007 (no gap) | `random-materials/Star_Conflict_Preservation_Project_008.*-json-part/` | C | Digest "batch 008" below (K1-K14); security S-07 note, S-29, S-30; Q47 |
+| S12/S15 b009 | Batch 009: partial JSON exports `Star_Conflict_Preservation_Project_009.eng-json-part` (63 msgs, 31 new, 2026-10-12 21:20 → 2026-10-13 06:11) and `...009.ru-json-part` (374 msgs, 199 new, 2026-10-12 21:19 → 2026-10-13 07:38); continue batch 008 without a gap | `random-materials/Star_Conflict_Preservation_Project_009.*-json-part/` | C | Digest "batch 009" below (M1-M9) |
 | S18 | Community tool **SCPatcher / "Star Conflict Mod Manager" v0.1** by Furebel (Python/Tkinter text patcher with 8 bundled mods; released 2026-10-11 in `#general-eng` as `SCModManager_v0_1.zip`, temporary download link, no repository, **no licence stated**) | `random-materials/SCPatcher/` | C (claims) / B (fingerprints and patterns checked against S3/S4 by us) | Review: [community-mod-manager.md](../07-administration/community-mod-manager.md); loot-rule defect (Q45) |
 
 ## Digest of S11 (community wiki)
@@ -399,6 +400,42 @@ private servers and by hosts talking about progression design.
 
 Not adopted: server recommendations, UE5 remake debate, nostalgia about
 older game versions, banter.
+
+## Digest of batch 009 (partial exports of S12 and S15, night of 2026-10-12/13)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names or quotes. A public server address posted in the
+> chat was not copied.
+
+**Scope.** EN: 31 new messages, 2026-10-12 21:20 → 2026-10-13 06:11. RU: 199
+new messages, 2026-10-12 21:19 → 2026-10-13 07:38. Low signal: most of the RU
+slice is nostalgia about old balance (implants, bosses) and banter; several
+messages are screenshots without text.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| M1 | The S17 page with the translated platform config was briefly unreachable (unpublished while its markup was fixed); the site renders Lua/XML/config snippets with display problems and asks for snippets or screenshots | Link still valid (S17); link-only policy unchanged |
+| M2 | "How do I unlock the **Experimental Destroyer**?" | **File-verified:** "Experimental destroyer" is the display name of the open-world pirate-event **boss** `Def.Ship_OW_Boss_PirateEvent` (`data/gamedata/def/ex/ow_bot_preset.lua`, `inherit = "Ship_Gen_Boss_Empire_Destroyer"`, `ship4bot = true`, hull 40 000 000, shield 8 000 000, `max_speed` 23, boss modules, hangar icons `icon_error`). It is an AI ship, not a player ship - there is nothing to unlock. Community figures of "50 M hull / 10 M shield" refer to similar boss hulls; battle values are decided by the server Lua (V-10) |
+| M3 | Ellydium (alien) ships on community servers: the first three are "relatively obtainable" but need **"gs"** for the starter pack; hosts add "gs" to PvE/PvP rewards | "gs" = **Galactic Standards**, the premium currency (`goldCredits` in `accounts`; string table: "not enough Galactic Standards"). Hosts can grant it with the verified `give` admin task (`value: "goldCredits"`) - [admin-tasks-howto](../07-administration/admin-tasks-howto.md); reward edits -> [tuning-recipes](../05-configuration/tuning-recipes.md) |
+| M4 | A "hidden" alien ship added to an account directly in MongoDB **cannot move**; its modules look like destroyer modules | Unverified. Lead: AI and boss hulls (`ship4bot = true`; 1 800+ such definitions across the bot/NPC preset files) carry AI-only modules and boss models; whether such a hull is flyable by a player, and what stops it moving, is open -> **Q49** |
+| M5 | Several hosts have already added alien ships and an alien boss creature as playable ships; requests for a **step-by-step guide "what to add where"** for non-programmers; reply: it has to be added on the server **and** the client | **Supported by static analysis:** the battle server compares an entity-definitions hash over definition names with the client's and refuses a client with different definitions (`DR_BAD_GAMEDATA_VERSION`, not switchable) - [hub-protocol-and-framing](../08-reverse-engineering/hub-protocol-and-framing.md) §6a; only the client and the battle server read `data/gamedata` - [gamedata-readers](../05-configuration/gamedata-readers.md) -> FAQ |
+| M6 | A host built a launcher to distribute client files after four days of work ("on localhost it is easy, for remote players it is hard") | Same demand as b008 K1; security S-29 |
+| M7 | A host clears Redis before opening the server ("junk left in it") | Redis is used by the LeaderboardServer ([service-summaries-static](../08-reverse-engineering/service-summaries-static.md)); what the shipped node leaves in Redis is not documented here |
+| M8 | Wish for a "classic" server: no dreadnoughts, no open world, only 15 ship ranks and the commander (captain) mode; a guess that drop rates are set in the matchmaker | Queue set and modes are server configuration ([queue-reference](../05-configuration/queue-reference.md), [game-modes](../05-configuration/game-modes.md)); loot is set by the loot rules in the platform Lua and the Lua loot tables (Q45), not by the matchmaker |
+| M9 | A host wants to **load-test** a public node to know whether the machine is big enough | No load data yet; known figures: idle node ~1.2 GB RAM, 19 processes; CPU starvation on 2 cores (V-1, V-5). Lab idea: bot-only battles on a node copy |
+
+### Demand and problem signals (batch 009)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Adding ships/content: what goes on the server, what on the client | modding | M5 -> FAQ "Modding"; a full guide is a gap |
+| Alien ships, premium currency | economy | M3 -> FAQ, admin tasks |
+| Boss hulls as player ships | modding | M2, M4 -> Q49 |
+| Capacity planning | operations | M9 -> gap (no load figures) |
+| Classic queue set | configuration | M8 -> queue reference |
+
+Not adopted: nostalgia about old balance (implants, boss fights), AI-art,
+streaming chatter, insults.
 
 ## Digest of S17 (The Outpost, fan site: Server Guide Modules)
 

@@ -50,7 +50,10 @@ verification on Windows, Linux and LAN setups continues.
   and the [community mod manager](docs/07-administration/community-mod-manager.md)
   (including a shipped loot-rule defect it works around).
 - Operator FAQ and tuning recipes extended from anonymised community reports,
-  each cross-checked against the shipped files.
+  each cross-checked against the shipped files; latest additions: which
+  edits need the same files on every client (definition names), the
+  "Experimental destroyer" is an AI boss, Galactic Standards = `goldCredits`;
+  new open question Q49 (AI/boss hulls as player ships).
 
 ### Changed
 - Premium time: `accounts.premiumTill` is the expiry as a Unix timestamp in

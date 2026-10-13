@@ -299,7 +299,26 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   from a clean install) or regenerate it with `prepare_shared`. Keep backups
   before editing generated files.
 
+### Batch 009 additions (2026-10-13)
+
+* **How do I unlock the "Experimental destroyer"?** You cannot: it is the
+  open-world pirate-event boss (`Ship_OW_Boss_PirateEvent` in
+  `data/gamedata/def/ex/ow_bot_preset.lua`), an AI ship with 40 M hull.
+  *(file-verified)*
+* **What is "gs"?** Galactic Standards, the premium currency, stored as
+  `goldCredits`. Grant it with the `give` admin task
+  ([admin-tasks-howto](admin-tasks-howto.md)).
+
 ## Modding
+
+**Q: I added a new ship or item. Do players need my files?** Yes. Adding or
+renaming definitions changes the entity-definitions hash that the battle
+server compares with each client's; a client without the same definitions is
+refused with `DR_BAD_GAMEDATA_VERSION`, and this check cannot be switched off
+([hub-protocol-and-framing §6a](../08-reverse-engineering/hub-protocol-and-framing.md)).
+Changing only *values* of existing definitions (for example hull points) does
+not change the hash; the battle server's values win in battle while the
+hangar shows the client's own values (V-10). *(static analysis + observed)*
 
 **Q: Does the client need my edits?** Server-data edits (Lua/XML under
 `cloud/` and `data/gamedata`) are used by your node; remote clients get server
