@@ -84,8 +84,14 @@ verification on Windows, Linux and LAN setups continues.
   access gates (client rank locks, ship-rank bands, weekly raid schedule,
   solo entry) and a lab test showing that no configuration route adds
   allied bots to a raid; new open question Q50.
+- **Pirate destroyers** ([pirate-destroyers](docs/05-configuration/pirate-destroyers.md)):
+  definition ids, English display names, parent hulls, spawning events and
+  module loadouts of the open-world pirate destroyer bosses, plus the
+  static facts that bear on flying one (Q49).
 
 ### Changed
+- FAQ: the "Experimental destroyer" answer no longer says it cannot be
+  flown; it has no store entry, and flying it is open (Q49).
 - Premium time: `accounts.premiumTill` is the expiry as a Unix timestamp in
   milliseconds; the `give` admin task takes hours.
 - `LICENSE` carries the full CC0 1.0 legal code; scope, trademarks and the

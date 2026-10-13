@@ -323,10 +323,13 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
 
 ### Batch 009 additions (2026-10-13)
 
-* **How do I unlock the "Experimental destroyer"?** You cannot: it is the
-  open-world pirate-event boss (`Ship_OW_Boss_PirateEvent` in
-  `data/gamedata/def/ex/ow_bot_preset.lua`), an AI ship with 40 M hull.
-  *(file-verified)*
+* **How do I unlock the "Experimental destroyer"?** Not through the store or
+  progression: it is the open-world pirate-event boss
+  (`Ship_OW_Boss_PirateEvent` in `data/gamedata/def/ex/ow_bot_preset.lua`),
+  an AI ship with 40 M hull and no `store.xml` entry *(file-verified)*.
+  Whether it can be flown when added to an account some other way is open
+  (Q49). Names and modules of all pirate destroyers:
+  [pirate-destroyers](../05-configuration/pirate-destroyers.md).
 * **What is "gs"?** Galactic Standards, the premium currency, stored as
   `goldCredits`. Grant it with the `give` admin task
   ([admin-tasks-howto](admin-tasks-howto.md)).

@@ -55,6 +55,7 @@ Status legend: ✅ substantive draft · 🟡 partial · ⬜ planned (no file yet
 | [matchmaker-decision-log.md](05-configuration/matchmaker-decision-log.md) — how to read the MatchMaker decision log (PvP hands/destroyer rules, PvE by buffs/mission level), static catalogue | ✅ |
 | [event-ships-mail-and-clan-ship.md](05-configuration/event-ships-mail-and-clan-ship.md) — where event-ship parts come from, mail rules, clan-ship (dreadnought) requirement (static answers Q34/Q42/Q43) | ✅ |
 | [bot-presets.md](05-configuration/bot-presets.md) — bot behaviour presets, lineups and tier/rank rules (answers Q28 statically) | ✅ |
+| [pirate-destroyers.md](05-configuration/pirate-destroyers.md) — open-world pirate destroyer bosses: definition ids, display names, parent hulls, spawning events, modules; facts for Q49 (flying a boss hull) | ✅ |
 | [ship-defs.md](05-configuration/ship-defs.md) — **generated**, ship definition data model: files, inheritance, stat fields and ranges, link to store/DB | ✅ |
 | [store-zones-rules-semantics.md](05-configuration/store-zones-rules-semantics.md) — meaning of store/zone/rule XML attributes, generator vs hand-maintained files | ✅ |
 | [progression-xml-semantics.md](05-configuration/progression-xml-semantics.md) — titles, achievements, login offers, account auras, vessel presets, seed-chip (autogen) classes and pricing | ✅ |
