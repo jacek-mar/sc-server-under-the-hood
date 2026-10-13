@@ -128,7 +128,7 @@ Independent of L0–L3:
 
 | Hazard | Why | Mitigation |
 |--------|-----|-----------|
-| **Case sensitivity** | Data authored on Windows may reference `Foo.lua` as `foo.lua` | Normalise at load; test on case-sensitive FS; case-insensitive overlay as fallback ⚠ unverified count |
+| **Case sensitivity** | Data authored on Windows may reference `Foo.lua` as `foo.lua` | Normalise at load; test on case-sensitive FS; case-insensitive overlay as fallback. **Measured (LX-5, 2026-10-13): 22 of about 13 540 resolvable path references differ only in case** - see the LX-5 row. Under Wine the lookup is case-insensitive, so this matters for native ports (L2/L3) and tools that open files directly |
 | **Path/encoding** | Backslashes, mixed encodings (Cyrillic comments, BOMs; project already hit ANSI issues) | UTF-8 everywhere in new code; treat input as bytes |
 | **Line endings in cfg/Lua/XML** | CRLF parsers | Tolerant parser |
 | **Data generation step** | XML is produced by `DedicatedServer.exe -prepareSharedData` from Lua | Either run it once under Wine at build time, or re-implement the export (inputs are Lua tables → deterministic; test by diffing against stock output — task B-5) |
@@ -173,7 +173,7 @@ Independent of L0–L3:
 | LX-2 | Same in a rootless container, headless (no X11) | Image size, required packages |
 | LX-3 | Run one battle (coop vs AI): DS memory/CPU, port used | Sizing numbers, Q1 |
 | LX-4 | Check Hub stats/health without `pdh` (status JSON) | Compatibility note |
-| LX-5 | Case-sensitivity scan: references vs actual file names in `data/gamedata` and `cloud/data` | List of mismatches |
+| LX-5 | Case-sensitivity scan: references vs actual file names in `data/gamedata` and `cloud/data` | **Done 2026-10-13 (static):** 113 870 file names (loose files + extracted `.pak` contents) against the quoted path references in `cloud/`, `data/gamedata/` and `sys_data/gamedata/` Lua/XML/cfg/txt/bat: 13 518 exact, **22 case-only** (17 distinct), 237 unresolved (run-time or other roots). Case-only: `ui/locale/<language>/uiResources.txt` (11 languages, real name `uiresources.txt`; `locale.lua`, `locale_default.lua`), `Models/turret/biglightninggun/...` (5 module rows in `def/ex/active.lua`), `models/objects/jump_gates/Accelerator/...` (`def/objects/clanship_entities.lua`), `GameData/materials/*.lua` and `GameData/physics/def_mat.lua` (`materials/samples.lua`, `sys_data/gamedata/materials/main.lua`). Whether the engine's `.pak` lookup folds case is not known |
 | LX-6 | `prepare_shared` under Wine vs on Windows: byte-compare generated XML | Confirms portable build step |
 | LX-7 | ARM host + x86 emulation + Wine (optional) | Feasibility note |
 | LX-8 | Remote client from Windows to the Linux node (LAN) | Closes Q2/Q3 on Linux |

@@ -54,6 +54,22 @@ verification on Windows, Linux and LAN setups continues.
   edits need the same files on every client (definition names), the
   "Experimental destroyer" is an AI boss, Galactic Standards = `goldCredits`;
   new open question Q49 (AI/boss hulls as player ships).
+- Operator tool [`tools/ref_lint.py`](tools/ref_lint.py): finds references to
+  definitions that do not exist; with `--reference` it shows only what an
+  edit introduced ([config-validation-tools](docs/07-administration/config-validation-tools.md) §2b).
+- [Data invariants](docs/05-configuration/data-invariants.md): eleven rules
+  that edits must not break, and the 184 references in the shipped data that
+  point at undefined names (including the eight loot tables of the stock
+  loot rules).
+- [Titles, achievements, offers, auras, presets, seed chips](docs/05-configuration/progression-xml-semantics.md):
+  meaning of the remaining generated XML files, with translated rules from
+  the source comments.
+- `ZoneCoordinator.exe` summary (open-world instance dispatcher) in
+  [service-summaries-static](docs/08-reverse-engineering/service-summaries-static.md);
+  data search roots (`datasources*.txt`, `sys_data`) in
+  [data-files](docs/05-configuration/data-files.md); case-sensitivity scan
+  for Linux hosting (LX-5); static findings for DLC crediting (Q44) and the
+  `address.cfg` location (Q46).
 
 ### Changed
 - Premium time: `accounts.premiumTill` is the expiry as a Unix timestamp in

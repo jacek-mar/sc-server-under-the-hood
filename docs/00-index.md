@@ -57,6 +57,8 @@ Status legend: ✅ substantive draft · 🟡 partial · ⬜ planned (no file yet
 | [bot-presets.md](05-configuration/bot-presets.md) — bot behaviour presets, lineups and tier/rank rules (answers Q28 statically) | ✅ |
 | [ship-defs.md](05-configuration/ship-defs.md) — **generated**, ship definition data model: files, inheritance, stat fields and ranges, link to store/DB | ✅ |
 | [store-zones-rules-semantics.md](05-configuration/store-zones-rules-semantics.md) — meaning of store/zone/rule XML attributes, generator vs hand-maintained files | ✅ |
+| [progression-xml-semantics.md](05-configuration/progression-xml-semantics.md) — titles, achievements, login offers, account auras, vessel presets, seed-chip (autogen) classes and pricing | ✅ |
+| [data-invariants.md](05-configuration/data-invariants.md) — rules edits must not break (definition names, positional ids, titles, offers, autogen) and the dangling references in the shipped data | ✅ |
 | [queue-reference.md](05-configuration/queue-reference.md) — every queue incl. brawl/sector/league/raid | ✅ |
 | [open-world-and-services.md](05-configuration/open-world-and-services.md) — ZoneInstance, Universe, quests, leaderboards, global events | ✅ |
 | economy-and-rewards.md | ⬜ |

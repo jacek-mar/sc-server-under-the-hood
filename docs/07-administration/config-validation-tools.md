@@ -1,6 +1,6 @@
-# Config validation tools (def names, queue block, data drift)
+# Config validation tools (def names, references, queue block, data drift)
 
-> Two small **read-only** helpers for operators who edit the shipped files.
+> Small **read-only** helpers for operators who edit the shipped files.
 > They address the most frequent failure reports in the community channels
 > (see the "demand and problem signals" in the
 > [source register](../sources/source-register.md), batch 005): a server that
@@ -151,6 +151,38 @@ copy: one bundle inserted, `battle_pass.lua` touched, `aux_limits.xml`
 edited) -> 2 stale, 1 hand-edit, `Bundles_` order shift reported at the
 inserted definition. Exit code 1 whenever files differ.
 
+## 2b. `tools/ref_lint.py`
+
+```
+.venv\Scripts\python.exe -X utf8 -I tools\ref_lint.py --depot "<game>"
+.venv\Scripts\python.exe -X utf8 -I tools\ref_lint.py --depot "<edited copy>" --reference "<untouched copy>"
+```
+
+Finds **dangling references**: a value that should name a definition but
+names nothing. Such references fail silently at run time - the stock loot
+rules name eight loot tables that do not exist, which empties the arena
+reward search (Q45).
+
+| Indexed as defined | Checked as references |
+|---|---|
+| every `<Registry>.<name> =` / `<Registry>["<name>"] =` table in `data/gamedata` and `sys_data/gamedata` (`Def`, `Spell`, `LootTable`, `AccountAura`, `DefItemPrice`, `ModulePresets`, `VesselTree`, `Materials`, `AiPreset`, ...); `<Item defName>` in `store.xml` (covers names Lua builds in loops); identifiers compiled into `DedicatedServer.exe` and `win64/game.exe` (engine built-ins; `--no-exe` skips them) | `<key> = "Name"` for about 80 reference keys in the game-data Lua (`inherit`, `default_modules`, `spell`, `projectile`, `item`, `bundle`, `loot_table`, `discounted_def`, `reward_account_aura`, ...; texture, model, UI-string and engine-class keys are excluded); loot tables (`lt = "..."`) in `cloud/data/default_platform_config.lua`; `defName=` / `resource=` in `cloud/data/*.xml` |
+
+With `--reference` only findings that the untouched copy does not have are
+printed - the ones your edits introduced. `--key` limits the check to some
+keys, `--limit 0` prints every location. Exit code 1 when findings are
+printed.
+
+**Result on the shipped build** *(file, 2026-10-13)*: about 70 000 defined
+names, **184 unresolved key/name pairs** - listed and classified in
+[data-invariants](../05-configuration/data-invariants.md) part 2. None of
+them stops a node from starting.
+
+**Limits:** names created at run time that are not in `store.xml` are
+reported (check by hand); disabled entries are reported like active ones;
+values that are not definition names but use a checked key (for example
+beacon ids `_first_1` in `shared/adventures.lua`) are skipped only when
+they start with `_`.
+
 ## 3. Suggested workflow for an operator
 
 1. Keep the edit in `*_local.cfg` / an overlay file where possible
@@ -158,7 +190,8 @@ inserted definition. Exit code 1 whenever files differ.
 2. Run `queue_lint.py` on the edited `default_platform_config.lua`; fix
    E-class findings; read the I1 block once.
 3. After editing `store.xml`/Lua defs run `defname_check.py --xml …` /
-   `--lua …`.
+   `--lua …`, then `ref_lint.py --reference <untouched copy>` (nothing new
+   may appear).
 4. Only then run `prepare_shared` and restart. Back up Mongo before inserting
    defs into accounts.
 5. Run `data_drift_check.py` against an untouched copy of the same build:

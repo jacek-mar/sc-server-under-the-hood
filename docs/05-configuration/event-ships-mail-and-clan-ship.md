@@ -187,10 +187,29 @@ purchases are tracked separately in `boughtArcDLC` (`Task_BuyArcDLC`).
 * `store.xml` has the DLC bundles (`Bundle_DLC_*`, `Bundle_Arc_DLC_*`) but
   no app-id attribute.
 
-**Open (Q44):** which file or collection fills the DLC record table (its
-loader was not found in this pass; the record array lives in the same
-shared-data object that loads `store.xml`, `special_values.xml` and the
-other `cloud/data` XML files). Proposed test (on a server copy):
+**Where the DLC record table does *not* come from** *(static, 2026-10-13)*.
+The keys a record needs - the 303 Steam app ids and the Gaijin-store GUIDs of
+`DLCList` (for example 222280 and its GUID pair for the first DLC) - occur in
+**no** server-side file: not in `cloud/data` (XML, cfg, Lua), not in the
+server pak scripts, and not as integer constants in `Shard.exe` (a byte
+search finds 4 of 303 values, at unrelated code offsets - chance matches).
+They appear only in client files (`ui_properties.lua`, `vessel_stickers.lua`).
+The table is therefore filled at run time from a source that was not
+released (a vendor service or a database collection that a fresh database
+does not have) *(inferred)*. Consequence for a community node: with an empty
+table, `Task_UpdateDLCOwnership` has nothing to credit even when ownership is
+simulated *(inferred; the lab test below would confirm it)*. The practical
+route for former DLC owners is granting the contents directly - the bundle
+definitions with their `fixed_contents` (`Bundle_DLC_*`, `Bundle_Arc_DLC_*` in
+`def/objects/bundles_dlc.lua` / `bundles.lua`) list what each DLC gave, and
+the `give` admin task or an `adminMail` attachment (`LAT_ITEM`, `LAT_PREMIUM`,
+`LAT_CREDITS`, ...) can deliver those items
+([admin-tasks-howto](../07-administration/admin-tasks-howto.md)).
+
+**Open (Q44):** confirm the empty table on a running node (the record array
+lives in the same shared-data object that loads `store.xml`,
+`special_values.xml` and the other `cloud/data` XML files). Proposed test
+(on a server copy):
 set `cl_versionType` to a non-`live` value and
 `dbg_simulatedSteamDlcOwnership` to `<test uid>;<app id from DLCList>` in
 the node copy's `shard_local.cfg`, log in with the test account and watch

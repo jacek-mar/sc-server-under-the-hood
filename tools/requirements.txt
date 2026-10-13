@@ -1,2 +1,2 @@
-# The published tools (queue_lint, defname_check, data_drift_check,
+# The published tools (queue_lint, defname_check, ref_lint, data_drift_check,
 # security_audit, extract_cvars) use only the Python standard library.

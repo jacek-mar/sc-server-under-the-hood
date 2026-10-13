@@ -73,5 +73,28 @@ Summary:
 * 27 files have no static evidence (mostly the 22 `cam_ship_*.cfg` camera
   presets, plus `automats.lua`, `developer.lua`, `test_balance.lua`,
   `materials/samples.lua`, `materials/material_list.mel`).
-* Runtime lab S11-R1 (what `prepare_shared` rewrites) will turn the
-  generated-XML pairing from *inferred* into *observed*.
+* The generated-XML pairing is *observed* since the `prepare_shared` run in
+  [verification-log V-11](../04-installation/verification-log.md).
+
+## Search roots (`datasources*.txt`) *(file, 2026-10-13)*
+
+The engine opens game files through a virtual file system whose roots are
+listed in plain-text `datasources*.txt` files next to the executables; the
+`.pak` archives in `data/` are mounted into the same tree, so a path such as
+`gamedata/def/ex/ship.lua` or `platform_config.cfg` is looked up in every
+root (and pak) in turn.
+
+| File | Roots (relative to the executable) |
+|---|---|
+| `win64/datasources.txt` (client) | `..\data`, `..\sys_data` |
+| `cloud/datasources.txt`, `cloud/datasources_cloud.txt` | `.\data`, `..\data`, `..\sys_data`, `..\local_data` |
+| `cloud/datasources_defs_build.txt` | used by `prepare_shared` (`-ds` switch) |
+
+`sys_data/` (41 files) is a **second data root**: `sys_data/gamedata/def/`
+holds base definitions (`base_defs.lua`, `logic.lua`, `joints.lua`,
+`filters.lua`, `sounds.lua`), plus `properties.lua`, physics and material
+tables. Definitions there are referenced from `data/gamedata` (for example
+logic entities such as `Logic_JumpDockLocation`), so tools that index
+definitions must read both roots. `local_data/` does not exist in the
+shipped install (an optional override root for the cloud services,
+*inferred*).

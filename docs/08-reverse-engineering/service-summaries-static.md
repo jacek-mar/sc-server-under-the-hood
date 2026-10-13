@@ -1,8 +1,8 @@
-# Four lesser-documented services, read statically
+# Five lesser-documented services, read statically
 
-> Analysis of 2026-10-11/12. Static strings/cvar analysis of
-> `EarlyMatchMaker.exe`, `StatServer.exe`, `Tournament.exe` and
-> `LeaderboardServer.exe` (the four executables [architecture.md](../03-architecture/architecture.md)
+> Analysis of 2026-10-11/12 (section 5: 2026-10-13). Static strings/cvar
+> analysis of `EarlyMatchMaker.exe`, `StatServer.exe`, `Tournament.exe`,
+> `LeaderboardServer.exe` and `ZoneCoordinator.exe` (the executables [architecture.md](../03-architecture/architecture.md)
 > §2 lists with the least detail). Nothing was executed. Cross-checked
 > against [cvar-defaults.md](../05-configuration/cvar-defaults.md) and the
 > module/collection map [service-data-map.md](service-data-map.md). Tournament
@@ -105,9 +105,40 @@ init failures and leaderboards stay empty/stale; this matches the
 `db_redisHost` line being commented out in `cloud/data/common.cfg`
 (config-system.md).
 
-## 5. Cross-reference
+## 5. `ZoneCoordinator.exe` (type 14, in `cloud.xml`)
 
-All four are already listed in [architecture.md](../03-architecture/architecture.md)
+*(static: strings unique to this executable compared with the other cloud
+services, cvar descriptions, console usage strings; nothing executed)*
+
+**Role.** The open-world dispatcher: it keeps the list of running **zone
+instances** (open-world battle servers - `DedicatedServer.exe` processes; the
+string `ZoneCoordinator: Failed to launch dedicatedServer app` confirms that
+it starts them itself), creates a new one when a player enters a zone that
+has none, and moves players between zones and instances.
+
+| Function | Evidence (strings) |
+|---|---|
+| Instance registry | `ZoneCoordinator: new zone instance %s found. zoneId %d. addr %s`; `got zone instance %s shutdown notification`; `broad request ZoneInstance status`; console `/zc_status` prints a table `instanceId / zoneId / csPart / liveTime / clients / connected / lastUpdate` and `Total %d instances`; statsd metric `zc.instances` |
+| Instance start | `ZoneCoordinator: starting zone %d for uid %s`; the switch string `-hostInstanceId` (probably passed to the started instance, *inferred*); cvar `zc_enableInstanceLaunch` (default 1) turns new launches off; `zc_availableForPlayersMaxTime` (default 86 400 s) = how long an instance accepts joiners |
+| Regional instances | `zc_minimumRegionalPlayers` (default 0) = players needed to launch a *regional* instance |
+| Player moves | `Moving user %s to instance %s, zone %d`; `MovePlayerToZone: server busy`; `undock request from unknown zone %d. replace by default zone %d` (a player leaving the hangar for an unknown zone is sent to a default zone); console `/zc_movePlayerToZone <zoneId> <uid>`, `/zc_movePlayerToInstance <instanceId> <uid>` |
+| Raid zone blocks | `zc_enableZoneBlocks` (engine default 0, set to 0 again by `ConfigureZoneCoordinator()` in the platform Lua); the flag is passed to running and new instances ([cvar-reference](../05-configuration/cvar-reference.md)) |
+| Clan ships | asks the ClanServer for clan data (`ZoneCoordinator: request clans info`, `Received %d clans from ClanServer`, messages `CC_ZC_CLAN_SHIPS_ALL_CLANS`, `CC_ZC_CLAN_UPDATE_SHIPS`); a clan ship has its own zone per race (`ClanShipZoneForRace%d`, `SpaceZones. Race %d hasn't clan ship Zone`); `MovePlayerToZone: clan ship not found` / `ClanServer didn't respond` are the failure cases |
+| Ownership and kicks | `Universe: got invalid zoneId %d in CC_UNIVERSE_SYNC_OWNAGE` (zone ownership from the Universe service); `CC_ZI_KICK_PLAYER_FROM_ZONES` |
+| Data | zone list from `cloud/data/zones.xml` (`SpaceZone.cpp`); no `data/gamedata` reads ([gamedata-readers](../05-configuration/gamedata-readers.md)) |
+
+**Practical points for hosting** *(inferred)*: every open-world zone that a
+player enters costs one more `DedicatedServer.exe` process on the node, so
+open-world play scales CPU/RAM like extra battles (compare the start-up CPU
+starvation on 2 cores in [verification-log](../04-installation/verification-log.md)).
+`/zc_status` on the ZoneCoordinator's SSH console is the quickest way to see
+which instances run and how many players each holds. A host who wants no
+open world (a "classic" server, community batch 009) can set
+`zc_enableInstanceLaunch 0` - untested; what the client shows then is open.
+
+## 6. Cross-reference
+
+All five are already listed in [architecture.md](../03-architecture/architecture.md)
 §2 with a one-line role and their `cloud.xml` type id; this document only adds
 the static detail the strings give. None of this touches authentication or
 credential handling.

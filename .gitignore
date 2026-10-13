@@ -25,6 +25,7 @@ work/
 tools/*
 !tools/queue_lint.py
 !tools/defname_check.py
+!tools/ref_lint.py
 !tools/data_drift_check.py
 !tools/security_audit.py
 !tools/extract_cvars.py
