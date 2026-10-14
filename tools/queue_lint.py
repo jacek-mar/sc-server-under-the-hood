@@ -28,6 +28,10 @@ only read). Checks:
   I1 coverage: per (queue list, template) the mmRank x mmValue grid that no
      queue accepts (rank 1..17 x value 0..99) - explains "no match" for
      accounts whose rank/value falls into a gap
+  I2 queues whose mmSquadRank range differs from their mmRank range (squad
+     filter; shown with the coverage block)
+  I3 a co-op (vs AI) template whose levelsDesc includes mode 11 (bomb the
+     base) - bots are reported not to carry the bomb (shown with coverage)
   L1 loot rules (DedicatedServcerServices_SetLootRules): a ship rank 1..17
      without a row - ships of that rank silently get no loot search after
      battles
@@ -391,16 +395,19 @@ def main():
                     for nm in re.findall(r'"([^"]+)"', km.group(1)):
                         if presets and nm not in presets:
                             findings.append(("E5", ln, f"unknown bot preset '{nm}' in {key}"))
-        calls.append((lm.group(1), tpl, m.start(), rmin, rmax, vmin, vmax, ln))
+        calls.append((lm.group(1), tpl, m.start(), rmin, rmax, vmin, vmax, ln, smin, smax))
 
     for sev, ln, msg in sorted(findings, key=lambda f: (f[1], f[0])):
         print(f"{sev} line {ln}: {msg}")
 
     if not a.no_coverage and calls:
         groups = {}
-        for lst, tpl, pos, rmin, rmax, vmin, vmax, ln in calls:
+        squad_diff = {}
+        for lst, tpl, pos, rmin, rmax, vmin, vmax, ln, smin, smax in calls:
             defpos = max([p for (n, p, _i) in templates if n == tpl and p < pos], default=-1)
             groups.setdefault((lst, tpl, defpos), []).append((rmin, rmax, vmin, vmax))
+            if (smin, smax) != (rmin, rmax):
+                squad_diff.setdefault((lst, tpl), []).append((ln, rmin, rmax, smin, smax))
         print()
         for (lst, tpl, defpos), rects in groups.items():
             grid = [[False] * (VAL_MAX + 1) for _ in range(RANK_MAX + 1)]
@@ -437,6 +444,21 @@ def main():
                 print(f"   mmValue not served for any rank: {rng(allgaps)}")
             for r, miss in list(partial.items())[:6]:
                 print(f"   rank {r}: uncovered mmValue {rng(miss)}")
+    if not a.no_coverage and calls:
+        if squad_diff:
+            print()
+        for (lst, tpl), rows in squad_diff.items():
+            sample = ", ".join(f"line {ln}: rank {r0}-{r1} / squad {s0}-{s1}" for ln, r0, r1, s0, s1 in rows[:3])
+            print(f"I2 {lst} / {tpl}: {len(rows)} queue(s) with mmSquadRank range != mmRank range ({sample}"
+                  f"{', ...' if len(rows) > 3 else ''}) - squads are filtered by the squad range; players report "
+                  "squads with bots only matched when both ranges are equal")
+        for name, _pos, info in templates:
+            if "coop" not in name.lower():
+                continue
+            bomb = sorted(lvl for lvl, ms in info["levels"].items() if 11 in ms)
+            if bomb:
+                print(f"I3 {name} (line {info['line']}): mode 11 (bomb the base / Detonation) on "
+                      f"{len(bomb)} map(s) of a vs-AI template - bots are reported not to carry the bomb")
     if not a.no_coverage and loot_summary:
         print("\nL3 loot rules by rank (common / rare / epic table):")
         for r0, r1, names in loot_summary:

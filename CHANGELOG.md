@@ -134,6 +134,24 @@ verification on Windows, Linux and LAN setups continues.
   of range, duplicate rank, missing comma; exit status 1), L3 prints which
   ranks share which tables. Documented in
   [config-validation-tools](docs/07-administration/config-validation-tools.md).
+  Two further information checks: I2 (queues whose squad rank range differs
+  from the rank range) and I3 (vs-AI templates that include the bomb mode).
+- **Static answers (2026-10-14, second block):** hosting behind NAT - three
+  "override external host" settings found, host only, the LoadBalancer pair
+  apparently only with two or more Shard/chat servers (Q62, partly solved);
+  "cannot enter the battle" - the 53 matchmaker refusal codes with their
+  client messages and likely causes after hand edits, no karma-based check
+  ([troubleshooting](docs/04-installation/troubleshooting.md), Q60); premium
+  time - the client display keeps 32 bits of the seconds left, so 68 years or
+  more shows as zero while the client's expiry check still counts it as
+  active (Q63); mail and trading from a new PC - the 2-step setting
+  `shard_is2StepAuthForMailSendingNeeded` (FAQ); cosmetic grants with the
+  admin task `giveVesselCustomElement`; the client's file index - duplicate
+  paths between packages are fatal and a packed file most likely wins over a
+  loose one with the same path (Q56, static lead); the bomb mode's rules in
+  `gameplaysettings.lua` and no bot-side bomb behaviour found (Q61); S-28
+  corrected (the single-account-per-PC flag feeds login and matchmaking, not
+  trading).
 
 ### Changed
 - FAQ: the "Experimental destroyer" answer no longer says it cannot be

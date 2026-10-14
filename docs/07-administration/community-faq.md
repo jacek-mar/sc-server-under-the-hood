@@ -439,14 +439,26 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
 * **I changed my karma and now cannot get in.** Karma levels and police
   hostility are in `data/gamedata/shared/karma.lua`; an in-game reset costs
   500 GS (`KarmaResetCost`). Set `accounts.karma` back to its old value
-  offline (back up first). The refusal itself is not explained yet (Q60).
-  *(file; refusal reported)*
+  offline (back up first). No karma-based entry check exists (static); read
+  the exact refusal message and look it up in
+  [troubleshooting](../04-installation/troubleshooting.md) ("Cannot enter
+  the battle") - for example "negative galactic standards balance" means
+  `goldCredits` above 2 147 483 647, "the location's tech level" means a
+  ship tier outside the location's band (Q60). *(static; refusal reported)*
 * **How do I give tournament paints?** Paints, patterns and decals are
   *custom elements* (`shared/vessel_custom_elements.lua`, e.g.
   `4cb_tournament`); stickers are in `shared/vessel_stickers.lua` (group
-  `TOURNAMENT`). Grant one by admin mail, attachment type 16
-  `LAT_CUSTOM_ELEMENT` with its name, or through a bundle containing it
-  ([admin-tasks-howto](admin-tasks-howto.md) §4b) ⚠ untested.
+  `TOURNAMENT`). Grant one with the admin task `giveVesselCustomElement`
+  (fields `uid` and `item` = the element name; privilege `propertyEdit`),
+  by admin mail (attachment type 16 `LAT_CUSTOM_ELEMENT`) or through a
+  bundle containing it ([admin-tasks-howto](admin-tasks-howto.md)) ⚠ untested.
+* **A player on a new PC cannot send mail or trade.** Mail (and trading by
+  mail) needs `antibotCounter` 50 and, for a new machine, enough
+  `machineAntibotCounter` - otherwise 2-step authorisation is requested
+  (`shard_is2StepAuthForMailSendingNeeded`, default 1), which a community
+  server cannot offer. Set it to 0 in `shard_local.cfg`
+  ([event-ships](../05-configuration/event-ships-mail-and-clan-ship.md)).
+  *(static)*
 * **Why can't I fit seed chips on the alien hulls?** Those definitions
   (biomorph, open-world bosses and aliens) declare no seed-chip slots; the
   crafted rank-14/15 hulls declare 4 and 5 (Q49). *(file)*
@@ -472,7 +484,8 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
 * **"Fatal error: can't initialize file server. Two or more files within
   packages are the same."** The engine found the same path in more than one
   `.pak` archive - look for added or leftover packages, then verify the game
-  files in Steam. *(static message; cause inferred)*
+  files in Steam. A loose file with the same path as a packed one does not
+  cause this error (the packed copy is most likely used, Q56). *(static)*
 * **Rank 16-17 ships never find a vs-AI battle and get no loot.** The
   shipped co-op vs AI queues stop at rank 15 and the loot rules have rows
   1-15 only ([tuning-recipes](../05-configuration/tuning-recipes.md),
@@ -486,14 +499,22 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   3802, 3815 and UDP 35000 upwards; the node address must be the address
   clients can reach **and** an address the PC owns. Behind a router or CGNAT
   that conflicts (Q62); a VPS, a VPN shared by all players, or a LAN party
-  avoid the problem. *(observed V-9; NAT part open)*
+  avoid the problem. *(observed V-9; NAT part open)* Static lead
+  (2026-10-14): the services have "override external host" settings -
+  `net_overrideShardAddr`, `net_overrideChatServerAddr` (LoadBalancer) and
+  `net_overrideDedicatedServerAddr` (Shard), each a host name or IP without
+  port, set in `loadbalancer_local.cfg` / `shard_local.cfg`. The Shard one
+  applies whenever set; the LoadBalancer ones apparently only when it has
+  more than one Shard/chat server to choose from ⚠ - untested, see Q62.
 * **Do Steam achievements still unlock?** No. No Steamworks library ships
   with the client or the services, so nothing reports achievements to
   Steam. *(static)*
-* **Why is premium missing after I set a far-future date?** Reported: the
-  client shows no premium when the remaining time exceeds a 32-bit seconds
-  value (about 68 years); stay well below that, or use
-  `auth_infinitePremiumForRoles` (Q63). *(reported)*
+* **Why is premium missing after I set a far-future date?** The client's
+  remaining-time display keeps only 32 bits of the seconds left, so 68 years
+  or more shows as zero (1 January 2100 is too far; "until 2063" works). The
+  expiry check itself uses the full value, so premium is not expired - only
+  the display is wrong. Keep `premiumTill` less than about 68 years ahead
+  (for example 50), or use `auth_infinitePremiumForRoles` (Q63). *(static)*
 * **Can I get my official account back?** No - the official data was not
   released. Never use your Gaijin password on community servers (S-07).
 

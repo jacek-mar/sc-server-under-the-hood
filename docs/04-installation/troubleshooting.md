@@ -23,6 +23,38 @@
 | Players from LAN cannot connect | `cloud.xml` still points to `127.0.0.1` | Set the LAN/public address; open ports |
 | Squad/wing stuck loading in PvP arena, or bots missing after queue edits | Open — reported without a solution | See [open questions](../08-reverse-engineering/open-questions.md) |
 
+## "Cannot enter the battle" - matchmaker refusal messages
+
+When the MatchMaker refuses a queue request it returns a join-result code
+(`MasterServer.MMJoinResult`, see
+[masterserver-enums](../08-reverse-engineering/masterserver-enums.md)); the
+client shows the English text from its string table (`mmError_<code>`).
+The table maps the message a player sees to the code and to the causes that
+fit **hand-edited accounts and configs** *(message ↔ code: static, client
+string table; causes: inferred unless marked)*:
+
+| Message shown (English client) | Code | Likely cause after edits |
+|---|---|---|
+| "you can't enter a battle. Your account has a negative galactic standards balance…" | `MMJR_IN_DEBT` | `goldCredits` set above 2 147 483 647 is read as negative (signed 32-bit, Q52) - set a smaller value with the Hub stopped |
+| "ships of all pilots in the battle have to match the location's tech level." | `MMJR_VESSEL_TIER_INAPPROPRIATE` | a ship's tier outside the location's tier band (open world / Conquest); the "tech level" in community reports |
+| "ships in your combat slots do not meet rank requirements." / "…don't fit mission conditions." | `MMJR_VESSEL_RANK_INAPPROPRIATE(_PVE)` | combat-slot ship ranks outside the queue's ranks (for example rank 16-17 vs co-op queues 1-15, *file*) |
+| "all ships have to be ranks $min_rank$-$max_rank$." / "no ships of ranks …" | `MMJR_VESSEL_RANK_ALL` / `_ANY` | same, for modes with an explicit rank band |
+| "the highest ship rank in combat slots should be in the range …" | `MMJR_SQUAD_RANK_DIFF` | squad rank filter (`mmSquadRank`, Q35) |
+| "the player and all pilots in the squad need clearance level $rank$ or higher." | `MMJR_INVALID_ACCOUNT_RANK` | `accountRank` below the mode's requirement |
+| "unable to join the queue with damaged ships." | `MMJR_SHIPS_BROKEN` | a ship marked as destroyed/damaged; hand-inserted vessel records with odd condition fields ⚠ |
+| "ship equipment failure." | `MMJR_WRONG_EQUIPMENT` | a module or munition that does not fit the hull (slot, size, tier) - typical after hand-editing `vessels[].modules` ⚠ |
+| "this ship is not allowed to take part in battles." | `MMJR_FORBIDDEN_SHIP` | the hull is in `mm_forbiddenShips` / `lobby_forbiddenShips`, or an AI-only hull ⚠ |
+| "no ships selected for battle." | `MMJR_NO_SHIPS_IN_BSLOTS` | battle slots (`bSlot`) empty after a vessel edit |
+| "you need a license." | `MMJR_PREMIUM_REQUIRED` | premium expired or overflowed (Q63) |
+| "the queue is not available." | `MMJR_QUEUE_DISABLED` | queue disabled or outside its schedule |
+| "internal matchmaking error." | `MMJR_ERROR` | look in the MatchMaker log at that time |
+
+Karma does not appear among these codes: no karma-based entry check was
+found in Shard, MatchMaker, ZoneCoordinator or LobbyServer (only the karma
+reset task, `KarmaResetCost`). For the full list of 53 codes see the
+masterserver enums; the decision log (`mm_decisionLog`) shows the
+MatchMaker's side.
+
 ## Where to look
 
 1. `Hub/logs/hub_<date>.log` — spawn/registration/errors for every service.

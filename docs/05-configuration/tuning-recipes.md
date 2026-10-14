@@ -295,7 +295,7 @@ Leads and file checks; see the "batch 007" digest (J1-J12) in the
 | Fewer "kicked for spending" | `set sm_overloadCounterLimit 20` in `cloud/data/shard.cfg` line 6 (or `shard_local.cfg`); hosts use 999 | file-verified, Q41 |
 | Remove a mode from co-op vs AI (e.g. Detonation) | edit the map lists in `coopQueueTemplate.levelsDesc` (shipped `{4,9,11}` on five maps) in `cloud/data/default_platform_config.lua` | file-verified key; bots and mode 11 -> Q61 |
 | Post-battle loot with iridium | loot rules in `DedicatedServcerServices_SetLootRules` (platform Lua), tables in `data/gamedata/shared/loot_tables.lua`; use the `_v3` table names (Q45) | file-verified layout; a host's tweak reported |
-| Grant cosmetic items (paints, decals, stickers) | custom elements in `shared/vessel_custom_elements.lua`, stickers in `shared/vessel_stickers.lua`; admin mail attachment type 16 `LAT_CUSTOM_ELEMENT` or a bundle with `ai.BundleContent.CUSTOM_ELEMENT` | static ⚠ untested |
+| Grant cosmetic items (paints, decals, stickers) | custom elements in `shared/vessel_custom_elements.lua`, stickers in `shared/vessel_stickers.lua`; admin task `giveVesselCustomElement` (`uid`, `item`), admin mail attachment type 16 `LAT_CUSTOM_ELEMENT` or a bundle with `ai.BundleContent.CUSTOM_ELEMENT` | static ⚠ untested |
 
 ## Additions from the Steam forum (S19, 2026-10-14)
 

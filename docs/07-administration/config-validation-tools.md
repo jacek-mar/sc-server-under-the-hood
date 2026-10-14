@@ -71,6 +71,8 @@ only the text of `default_platform_config.lua` (no Lua interpreter).
 | W2 | warning | `(level, mode)` pair without a `Setting` row in `aux_limits.xml` LobbySettings |
 | W3 | warning | missing comma between two `levelsDesc` entries |
 | I1 | info | rank × `mmValue` coverage per (queue list, template): ranks and values no queue accepts |
+| I2 | info | queues whose `mmSquadRank` range differs from their `mmRank` range (squads are filtered by the squad range; players report squads with bots matched only when both are equal, Q35) |
+| I3 | info | a co-op (vs AI) template whose `levelsDesc` includes mode 11 (bomb the base / Detonation); bots are reported not to carry the bomb (Q61) |
 | L1 | warning | loot rules (`DedicatedServcerServices_SetLootRules`): a ship rank 1..17 without a row - ships of that rank silently get no loot search after battles |
 | L2 | error | loot rules row syntax: each row needs `common`, `rare`, `epic`, each with `lt = "<table>"` and a numeric `iter = {...}`; rank outside 1..17, a rank defined twice (the later row wins), missing comma between rows |
 | L3 | info | loot rules summary: which ranks share which tables (printed with the coverage block) |
@@ -114,6 +116,18 @@ Interpretation (all *(file)*; the consequences are static inferences):
   bound was meant. Whether MMV can reach 99 is a runtime question.
 * The April/paper-airplane and hangar-games templates reference levels that
   the active-map list does not contain - they are inactive event modes.
+
+### I2 / I3 on the shipped config (2026-10-14)
+
+```
+I2 queuesConfigLo / arcadeQueueTemplate: 6 queue(s) with mmSquadRank range != mmRank range (rank 1-17 / squad 1-15)
+I3 coopQueueTemplate (line 429): mode 11 (bomb the base / Detonation) on 5 map(s) of a vs-AI template
+I3 coopQueueTemplate (line 763): mode 11 (bomb the base / Detonation) on 5 map(s) of a vs-AI template
+```
+
+Both are information only (no effect on the exit status): they point at the
+places community hosts change for squads with bots and for vs-AI battles
+without the bomb mode.
 
 ### Loot rules on the shipped config (2026-10-14)
 
