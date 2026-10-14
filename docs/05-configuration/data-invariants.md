@@ -21,6 +21,7 @@
 | I-9 | **Never renumber, reorder, comment out or delete titles; add new ones at the end.** | Titles are referenced by numeric id (achievement ranks, mail, accounts) | *(file)* comment in `data/gamedata/shared/titles.lua`, translated; [progression-xml-semantics](progression-xml-semantics.md) §1 |
 | I-10 | **Never change an `offerId` once players have seen it.** | Accounts remember offers by id | *(file)* comment in `data/gamedata/shared/login_rewards.lua`, translated; §3 there |
 | I-11 | **One custom element (sticker, paint, decor) per achievement reward.** | With several, only the last one is granted | *(file)* comment in `data/gamedata/shared/sc_achievements.lua`, translated; §2 there |
+| I-12 | **Never delete or reorder rows of `<InventoryExtensions>` / `<AutogenInventoryExtensions>` in `cloud/data/special_values.xml`; change values only.** | The account stores the reached **step** (`invExtLevel`), not a size: removing rows shifts what each step means, and players report that a client then fails to start; raising `baseSize` works, but the next purchased step sets the size from the first row again (shipped: base 50, first row 75) | *(file: hand-maintained XML, no Lua source; static: Shard field `invExtLevel`; effects reported, Steam forum S19 SF19)* |
 
 Before restarting after an edit: run `tools/data_drift_check.py` (I-3, I-6),
 `tools/ref_lint.py --reference <untouched copy>` (I-7), `tools/queue_lint.py`

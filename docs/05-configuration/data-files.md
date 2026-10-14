@@ -96,8 +96,18 @@ holds base definitions (`base_defs.lua`, `logic.lua`, `joints.lua`,
 tables. Definitions there are referenced from `data/gamedata` (for example
 logic entities such as `Logic_JumpDockLocation`), so tools that index
 definitions must read both roots. `local_data/` does not exist in the
-shipped install (an optional override root for the cloud services,
-*inferred*).
+shipped install (an optional root for the cloud services, *inferred*).
+
+**Which copy wins** *(static, client `game.exe`, 2026-10-14; Q56)*: each
+line of `datasources.txt` must be a `.pak` or a directory ("FileSystem
+does not accept direct files in Datasource.txt now"); `.svn` folders are
+skipped. All entries are sorted by path; for an equal path a **packed
+copy always wins over a loose file**, and among loose copies the earlier
+data source wins. Two packages with the same path stop the client with
+"Two or more files within packages are the same." Consequence: a loose
+file can **add** new paths but cannot replace a file that a `.pak`
+already contains - to change such a file, change the package (or remove
+the path from it). The services use the same engine but were not traced.
 
 ## Adding a ship (community guide, S11 O12) *(community, ⚠ not tested by us)*
 
@@ -165,7 +175,7 @@ visible ships and modules that own them.
 **Operator consequence.** To give a new item a visible name, set its
 `uiName`/`uiDesc` to new keys **and** add those keys to the string table of
 **every** client (`strings/<language>/string.txt` inside `data/strings.pak`,
-or the loose `strings/` folder — see "Search roots"). A missing key shows the
+- a loose `strings/` copy does not replace the packed one, see "Which copy wins"). A missing key shows the
 raw key text. Name strings are a **client** resource: the server does not
 supply them (consistent with [gamedata-readers](gamedata-readers.md)). Counts
 of the string tables themselves are in

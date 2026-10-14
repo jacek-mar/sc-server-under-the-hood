@@ -71,7 +71,7 @@ only the text of `default_platform_config.lua` (no Lua interpreter).
 | W2 | warning | `(level, mode)` pair without a `Setting` row in `aux_limits.xml` LobbySettings |
 | W3 | warning | missing comma between two `levelsDesc` entries |
 | I1 | info | rank × `mmValue` coverage per (queue list, template): ranks and values no queue accepts |
-| I2 | info | queues whose `mmSquadRank` range differs from their `mmRank` range (squads are filtered by the squad range; players report squads with bots matched only when both are equal, Q35) |
+| I2 | info | queues whose `mmSquadRank` range differs from their `mmRank` range. Static (2026-10-14): in arcade queues the squad range is used only after a squad waited longer than `maxSquadTimeInQueue` (shipped 0x7FFFFFFF ms, practically never), so I2 matters mainly when that time was lowered (Q35) |
 | I3 | info | a co-op (vs AI) template whose `levelsDesc` includes mode 11 (bomb the base / Detonation); bots are reported not to carry the bomb (Q61) |
 | L1 | warning | loot rules (`DedicatedServcerServices_SetLootRules`): a ship rank 1..17 without a row - ships of that rank silently get no loot search after battles |
 | L2 | error | loot rules row syntax: each row needs `common`, `rare`, `epic`, each with `lt = "<table>"` and a numeric `iter = {...}`; rank outside 1..17, a rank defined twice (the later row wins), missing comma between rows |
@@ -179,6 +179,8 @@ with an untouched reference depot and reports, without printing contents:
 | File diff | changed / added / missing files (SHA-256) | know exactly what a node differs in before asking for help |
 | Generated XML vs Lua | **stale**: a Lua source changed but its generated XML did not (or is older); **hand-edit**: a generated XML changed while its Lua sources did not | the server reads the XML; `prepare_shared` rewrites it from Lua ([config-pipeline-and-limiters](../08-reverse-engineering/config-pipeline-and-limiters.md)) |
 | Positional store ids | definitions that take their store id from a load-order counter (`Bundles_`, `Avatars_`, `Mottos_`, `Drugs_` `_GetNextStoreItemId()`), compared in order per file and per family | inserting or removing one shifts every later id |
+| Inventory extension steps | row count of `<InventoryExtensions>` / `<AutogenInventoryExtensions>` in `special_values.xml` against the reference (added 2026-10-14) | accounts store the reached step (`invExtLevel`); removing or adding rows changes what each stored step means - invariant I-12 in [data-invariants](../05-configuration/data-invariants.md) |
+| Lua syntax of changed files | every changed or added `.lua` file: brackets out of balance, unterminated strings or long comments, a `function`/`if`/`do` block without `end`, a missing `,` between table entries (added 2026-10-14; zero findings on all 327 shipped Lua files; an imbalance is reported where it becomes visible) | community reports show most broken configs are typos (a missing comma, a stray character); the services stop or silently ignore the file |
 
 Pairing rules: same base name (`battle_pass.lua` -> `battle_pass.xml`),
 plus `reputation.lua` -> `aux_limits.xml`, `quests_base.lua` -> `quests.xml`

@@ -450,7 +450,7 @@ def main():
         for (lst, tpl), rows in squad_diff.items():
             sample = ", ".join(f"line {ln}: rank {r0}-{r1} / squad {s0}-{s1}" for ln, r0, r1, s0, s1 in rows[:3])
             print(f"I2 {lst} / {tpl}: {len(rows)} queue(s) with mmSquadRank range != mmRank range ({sample}"
-                  f"{', ...' if len(rows) > 3 else ''}) - squads are filtered by the squad range; players report "
+                  f"{', ...' if len(rows) > 3 else ''}) - the squad range applies after maxSquadTimeInQueue (arcade); players report "
                   "squads with bots only matched when both ranges are equal")
         for name, _pos, info in templates:
             if "coop" not in name.lower():

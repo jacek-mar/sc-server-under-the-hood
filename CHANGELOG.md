@@ -152,6 +152,23 @@ verification on Windows, Linux and LAN setups continues.
   `gameplaysettings.lua` and no bot-side bomb behaviour found (Q61); S-28
   corrected (the single-account-per-PC flag feeds login and matchmaking, not
   trading).
+- **Static answers (2026-10-14, third block):** the full `cloud.xml`
+  schema read by the Hub (`ServiceCVars`, per-node and per-service cvars,
+  `publicIF`, `noGameSession`, `noZoneInstance`, `disabled`,
+  `additionalParams`) in [config-system](docs/05-configuration/config-system.md);
+  file precedence settled - a packed file always wins over a loose file with
+  the same path ([data-files](docs/05-configuration/data-files.md), Q56); the
+  battle server copies the session's `botsCount` into `sv_numBots` (Q50
+  solved); squads are checked against `mmSquadRank` only after
+  `maxSquadTimeInQueue` (Q35); no seed-chip slots anywhere on the alien and
+  boss hull chains (Q49); starter-pack XML schema and selling cosmetic items;
+  troubleshooting tables for MongoDB start failures, the memory-leak dialog
+  and two more messages.
+- **`tools/data_drift_check.py`**: two new checks - inventory-extension step
+  rows (invariant I-12, new in
+  [data-invariants](docs/05-configuration/data-invariants.md)) and a light
+  Lua syntax check of changed files (brackets, strings, blocks, missing
+  commas; zero findings on the 327 shipped Lua files).
 
 ### Changed
 - FAQ: the "Experimental destroyer" answer no longer says it cannot be

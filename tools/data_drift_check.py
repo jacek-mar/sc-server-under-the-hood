@@ -29,6 +29,18 @@ Checks:
    family (files in sorted path order - the engine's real load order may
    differ, so family-level results are indicative).
 
+4. **Inventory extension steps** (invariant I-12): the `<InventoryExtensions>`
+   and `<AutogenInventoryExtensions>` rows of `cloud/data/special_values.xml`
+   are steps the account refers to by number (`invExtLevel`); a node whose row
+   count differs from the reference is flagged (values may change, rows may
+   not be added or removed).
+
+5. **Lua syntax of changed files**: every changed or added `.lua` file on the
+   node gets a light check without an interpreter - brackets out of balance,
+   unterminated strings or long comments, a block (`function`/`if`/`do`)
+   without `end`, and a missing `,` between two table entries. An imbalance
+   is reported where it becomes visible, which can be later than the edit.
+
 Exit code 0 = no differences, 1 = differences found, 2 = usage error.
 """
 import argparse
@@ -136,6 +148,134 @@ def counter_defs(path):
     return out
 
 
+LUA_KEYWORDS = {"and", "break", "do", "else", "elseif", "end", "false", "for", "function", "goto", "if", "in",
+                "local", "nil", "not", "or", "repeat", "return", "then", "true", "until", "while"}
+
+
+def lua_syntax(path):
+    """Light syntax check of one Lua file (no interpreter): unbalanced brackets,
+    unterminated strings / long comments, and a missing comma between two
+    table entries (`}` followed by `{`, `[` or `name =` inside a table).
+    Returns a list of (line, message)."""
+    with open(path, "rb") as fh:
+        src = fh.read().decode("latin-1")  # byte-preserving; shipped files mix cp1251/utf-8 comments
+    out, stack = [], []
+    i, n, line = 0, len(src), 1
+    last = None  # last significant token kind: "close" (a '}' that ended a table entry) or other
+
+    def long_bracket(pos):
+        m = re.match(r"\[(=*)\[", src[pos:pos + 64])
+        return m.group(1) if m else None
+
+    while i < n:
+        c = src[i]
+        if c == "\n":
+            line += 1
+            i += 1
+            continue
+        if c in " \t\r":
+            i += 1
+            continue
+        if src.startswith("--", i):
+            lb = long_bracket(i + 2)
+            if lb is not None:
+                end = src.find("]" + lb + "]", i)
+                if end < 0:
+                    out.append((line, "unterminated long comment"))
+                    break
+                line += src.count("\n", i, end)
+                i = end + len(lb) + 2
+            else:
+                j = src.find("\n", i)
+                i = n if j < 0 else j
+            continue
+        if c == "[" and long_bracket(i) is not None:
+            lb = long_bracket(i)
+            end = src.find("]" + lb + "]", i)
+            if end < 0:
+                out.append((line, "unterminated long string"))
+                break
+            line += src.count("\n", i, end)
+            i = end + len(lb) + 2
+            last = "value"
+            continue
+        if c in "\"'":
+            j = i + 1
+            while j < n and src[j] != c and src[j] != "\n":
+                j += 2 if src[j] == "\\" else 1
+            if j >= n or src[j] != c:
+                out.append((line, f"unterminated string ({c})"))
+                i = j
+                last = "value"
+                continue
+            i = j + 1
+            last = "value"
+            continue
+        if c in "({[":
+            if c in "{[" and last == "close" and stack and stack[-1][0] == "{":
+                out.append((line, "missing ',' between two table entries"))
+            stack.append((c, line))
+            i += 1
+            last = "open"
+            continue
+        if c in ")}]":
+            want = {")": "(", "}": "{", "]": "["}[c]
+            if not stack or stack[-1][0] != want:
+                out.append((line, f"unmatched '{c}'"))
+                return out
+            stack.pop()
+            i += 1
+            last = "close" if c == "}" else "value"
+            continue
+        m = re.match(r"[A-Za-z_][A-Za-z0-9_]*", src[i:i + 80])
+        if m:
+            word = m.group(0)
+            # statement blocks: inside them a '}' followed by a name is a new statement, not a table field
+            if word in ("function", "if", "do", "repeat"):
+                stack.append(("B", line))
+            elif word in ("end", "until"):
+                if stack and stack[-1][0] == "B":
+                    stack.pop()
+                else:
+                    out.append((line, f"unexpected '{word}'"))
+                    return out
+            k = i + len(word)
+            while k < n and src[k] in " \t":
+                k += 1
+            is_field = k < n and src[k] == "=" and not src.startswith("==", k)
+            if is_field and last in ("close", "value") and stack and stack[-1][0] == "{":
+                out.append((line, f"missing ',' before field '{word}'"))
+            i += len(word)
+            last = "kw" if word in LUA_KEYWORDS else "value"
+            continue
+        mnum = re.match(r"\d[0-9A-Za-z_.]*", src[i:i + 40])
+        if mnum:
+            i += len(mnum.group(0))
+            last = "value"
+            continue
+        i += 1
+        last = "sep" if c in ",;" else "other"
+    for ch, ln in stack[-3:]:
+        out.append((ln, "block (function/if/do/repeat) without 'end'" if ch == "B" else f"unclosed '{ch}'"))
+    return out
+
+
+def inv_ext_rows(path):
+    """Return {list name: (baseSize, [row sizes])} from special_values.xml."""
+    out = {}
+    if not path or not os.path.exists(path):
+        return out
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        text = re.sub(r"<!--.*?-->", "", fh.read(), flags=re.S)
+    for name in ("InventoryExtensions", "AutogenInventoryExtensions"):
+        m = re.search(r"<" + name + r"\b([^>]*)>(.*?)</" + name + ">", text, re.S)
+        if m:
+            base = re.search(r'baseSize="(\d+)"', m.group(1))
+            sizes = [int(x) for x in re.findall(r'<Extension\b[^>]*\bsize="(\d+)"', m.group(2))]
+            out[name] = (int(base.group(1)) if base else None, sizes)
+    return out
+
+
 def first_divergence(a, b):
     for i, (x, y) in enumerate(zip(a, b)):
         if x != y:
@@ -232,6 +372,27 @@ def main(argv):
         state = "same order" if i is None else f"**differs from position {i}** - every later id shifts"
         fam_lines.append(f"| `{fam}_` | {len(r)} | {len(n)} | {state} |")
 
+    # 5. Lua syntax of changed / added files
+    lua_issues = []
+    for rel in sorted(set(changed) | set(added)):
+        if rel.endswith(".lua"):
+            for ln, msg in lua_syntax(node[rel])[:3]:
+                lua_issues.append(f"`{rel}` line {ln}: {msg}")
+
+    # 4. inventory extension steps (I-12)
+    inv = []
+    sv = "cloud/data/special_values.xml"
+    ri, ni = inv_ext_rows(ref.get(sv)), inv_ext_rows(node.get(sv))
+    for name in sorted(set(ri) | set(ni)):
+        rb, rs = ri.get(name, (None, []))
+        nb, ns = ni.get(name, (None, []))
+        if len(rs) != len(ns):
+            inv.append(f"**`<{name}>` has {len(ns)} step rows on the node, {len(rs)} in the reference** - accounts store the "
+                       "reached step (`invExtLevel`); adding or removing rows changes what each stored step means (I-12)")
+        elif (rb, rs) != (nb, ns):
+            inv.append(f"`<{name}>`: same {len(ns)} rows, values changed (base {rb} -> {nb}) - allowed; note that a purchased "
+                       "step sets the size from its row, not from `baseSize`")
+
     lines = ["# Data drift report", "",
              f"Reference: `{os.path.basename(os.path.abspath(a.reference))}` - node: "
              f"`{os.path.basename(os.path.abspath(a.node))}` - scope: " + ", ".join(f"`{s}`" for s in scope), "",
@@ -249,6 +410,8 @@ def main(argv):
     lines += ["", "## Positional store ids\n", "| Counter family | Reference defs | Node defs | Order |",
               "|---|---:|---:|---|"] + fam_lines + [""]
     lines += [f"* {p}" for p in pos] or ["* no per-file differences"]
+    lines += ["", "## Inventory extension steps (I-12)\n"] + ([f"* {x}" for x in inv] or ["* no findings"])
+    lines += ["", "## Lua syntax of changed files\n"] + ([f"* {x}" for x in lua_issues] or ["* no findings"])
     report = "\n".join(lines) + "\n"
     if a.out:
         with open(a.out, "w", encoding="utf-8", newline="\n") as fh:

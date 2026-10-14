@@ -461,7 +461,7 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   *(static)*
 * **Why can't I fit seed chips on the alien hulls?** Those definitions
   (biomorph, open-world bosses and aliens) declare no seed-chip slots; the
-  crafted rank-14/15 hulls declare 4 and 5 (Q49). *(file)*
+  crafted rank-14/15 hulls declare 4 and 5, regular player hulls one per tier step from T2 (Q49). *(file, inheritance checked)*
 
 ### Steam forum additions (S19, 2026-10-14)
 
@@ -485,7 +485,8 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   packages are the same."** The engine found the same path in more than one
   `.pak` archive - look for added or leftover packages, then verify the game
   files in Steam. A loose file with the same path as a packed one does not
-  cause this error (the packed copy is most likely used, Q56). *(static)*
+  cause this error - the packed copy is used and the loose one ignored
+  (Q56). *(static)*
 * **Rank 16-17 ships never find a vs-AI battle and get no loot.** The
   shipped co-op vs AI queues stop at rank 15 and the loot rules have rows
   1-15 only ([tuning-recipes](../05-configuration/tuning-recipes.md),

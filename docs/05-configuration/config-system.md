@@ -86,6 +86,25 @@ Semantics for most of these are **unverified** (name-derived).
 | `Service@priority` | Launch order: 0 low, 1 medium (default), 2 high |
 | `CommonCVars` | cvars applied to every service |
 
+**Everything the Hub parser reads** *(static, `Hub::ApplyConfigurationXml`, 2026-10-14)* - more than the shipped file uses:
+
+| Element / attribute | Notes |
+|---|---|
+| `Cloud/CommonCVars/CVar@name,value` | cvars for every service of every node (shipped) |
+| `Cloud/ServiceCVars/CVar@serviceType,name,value` | cvars for every service **of one type** (not in the shipped file) |
+| `Node@address`, `@id`, `@region`, `@dediServerHost` | as above; a node without `id` is ignored ("has no id assigned, IGNORING THAT NODE") |
+| `Node@publicIF` | an extra address stored in the node descriptor; name suggests the **public interface** of the node. Not read by any service by name; its effect is untested (Q62) |
+| `Node@noGameSession`, `Node@noZoneInstance` | flags (booleans); by name: the node does not host battle sessions / open-world instances *(inferred)* |
+| `Node@disabled` | the node is skipped |
+| `Node/CommonCVars/CVar@name,value` | cvars for the services **of this node** |
+| `Service@type`, `@priority` | as above |
+| `Service@additionalParams` | extra parameters for that service process *(inferred: command line)* |
+| `Service/CVar@name,value` | cvars for **this service instance** - e.g. a second Shard on the same node with its own `shard_listenTo` ⚠ untested |
+
+`Service@path` is named only in the file's header comment; the parser
+strings do not show it. Which wins between a `cloud.xml` cvar and the same
+cvar in a service's `.cfg` / the platform Lua is untested.
+
 Multi-node layouts are *possible in principle* (several `<Node>`s, `path`
 attribute, LoadBalancer "balance between separate nodes") but have never been
 tested by this project.

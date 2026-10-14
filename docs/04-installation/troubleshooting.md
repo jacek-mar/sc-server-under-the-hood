@@ -7,7 +7,7 @@
 |---------|--------------|-----|
 | Cannot log in right after starting | Services still starting (~40–90 s; Universe/Adventure ~15 s each) | Wait; watch `Hub/logs/hub_*.log` |
 | Matchmaking fails ("MM fail") | A service crashed or Mongo not ready | Restart the server (community report); check `matchmaker_*.log` |
-| MongoDB won't start / window closes | Stale `mongod.lock` or a leftover `mongod.exe` process | Kill stray `mongod.exe`; run the commands of `launch.bat` from `cmd` to see the error; if the DB was not shut down cleanly, repair/remove lock |
+| MongoDB won't start / window closes | Missing data folder, a second `mongod` on the same folder or port, too little disk space for the journal, or an unclean shutdown | Run `mongod.exe --dbpath "<folder>"` from a console and match the message in the table below |
 | Mongo GUI cannot connect | Modern GUI/driver does not speak MongoDB 2.6 | Use an old tool (NoSQLBooster ≤ 4.7.5 / MongoBooster 3.5.x) |
 | Edited DB values revert | Server/game was running and overwrote them | Stop client **and** server (Mongo may stay up), edit, restart |
 | Changes to Lua data have no effect on services | Services read generated XML | Run `cloud/prepare_shared.bat` (Mongo must be running), restart cloud |
@@ -21,7 +21,26 @@
 | Client log `No more loadbalancers available` / `10061` | Server not up yet (or died) | Check ports 3801/3802 and `Hub/logs` |
 | Hub, services and Mongo still running after closing the client | Client does not stop a local server it started *(observed)* | Stop manually (see [verification log](verification-log.md#clean-shutdown-verified)) |
 | Players from LAN cannot connect | `cloud.xml` still points to `127.0.0.1` | Set the LAN/public address; open ports |
+| Error dialog "<Service>: Memory leak detected. Amount: N, size: M byte", afterwards the Hub or that service stops responding | The engine's memory-statistics routine reports allocations still alive with a **modal** `MessageBoxA` (`MB_ICONERROR` + `MB_SERVICE_NOTIFICATION`), only when no debugger is attached; the service waits until the dialog is closed *(static; trigger - shutdown or a statistics dump - not pinned down)*. The text exists in all 21 service executables | Close the dialog (OK) - it may sit behind other windows or on the desktop of a hidden service window; then restart the node cleanly. Report the service name and time; it is a symptom, not the cause |
+| Fatal error "can't initialize file server. Two or more files within packages are the same." | Two `.pak` archives contain the same path (leftover or added packages) *(static)* | Remove the extra package, or verify the game files in Steam; a loose file with the same path as a packed one does **not** cause it ([data-files](../05-configuration/data-files.md), "Which copy wins") |
+| "Server under heavy load" on the login screen | Client text for a login waiting in the queue (`login_connecting_desc`) - the login does not complete *(static)* | Services not (yet) up, a client-started server still running from an earlier session, or a broken config edit - check the service logs |
 | Squad/wing stuck loading in PvP arena, or bots missing after queue edits | Open — reported without a solution | See [open questions](../08-reverse-engineering/open-questions.md) |
+
+## MongoDB will not start - messages of the bundled MongoDB 2.6.12
+
+Start `mongod.exe` by hand in a console (`mongod.exe --dbpath "<folder>"`,
+from `cloud/mongodb`) so the window stays open, then match the message.
+Texts are taken from the bundled `mongod.exe` *(static, 2026-10-14)*; the
+exact log lines per cause are a pending lab check (MS-1).
+
+| Message (part) | Cause | Fix |
+|---|---|---|
+| `ERROR: dbpath (<folder>) does not exist` … `give existing directory in --dbpath` | the data folder is missing - `launch.bat` uses `%LOCALAPPDATA%\Targem\StarConflict\cloud\mongodb\data`, an older install may keep its data elsewhere | create the folder or pass the right `--dbpath` |
+| `Unable to create/open lock file: …mongod.lock` … `Is a mongod instance already running?` | another `mongod` uses the same folder - often the one a Steam start launched (`local_server.xml`) | close the other instance (`Ctrl+C` in its window) or block the client autostart |
+| `addr already in use` | another program (often another `mongod`) listens on port 27017 | as above, or a different `--port` (then the services need `db_mongoHosts`) |
+| `Insufficient free space for journal files` … `or use --smallfiles` | the 64-bit build preallocates journal files (about 3 × 1 GB) and needs that space free | free disk space, or add `--smallfiles` (smaller journal and data files) - which is what players report helps |
+| `Unclean shutdown detected.` … `Please visit http://dochub.mongodb.org/core/repair` | the last stop was not clean and journaling could not recover it | restore a backup, or run `--repair` on a **copy** of the folder |
+| `exception in initAndListen …, terminating` / `dbexit` | the generic last line after any of the errors above | read the line before it |
 
 ## "Cannot enter the battle" - matchmaker refusal messages
 
