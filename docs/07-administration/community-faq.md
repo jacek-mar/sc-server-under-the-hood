@@ -399,6 +399,58 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   ([tuning-recipes](../05-configuration/tuning-recipes.md), S11 additions).
   *(file-verified key; effect reported)*
 
+### Batch 011 additions (2026-10-14)
+
+* **How do I edit the database safely?** Stop the game and the server, start
+  only MongoDB, edit with a MongoDB client (the community uses NoSQLBooster
+  5.2.12 with the bundled MongoDB 2.6; connect to `127.0.0.1:27017`), stop
+  MongoDB cleanly, then start the server again. Editing while you are
+  online only shows after a relog and may be overwritten by the Shard,
+  which keeps online accounts in memory (Q32). For a running server use the
+  admin-task queue ([admin-tasks-howto](admin-tasks-howto.md)).
+  *(observed V-10/V-11 for admin tasks; overwrite not tested)*
+* **Starting the game from Steam fails while my database window is open.**
+  A Steam start runs `win64/game.exe -launchLocalServer`, and the client
+  then starts its own MongoDB (same data folder, port 27017) and Hub from
+  `win64/local_server.xml`. With MongoDB already running, the two collide
+  *(inferred)*. Close your own MongoDB first, or empty the two `executable`
+  entries in `local_server.xml` ("empty executable skips startup" - comment
+  in the file) and run the server yourself. Steam "verify files" restores
+  the file. *(observed V-5; file)*
+* **I get kicked while buying or crafting.** That is the Shard's request
+  limiter: `set sm_overloadCounterLimit 20` in `cloud/data/shard.cfg`
+  (line 6). Raise it there or in `shard_local.cfg`; very high values (hosts
+  use 999) effectively disable the protection (Q41). *(file-verified)*
+* **What do new accounts get?** `data/gamedata/shared/starter_pack.lua`
+  (`StarterPack`: credits, GS, iridium, resources, items, and `Vessels` with
+  modules and battle slot) -> `prepare_shared` -> `cloud/data/starter_pack.xml`.
+  Stock: one T1 ship, no currencies. Starting synergy: cvar
+  `synergy_on_start` (default 0); `gold_on_start` etc. are in the platform
+  Lua ([tuning-recipes](../05-configuration/tuning-recipes.md), batch 011).
+  *(file)*
+* **Why do I mostly get bomb and captain modes?** The queue's `levelsDesc`
+  lists the allowed gameplay ids per map; the shipped low-online arcade
+  **and co-op vs AI** queues use `{4,9,11}` (control, sentinel/"recon",
+  bomb the base/"Detonation") on five maps
+  ([queue-reference](../05-configuration/queue-reference.md),
+  [game-modes](../05-configuration/game-modes.md)). Hosts report that bots
+  do not handle the bomb and remove 11 from co-op (Q61). *(file; bot
+  behaviour reported)*
+* **I changed my karma and now cannot get in.** Karma levels and police
+  hostility are in `data/gamedata/shared/karma.lua`; an in-game reset costs
+  500 GS (`KarmaResetCost`). Set `accounts.karma` back to its old value
+  offline (back up first). The refusal itself is not explained yet (Q60).
+  *(file; refusal reported)*
+* **How do I give tournament paints?** Paints, patterns and decals are
+  *custom elements* (`shared/vessel_custom_elements.lua`, e.g.
+  `4cb_tournament`); stickers are in `shared/vessel_stickers.lua` (group
+  `TOURNAMENT`). Grant one by admin mail, attachment type 16
+  `LAT_CUSTOM_ELEMENT` with its name, or through a bundle containing it
+  ([admin-tasks-howto](admin-tasks-howto.md) §4b) ⚠ untested.
+* **Why can't I fit seed chips on the alien hulls?** Those definitions
+  (biomorph, open-world bosses and aliens) declare no seed-chip slots; the
+  crafted rank-14/15 hulls declare 4 and 5 (Q49). *(file)*
+
 ## Modding
 
 **Q: I added a new ship or item. Do players need my files?** Yes. Adding or

@@ -286,6 +286,17 @@ Leads and file checks; see the "batch 007" digest (J1-J12) in the
 | Allied bots in Special Operations (raids) | Not configurable: the MatchMaker writes `botsCount = 0` for every raid game | static (2026-10-14) + V-12, Q50 |
 | Add a new ship | Chain of definitions, presets and assets - see [data-files](data-files.md) "Adding a ship (community guide)"; ship id for a DB grant -> Q57; `storeItemId` -> Q58 | community guide (S11 O12) ⚠ |
 
+## Additions from batch 011 (2026-10-14)
+
+| Goal | Where | Evidence |
+|------|-------|----------|
+| Starter kit of new accounts (ships, currencies, items) | `data/gamedata/shared/starter_pack.lua`: `StarterPackBase` (`credits`, `goldCredits`, `tokenCredits`, `resources`, `items`) and `StarterPack.Vessels` (`<hull> = { [slot] = module, munition = {...}, put_in_battle_slot = n }`); `prepare_shared` writes `cloud/data/starter_pack.xml`, which the Shard reads. Stock: `Ship_Race1_M_T1` in battle slot 1, all currencies 0; three more T1 ships commented out on 2025-09-04 (file comment, translated) | file-verified; reported by a host: new accounts with rank-10/11 ships ⚠ |
+| Free synergy for new accounts | cvar `synergy_on_start` (int, default 0, all services; not assigned by the platform Lua, so a `*_local.cfg` should work) | static ([cvar-defaults](cvar-defaults.md)); effect reported ⚠ |
+| Fewer "kicked for spending" | `set sm_overloadCounterLimit 20` in `cloud/data/shard.cfg` line 6 (or `shard_local.cfg`); hosts use 999 | file-verified, Q41 |
+| Remove a mode from co-op vs AI (e.g. Detonation) | edit the map lists in `coopQueueTemplate.levelsDesc` (shipped `{4,9,11}` on five maps) in `cloud/data/default_platform_config.lua` | file-verified key; bots and mode 11 -> Q61 |
+| Post-battle loot with iridium | loot rules in `DedicatedServcerServices_SetLootRules` (platform Lua), tables in `data/gamedata/shared/loot_tables.lua`; use the `_v3` table names (Q45) | file-verified layout; a host's tweak reported |
+| Grant cosmetic items (paints, decals, stickers) | custom elements in `shared/vessel_custom_elements.lua`, stickers in `shared/vessel_stickers.lua`; admin mail attachment type 16 `LAT_CUSTOM_ELEMENT` or a bundle with `ai.BundleContent.CUSTOM_ELEMENT` | static ⚠ untested |
+
 ## Still to verify (candidates for Stage 3 experiments)
 
 1. Does `store_allowAllItemsForBying = 1` make *every* def purchasable?

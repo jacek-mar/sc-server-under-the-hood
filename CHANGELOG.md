@@ -110,6 +110,14 @@ verification on Windows, Linux and LAN setups continues.
   `dbg_testBattlePassUnlockPremium` (Q59); signed 32-bit currency limit
   (Q52); `default_modules` fallback at ship spawn (Q55); raid games always
   get `botsCount = 0` from the MatchMaker (Q50).
+- **Community reports, 13-14 October** (digest P1-P15 in the
+  [source register](docs/sources/source-register.md)): FAQ answers on safe
+  database editing, Steam starts colliding with a running MongoDB (client
+  local-server autostart), the request limiter, the new-account starter kit
+  (`starter_pack.lua`, `synergy_on_start`), mode lists for co-op, karma,
+  cosmetic grants (custom elements, stickers) and seed-chip slots on alien
+  hulls; new tuning recipes; open questions Q60 (account refused after
+  edits) and Q61 (bots in the bomb mode); Q49 amended.
 
 ### Changed
 - FAQ: the "Experimental destroyer" answer no longer says it cannot be

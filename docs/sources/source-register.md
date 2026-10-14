@@ -30,6 +30,7 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S12/S15 b008 | Batch 008: partial JSON exports `Star_Conflict_Preservation_Project_008.eng-json-part` (83 msgs, 73 new, 2026-10-12 16:50 → 21:03) and `...008.ru-json-part` (255 msgs, 205 new, 16:12 → 21:18); both overlap batch 007 (no gap) | `random-materials/Star_Conflict_Preservation_Project_008.*-json-part/` | C | Digest "batch 008" below (K1-K14); security S-07 note, S-29, S-30; Q47 |
 | S12/S15 b009 | Batch 009: partial JSON exports `Star_Conflict_Preservation_Project_009.eng-json-part` (63 msgs, 31 new, 2026-10-12 21:20 → 2026-10-13 06:11) and `...009.ru-json-part` (374 msgs, 199 new, 2026-10-12 21:19 → 2026-10-13 07:38); continue batch 008 without a gap | `random-materials/Star_Conflict_Preservation_Project_009.*-json-part/` | C | Digest "batch 009" below (M1-M9) |
 | S12/S15 b010 | Batch 010: partial JSON exports `Star_Conflict_Preservation_Project_010.eng-json-part` (11 msgs, 11 new, 2026-10-13 08:44 → 16:21) and `...010.ru-json-part` (348 msgs, 327 new, 07:46 → 16:16); continue batch 009 without a gap | `random-materials/Star_Conflict_Preservation_Project_010.*-json-part/` | C | Digest "batch 010" below (N1-N13); Q49 amended |
+| S12/S15 b011 | Batch 011: partial JSON exports `Star_Conflict_Preservation_Project_011.eng-json-part` (99 msgs, 98 new, 2026-10-13 16:45 → 2026-10-14 07:32) and `...011.ru-json-part` (786 msgs, 783 new, 2026-10-13 17:42 → 2026-10-14 11:45); EN continues batch 010, RU leaves a gap of about 90 minutes (16:16 → 17:42) | `random-materials/Star_Conflict_Preservation_Project_011.*-json-part/` | C | Digest "batch 011" below (P1-P15); Q60-Q61, Q49 amended |
 | S18 | Community tool **SCPatcher / "Star Conflict Mod Manager" v0.1** by Furebel (Python/Tkinter text patcher with 8 bundled mods; released 2026-10-11 in `#general-eng` as `SCModManager_v0_1.zip`, temporary download link, no repository, **no licence stated**) | `random-materials/SCPatcher/` | C (claims) / B (fingerprints and patterns checked against S3/S4 by us) | Review: [community-mod-manager.md](../07-administration/community-mod-manager.md); loot-rule defect (Q45) |
 
 ## Digest of S11 (community wiki)
@@ -527,6 +528,55 @@ or banter.
 Not adopted: unreleased alien modules with odd effects (curiosities, no
 server relevance), videos and screenshots without text, server naming
 jokes, insults.
+
+## Digest of batch 011 (partial exports of S12 and S15, 2026-10-13 evening → 2026-10-14 noon)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names or quotes. Server and video addresses posted in the
+> chat were not copied.
+
+**Scope.** EN: 98 new messages (loot-table and ship-modding tips, a public
+host's change list, game-mode mix, an updated community knowledge base, a
+long chat about PvP tactics). RU: 783 new messages, most of them a flame
+war and off-topic talk; the useful part is about database editing for
+newcomers, alien and boss hulls, imported 3D models, the request limiter,
+game modes for bots, karma, seed chips and multi-region hosting.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| P1 | Newcomers: "how do I edit the database?" - start `cloud/mongodb/launch.bat`, connect a MongoDB GUI (NoSQLBooster **5.2.12**, the version the community recommends for the bundled MongoDB 2.6) to `127.0.0.1:27017`, edit, close everything, stop the database with Ctrl+C, **then** start the game. Another player edits while playing and only relogs; a third saw errors when starting the game from Steam while the database window was open. A Linux how-to for the same tool was added to a community guide | Consistent with our rules: write while the Hub is stopped or through the admin-task queue; the Shard holds online accounts in memory (Q32, [mongodb §3a](../06-database/mongodb.md)). The Steam errors match the client's **local-server autostart**: a Steam start runs `win64/game.exe -launchLocalServer`, which starts MongoDB on the same data folder and port, plus the Hub, from `win64/local_server.xml` *(observed V-5; Steam launch entries, static)* - a second `mongod` on a data folder already in use fails *(inferred)* -> FAQ |
+| P2 | A host pushed a post-battle "search" loot table that now includes iridium and may tune the chances | Loot rules are set in the platform Lua (`DedicatedServcerServices_SetLootRules`), tables in `data/gamedata/shared/loot_tables.lua`; the shipped rules reference undefined tables (Q45, fixed by the `_v3` names) *(file)* |
+| P3 | Alien weapon on any ship: one line in `ship.lua` (the boss hull's weapon, with the hull name replaced) and the weapon slot emptied in the hangar - in battle the ship fires the alien gun | **Corroborates the static answer to Q55** (`default_modules` are applied at spawn when the slot is empty) - [tuning-recipes](../05-configuration/tuning-recipes.md) S11 table. Second independent report; still not run by us |
+| P4 | Two players ask how to get bots into Special Operations | Answered statically: the MatchMaker writes `botsCount 0` for every raid game; no configuration route (Q50, V-12) |
+| P5 | The "Manta" boss hull still neither moves nor turns. Workarounds: put the ESM warp-jump module on the weapon buttons and "teleport"; or copy the parameters of a working alien hull ("Zeta") and keep only the Manta model. A player also listed the alien hulls now flown on community servers ("Woodlouse" - internal name `multiped` per the chat - four biomorph hulls, the Manta) | Q49 stays open (runtime). **New static fact:** the biomorph (7 definitions), open-world boss (13), open-world alien (10) and alien predator hulls declare **no seed-chip slots** of their own (`default_slot_mask` / `slot_bones` without `AUTOGEN_0n`), while crafted rank-14/15 hulls declare 4/5 (`def/ex/ship_green.lua`) *(file; slots inherited from parent definitions not resolved)* - matches P9 |
+| P6 | A public host lists its changes: a "dreadnought speedrun" (a corporation with one level-10 player builds a basic dreadnought in seconds), new accounts get rank-10/11 ships and some free synergy, and fewer kicks "for spending money" | Clan-ship requirements: `clan_shipBuildHighRanks` and `ClanShipKF` ([event-ships](../05-configuration/event-ships-mail-and-clan-ship.md)). **New-account kit (file):** `data/gamedata/shared/starter_pack.lua` (`StarterPack`: currencies, resources, items, `Vessels` with modules and `put_in_battle_slot`) -> `cloud/data/starter_pack.xml` via `prepare_shared`, read by the Shard (string in `Shard.exe`); stock kit = one T1 ship, zero currencies (three more T1 ships commented out on 2025-09-04, per the file's Russian comment); free synergy = cvar `synergy_on_start` (default 0, all services). The kicks = Shard request limiter (P7) |
+| P7 | "Kicked while buying/crafting": set the request limit from 20 to 999 in the file next to the platform config | **File-verified:** `cloud/data/shard.cfg` line 6 `set sm_overloadCounterLimit 20` (Q41 solved; [config-pipeline-and-limiters](../08-reverse-engineering/config-pipeline-and-limiters.md)). The platform Lua does not assign it, so `shard_local.cfg` also works *(static)*. 999 effectively disables the per-channel spam protection - a trade-off for public servers (Q41) |
+| P8 | Game modes: PvP shows only "bomb" and "captain" modes; it is "configured in the matchmaker"; a host reduced Detonation in PvP and removed it from co-op vs AI because **bots do not handle the bomb**; another found the mode lists `4,9,11` in the platform config and a fix for bots stuck with the bomb | **File-verified:** both the arcade and the **co-op vs AI** templates of the low-online queue set list `{4,9,11}` (control, sentinel = "recon", bomb the base = "Detonation") for five maps ([queue-reference](../05-configuration/queue-reference.md)). Whether AI bots carry and plant the bomb is untested -> **Q61**; the bot fix is not described |
+| P9 | Newly added hulls cannot take seed chips, only crew changes | Consistent with the static fact in P5 (no `AUTOGEN` slot declarations on alien/boss hulls) |
+| P10 | A player changed their **karma** and now "is not let in anywhere"; others suspect a ship/module tier mismatch ("tech level") after adding ships | **File (karma, translated comments):** `data/gamedata/shared/karma.lua` - five levels each way (thresholds 1 000 / 15 000 / 50 000 / 150 000 / 500 000; the comments give ranges such as `[10;19]`, so the stored value is probably the displayed one ×100 *(inferred)*), `KarmaLevelOfPoliceEnemy = -1` (below that level a player is a "very dangerous criminal" for police NPCs), police raids triggered by fast karma drops (`designers_constants.lua`); karma reset costs 500 GS (`KarmaResetCost` in `special_values.xml`). Nothing found that blocks entry by karma; the actual refusal is unexplained -> **Q60** |
+| P11 | How to grant tournament paints? How to edit seed-chip values? | **Static answer:** paints, patterns and decals are *custom elements* (`data/gamedata/shared/vessel_custom_elements.lua`, e.g. `4cb_tournament`) and stickers (`shared/vessel_stickers.lua`, group `TOURNAMENT`); bundles grant them as `ai.BundleContent.CUSTOM_ELEMENT` with the element name, the admin mail has attachment type 16 `LAT_CUSTOM_ELEMENT` ([admin-tasks-howto](../07-administration/admin-tasks-howto.md) §4b) ⚠ untested; tournament reward sets and schedule: `shared/tournaments.lua`. Seed chips: rolled chips are stored in the account (N4), classes in `shared/autogen.lua` ([progression-xml-semantics §6](../05-configuration/progression-xml-semantics.md)) |
+| P12 | Custom 3D models: "all paks can be unpacked, so models can be changed"; a player showed a ship model from a TV series added to the game; others warn that copyrighted designs risk a takedown even without money involved | Archive format: [tpak-format](../08-reverse-engineering/tpak-format.md); mounting needs the named bones (N6) and the same client files (entity-definitions hash, M5). Legal note: third-party designs are a separate risk from the publisher's terms ([legal-and-licensing](../09-community-edition/legal-and-licensing.md)) |
+| P13 | Multi-region hosting "in miniature": one database with several nodes in different places, like the official service; today players need a separate account per server. For players in one country, traffic filtering can raise ping from 30 to 300 ms for hours - a regional server would help. Testing such setups in virtual machines was suggested | `cloud.xml` allows several `<Node>` elements, each with its own `address`, `region` and `dediServerHost` *(file; topology notes in [architecture](../03-architecture/architecture.md))*; a real multi-node run is untested (lab backlog). Accounts per server: each node has its own database (`cosmosim_<user>`). Demand signal for shared accounts and regional battle servers |
+| P14 | A community member is rebuilding the game with AI help on Unreal Engine 5, as "another game" to avoid legal trouble; heated debate | Context for [09-community-edition](../09-community-edition/) (option E, full clean-room); nothing adopted |
+| P15 | Modding "feels like black magic" for non-coders; the chat is unsearchable - mods should go to a mod site; the community knowledge base (S17) added comments and an editor beta | Demand signal: end-to-end guides and a mod catalogue; S17 stays link-only |
+
+### Demand and problem signals (batch 011)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Safe database editing for newcomers (tool, order, game closed?) | operations | P1 -> FAQ; admin-task queue as the safe path |
+| Kicked while spending (request limiter) | configuration | P7 -> FAQ (file-verified) |
+| Starter kit for new accounts, free synergy | economy | P6 -> tuning-recipes |
+| Mode mix per queue; bots and the bomb mode | configuration / AI | P8 -> queue-reference; Q61 |
+| Boss/alien hulls: movement, seed chips | modding | P5, P9 -> Q49 |
+| Account refused after edits (karma, tiers) | modding / support | P10 -> Q60 |
+| Cosmetic rewards (tournament paints) | administration | P11 -> FAQ |
+| Shared accounts across servers, regional servers | hosting | P13 -> architecture; multi-node lab is a gap |
+| Mod distribution and beginner guides | community | P15 -> downstream / gap |
+| Bots in Special Operations | configuration | P4 -> Q50 (not configurable) |
+
+Not adopted: PvP tactics and nostalgia, the flame war, hardware and phone
+debates, image-generation talk, film-ship wish lists beyond the legal note.
 
 ## Digest of S17 (The Outpost, fan site: Server Guide Modules)
 
