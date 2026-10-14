@@ -16,13 +16,13 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S8 | Client logs | `…/Targem/StarConflict/logs/` | B | Client↔shard ports (3802), shutdown behaviour |
 | S9 | ASCII strings of `Hub`, `Shard`, `MatchMaker`, `DedicatedServer`, `Authenticator`, `LoadBalancer`, `ScriptsServer`, `game.exe` | scratch only | B | Console commands, cvar names, LuaJIT |
 | S10 | MongoDB data directory listing | `…/Targem/StarConflict/cloud/mongodb/data/` | B | Database names |
-| S11 | Community wiki "STAR CONFLICT COMMUNITY EDITION" | `random-materials/STAR CONFLICT COMMUNITY EDITION.md` | C | Account fields, config tips, Linux, bots |
+| S11 | Community wiki "STAR CONFLICT COMMUNITY EDITION" (editable Google document; local snapshot 2026-10-10, online version re-read 2026-10-14: `https://docs.google.com/document/d/1FVFKNYQdCZJGlXSTMVnP4IPsPz9fFg5pZaMj2B4lx1w`) | `random-materials/STAR CONFLICT COMMUNITY EDITION.md` (snapshot); online: link only | C | Account fields, config tips, Linux, bots; 2026-10-14 delta: battle pass, seed chips, resource limits, new-ship guide (O1-O14) |
 | S12 | Discord export `#general-eng` of the "Preservation Project" (batch 001: 5 717 messages, 2026-04-17 → 2026-10-10; batch 002: 5 900 messages, **superset** of 001 +183 from 2026-10-10 13:05–22:03 UTC) | `random-materials/Star_Conflict_Preservation_Project_00{1,2}.1*/` | C | RE leads (pak, RakNet), operator experiences |
 | S14 | **Star Conflict game wiki** reference copy (5 381 pages, 3 313 media files, 696 MB; captured 2026-10-10 from the community wiki mirror, historical archive 2026-06-04). *Game* documentation, not server documentation | `random-materials/sc-media-wiki/` | C | Gameplay background (ships, modes, economy, currencies); **not** evidence of server behaviour. Rights unresolved (see its `ATTRIBUTION.md`) → keep private, cite page title/revision only |
 | S13 | `files.list` | `…/star conflict/files.list` | A | Depot manifest |
 | S15 | Discord export `#general-ru` of the same server, **Russian-language channel**, HTML (Discrub) export: 9 323 messages, 100 authors, 2026-04-20 → 2026-10-11 02:47 (batch 003) | `random-materials/Star_Conflict_Preservation_Project_003.ru-html/` | C | Release-day operator experience (RU community), RE leads, Docker announcement; **not** a superset of S12 (different channel) |
 | S16 | Community project "Star Conflict — Unofficial Server in Docker" (GitHub, MIT; scripts/configs only, no game files); local snapshot of 2026-10-10/11 | `random-materials/starconflict-community-edition-docker-master/` | C (claims) / B (byte-pattern check we ran) | Linux/Wine hosting analysis: [docker.md](../04-installation/docker.md) |
-| S17 | Fan site "The Outpost" - Server Guide Modules (snippet collection); evaluated page: `default_platform_config.lua` with comments translated to English (`https://www.graviton.at/outpost/server-guide-module/defaultplatformconfiglua-translated-to-english`, seen 2026-10-11) | web, link only (not copied) | C (spot-checked against S3: faithful) | Reading aid for the Russian comments; see digest below |
+| S17 | Fan site "The Outpost" - Server Guide Modules (snippet collection); evaluated page: `default_platform_config.lua` with comments translated to English (`https://www.graviton.at/outpost/server-guide-module/defaultplatformconfiglua-translated-to-english`, seen 2026-10-11); whole Knowledge Base (17 articles) and the Server Setup Guide reviewed 2026-10-14 (`https://www.graviton.at/outpost/base`) | web, link only (not copied) | C (spot-checked against S3: faithful; KB: unnamed or Discord-credited authors, average trust) | Reading aid for the Russian comments; operator how-tos; leads Q51-Q55; see digest below |
 | S12/S15 b004 | Batch 004: partial JSON exports `Star_Conflict_Preservation_Project_004.eng-json-part` (23 msgs) and `...004.ru-json-part` (248 msgs, 213 new), both 2026-10-11 | `random-materials/Star_Conflict_Preservation_Project_004.*-json-part/` | C | Digest "batch 004" below; Q32-Q36, S-19 |
 | S12/S15 b005 | Batch 005: partial JSON exports `Star_Conflict_Preservation_Project_005.eng-json-part` (155 msgs, 132 new) and `...005.ru-json-part` (389 msgs, 219 new), 2026-10-10 23:26 → 2026-10-11 18:47 (EN) and 12:07 → 13:48 (RU) | `random-materials/Star_Conflict_Preservation_Project_005.*-json-part/` | C | Digest "batch 005" below; Q38-Q40, Q28/Q34 amended |
 | S12/S15 b006 | Batch 006: partial JSON exports `Star_Conflict_Preservation_Project_006.eng-json-part` (302 msgs incl. a 2-message release thread, 147 new, 2026-10-11 19:13 → 2026-10-12 09:05) and `...006.ru-json-part` (951 msgs, 485 new, 2026-10-11 13:52 → 2026-10-12 09:15) | `random-materials/Star_Conflict_Preservation_Project_006.*-json-part/` | C | Digest "batch 006" below; Q44-Q46, Q3/Q32/Q36 amended |
@@ -43,6 +43,50 @@ and Q&A items: loot-not-found (`sv_lootFailChance`), gold per match
 [cvar-notes](../05-configuration/cvar-notes.md), [linux-proton](../04-installation/linux-proton.md).
 The wiki has 5 embedded screenshots (Mongo GUI, gameplay-id comment block,
 queue template) — extracted copies are not retained.
+
+### S11 update (online version, read 2026-10-14) - delta only
+
+The document roughly tripled since the 2026-10-10 snapshot. Contributors are
+named in the document; they stay anonymous here. Code shown only as
+screenshots and a chat-attachment link were not followed. Average trust:
+recipes from individual hosts. One section (the new-ship guide) is detailed,
+dated "checked in game, October 2026", and gives byte layouts.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| O1 | Linux: Proton **9.0-4** works as well as 11.0-2 (tested on Debian 13 with an integrated Intel GPU); the DB can be edited on Linux with **NoSQLBooster 5.2.12** (AppImage, needs the FUSE 2 library); procedure: start the game, close the game and the Hub window, keep `mongod` running, connect to `localhost:27017` | Added to [linux-proton](../04-installation/linux-proton.md) and [mongodb](../06-database/mongodb.md) (our earlier "NoSQLBooster ≤ 4.7.5" was too strict) ⚠ untested by us |
+| O2 | Loot not found: `cvars.sv_lootFailChance` (find by name, the line number varies) | Already covered ([cvar-notes](../05-configuration/cvar-notes.md), Q45) |
+| O3 | Insignias via the "mole" event: inject the mole crates into the asteroid drop table of `openworld_entities.lua`; each asteroid table line is one crate, the bracketed number its chance, the braces the possible crates; every asteroid type copies the generic one but has its own table per controlling faction | **File-verified:** the asteroid tables have lines `[0.88] = { "LootCrate_OW3_OreUltraRich", ... }`, and the mole crates (`LootCrate_OW2_MoleShipPart`, `..._MoleShipPartNormal`) sit in trailing comments of those lines in the shipped file -> [tuning-recipes](../05-configuration/tuning-recipes.md) |
+| O4 | **Tester's Agony** (`Ship_ST_Rank5`): node tree like the Ellydium ships, any basic special module, rank 5-15, model changes with the special module; crafting it always fails with "not enough credits"; workaround: insert a `vessels` entry (with `unlockedMask` / `activeMask` values) | "Not enough credits" matches our file finding: the recipe needs `unreachable_activator` (price 1 000 000 000) as an intentional blocker ([event-ships](../05-configuration/event-ships-mail-and-clan-ship.md)). Grant recipe ⚠; vid handling -> **Q57** |
+| O5 | Vessel ids: one author takes "highest `vid` + 1" and is unsure; the new-ship section says take `vid` from collection `counters` (`_id: "vid"`) and increment the counter, because the next purchase consumes the counter; duplicate `vid`s "sometimes cause problems" | Consistent with the schema (`counters` = `{_id: string, c: int64}`); exact behaviour untested -> **Q57** (matters for every hand-made ship grant and for admin tools) |
+| O6 | A Lua table fails without a trailing comma (`{{1,"..."} }` breaks, `{{1,"..."}, }` works) | **Contradicted by the stock file:** `battlePassEndTable` in the shipped `default_platform_config.lua` ends with `}}` and no trailing comma; Lua accepts both forms. The breakage was most likely another syntax error -> FAQ (syntax check) |
+| O7 | Resource holding limits: `.player_stock_limit` in `prices_tradegoods.lua` (examples: `ow_Impure_iridium` = Vanadium, `iridium_monocrystall`, `processor_block`, `resource_zeta`) | **File-verified:** 148 occurrences in `data/gamedata/def/ex/prices_tradegoods.lua` -> tuning-recipes |
+| O8 | Seed chips: `shared/autogen.lua` holds the base class, prices, upgrade costs, effect counts and minimum ranks; effect groups in `def/ex/autogen_common.lua`, `autogen_balanced.lua`, `autogen_special.lua`; classes COMMON (4 common), BALANCED (1 balanced + 3 common), SPECIAL (1 special + 3 common), DOUBLE (2 special + 3 common); `cloud/data/autogen.xml` must change too; owned chips: ids in `autogen_defs.lua` | Consistent with [progression-xml-semantics §6](../05-configuration/progression-xml-semantics.md): `autogen.xml` is **generated** from `shared/autogen.lua` - regenerate with `prepare_shared` instead of editing it by hand (explains the author's inconsistent results) |
+| O9 | Battle pass: `creditsEventStart`/`creditsEventEnd` decide when xenochips can be earned and shown; `battlePassStart`/`battlePassEndTable` the event window and active stages; stages must also be uncommented in `shared/battle_pass.lua` and match `cloud/data/battle_pass.xml`; some stages still error because the game checks DLC ownership before giving rewards | Consistent with tuning-recipes (batch 007). New from the file comments (translated from Russian): an empty stage end time means "no end"; player progress is kept for **one** event only and is lost when `battlePassStart` changes; stage 1 and 2 end times must be equal. `premium_dlc` keys are already commented out in the shipped `battle_pass.lua`; the DLC-check claim -> **Q59** (with Q44) |
+| O10 | Bot presets: PvE `def/ex/bot_preset.lua`, open world `def/ex/ow_preset.lua` | Files exist (plus `ow_bot_preset.lua` for the open-world AI hulls); covered in [bot-presets](../05-configuration/bot-presets.md) |
+| O11 | "How to find the admin-role field": guesses (`role`, `admin`, `gm`, ...) marked as unconfirmed | Answered here: the field is `accounts.admRole` *(observed, V-10)*; privileges come from `web_adm.admRoles` ([admin-tasks-howto](../07-administration/admin-tasks-howto.md) §4a) |
+| O12 | **New-ship guide**: a ship is a chain - Lua def (`def/ex/ship.lua`: model, `storeItemId`, `base_preset`, tree icon and position), `prices_ship.lua` (`is_atlas_entity`), client preset (`ship_preset.lua`), `ModulePresets.<base_preset>` (`shared/module_presets.lua`), `VesselTree.<def>` (`shared/vessel_tree.lua`), server preset (`cloud/data/vessel_presets.xml`), strings, icons; model package with 4 meshes, DXT5 texture pairs, skeleton bone records, convex collision; "loose files under `data/` override the pak (`win64/datasources.txt`)", so no repacking; a community asset toolkit reads paks, meshes and textures but does not write them | Server-relevant chain added to [data-files](../05-configuration/data-files.md) (paraphrased; asset byte layouts stay in the source). Loose-file override -> **Q56** (consistent with N1, contradicts F11). `storeItemId` claim -> **Q58** |
+| O13 | The client picks up a new model only on a cold start; `Hub.exe` does not exit on its own and the next launch attaches to the old cluster - kill both `game.exe` and `Hub.exe` | Consistent with the client-started local node (`win64/local_server.xml`) leaving the Hub running ⚠ -> FAQ |
+| O14 | Client logs in `%LOCALAPPDATA%\Targem\StarConflict\logs\`, crash dumps in `...\exceptions\` | Consistent with S8 -> FAQ |
+
+#### Demand and problem signals (S11 update)
+
+* Hosts want **generous accounts** (currencies, insignias, resources above
+  the holding limit) without breaking them - the type-limit warning in the
+  document matches Q51/Q52.
+* **Special and test ships** (Tester's Agony, custom hulls) are the most
+  detailed topic; the shared pain is ship grants by hand (`vid`, masks).
+* **Events on demand:** battle pass, xenochips and timed gold rewards all
+  hinge on dates in the platform config.
+* **Custom content** is moving to the client side (models, textures, icons);
+  this raises the client-compatibility questions of Q3/Q36 and the loose-file
+  question Q56.
+
+#### Not adopted
+
+Contributor names and credits; the chat-attachment link to a modified
+`battle_pass.lua`; screenshot-only code; asset byte layouts (left in the
+source, link only).
 
 ## Digest of S12 (Discord, anonymised summary of server-project work)
 
@@ -289,7 +333,7 @@ As before, most recipes describe **one host's** node.
 | I8 | **Crediting DLCs** to restored accounts is the missing piece for one host's account-restoration effort; "all battle-pass cosmetics are in test mode" | **Static (this session):** DLC ownership is checked by the Shard (`Task_UpdateDLCOwnership`) through `SteamWebAPI_GetPublisherAppOwnership`, which needs the empty publisher key; DLC prices/contents come from collections `steamDlcPrices`/`yupDlcPrices`/`arcDlcPrices` (`LoadDlcPrices`), and bundles are in `data/gamedata/def/objects/bundles_dlc.lua` (`Bundle_DLC_*`, "used in DLC, do not change"). A cvar `dbg_simulatedSteamDlcOwnership` (string, Shard) exists. New **Q44** |
 | I9 | Giving yourself a special ship: copy the DB data of a *similar* ship (manufactured from manufactured, non-customisable from non-customisable) and change `defName` - written up in a community document | Consistent with Q40/schema; recipe unverified |
 | I10 | **Custom seed chips** live in `autogen.xml` | **File-verified:** `cloud/data/autogen.xml` and `autogen_special_values.xml` exist; `AUTOGEN` contents with grades `BALANCED/SPECIAL/DOUBLE` appear in DLC bundles. Semantics not documented yet (B-4 rest) |
-| I11 | The Outpost fan site (S17) has a new **server setup guide** page; one university firewall blocked the site | S17 update; link only. Re-check for content during the next S17 visit |
+| I11 | The Outpost fan site (S17) has a new **server setup guide** page; one university firewall blocked the site | **Resolved 2026-10-14:** guide read; its content (port 3850, `hub_detachChildProcesses`, Redis via `db_redisHost`, `auth_allowInternalAutoCreate`, `-lang`, mode names, shutdown order, `cosmosim_<user>`) matches our docs; nothing new - see [S17 KB review](#s17-knowledge-base-review-2026-10-14) |
 | I12 | RU: **local server "authorisation error"**; both batch files open and close at once; fix reported by one host: in `cloud/mongodb/launch.bat` set `MONGO_DATA_PATH` to a folder next to `launch.bat` instead of the `%LOCALAPPDATA%` path. Another suggestion: use the Docker project | **File-verified:** shipped `launch.bat` uses `%LOCALAPPDATA%\Targem\StarConflict\cloud\mongodb\data` and creates it if missing. The cause is unknown (⚠ hypothesis: a profile path that MongoDB 2.6 cannot use, e.g. non-ASCII user names, or permissions). Added to the FAQ as a diagnostic |
 | I13 | RU: "there was a setting that shows the windows of **all services** on Windows" | **File-verified:** `cloud/data/hub.cfg` line 6 `set hub_detachChildProcesses 1`; binary description "launch server applications without a window". Setting 0 should show the service consoles (⚠ untested) - FAQ |
 | I14 | RU: wish for the client to **start in "server" mode and remember the address**; answers: "patch the exe" or put a short name for the server's IP into the Windows `hosts` file | **Static lead (this session):** the client's `config.cfg` (in `misc.pak`) runs `exec address.cfg`, but no `address.cfg` ships and `game.exe` does not name it; the client has `net_masterServerAddress` ("master server load balancer network address", default empty). Whether a user `address.cfg` with that cvar presets the server is **Q46** |
@@ -519,6 +563,37 @@ jokes, insults.
   wording remain fine.
 * **Watch:** the collection may grow into a practical handbook; re-check
   periodically (listed in CLAUDE.md watch list).
+
+### S17 Knowledge Base review (2026-10-14)
+
+All 17 "Server Guide Modules" articles and the Server Setup Guide were read
+(text only; code shown only in screenshots was not read). Trust: average -
+short recipes, mostly credited to Discord users, rarely with evidence.
+
+**Already covered** (no change needed): loot aliases for the
+`CommonRanks_*_v3` tables (Q45, V-10); matchmaker bot presets and
+`maxTimeInQueue` ([bot-presets](../05-configuration/bot-presets.md)); the
+auto-kick limit "20" in `shard.cfg` = `sm_overloadCounterLimit` (I7);
+starting balances `gold_on_start` etc., battle pass dates and
+`battle_pass.xml`, asteroid yield files, alien boss HP in `cargoship.lua`
+([tuning-recipes](../05-configuration/tuning-recipes.md)); pirate destroyer
+names ([pirate-destroyers](../05-configuration/pirate-destroyers.md)); DB fields
+`goldCredits`, `credits`, `tokenCredits`, `accountRank` (useful maximum 25 per
+the site), `unlimPve_playerLevel1/2`; `prepare_shared.bat` workflow; the setup
+guide (I11).
+
+**New leads → test proposals** (all ⚠, community):
+
+| Site article | Claim (paraphrased) | Open question |
+|--------------|---------------------|---------------|
+| Setting PvE Attack/Defense Levels | Very high levels: invincible ship, `nan` hull/shield bars, level-1 damage | [Q51](../08-reverse-engineering/open-questions.md) |
+| Setting GS, Iridium and Credits | Balances set too high turn negative and cannot be spent | Q52 |
+| Unlocking the experimental destroyer | Insert a vessel record with `defName: Ship_OW_Boss_PirateEvent1` (name not found in shipped data) | Q53 (and Q49) |
+| Setting the Resources | Buy one of each resource first, then edit its amount; "special parts" crafts may stay blocked | Q54 |
+| Import the alien weapons of gameplay_Leviathan | Snippet in `ship.lua` + emptied weapon slots = ship fires the alien gun (contradicts an earlier report) | Q55 |
+
+Player and host interest behind them: generous test accounts without
+breaking the account, PvE progression by hand, special ships and weapons.
 
 ## Digest of S16 (community Docker project)
 

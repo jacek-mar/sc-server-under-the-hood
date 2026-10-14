@@ -98,6 +98,19 @@ values (e.g. `premium_on_start`, cost multipliers) and rules. *(file-verified)*
 per day; the DB tracks it in `tokenCredits_earnedToday`. *(file-verified;
 effect untested)* — relevant to Q12.
 
+**Q: How high can I set a balance, a PvE level or a resource by hand?** Not
+known yet - keep values modest and use the admin task `give` where possible
+([admin-tasks-howto](admin-tasks-howto.md)). Community reports (S17, ⚠):
+balances set "too high" turn negative and cannot be spent (**Q52**; the DB
+fields are int64, but the game refuses currency caps above 2 147 483 647 -
+signed 32-bit - so stay below that); very high PvE attack/defence
+levels (`unlimPve_playerLevel1/2`) make the ship invincible with `nan` hull and
+shield bars and level-1 damage (**Q51**; the buffs grow linearly per level
+with no cap in `shared/unlim_pve.lua`); resources reportedly have to be bought
+once before their `items[]` entry can be edited (**Q54**). Player rank
+`accountRank` above 25 reportedly has no effect. All are open test proposals in
+[open-questions](../08-reverse-engineering/open-questions.md).
+
 **Q: Permanent premium for admins?** `cvars.auth_infinitePremiumForRoles =
 "gm;support"` gives infinite premium to accounts whose `admRole` is in the list.
 *(file-verified)* Setting `admRole` in the DB might also be what community
@@ -358,6 +371,33 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   The admin-task queue (`give`, `adminMail`) is the interface the Shard
   itself applies ([admin-tasks-howto](admin-tasks-howto.md)). *(observed for
   the admin tasks, V-10/V-11)*
+
+### Community guide update (S11, 2026-10-14)
+
+* **My Lua edit broke the game - do tables need a trailing comma?** No. Lua
+  accepts `{ {1,"..."} }` and `{ {1,"..."}, }` alike, and the shipped
+  `battlePassEndTable` has no trailing comma. Look for another syntax error
+  (missing comma *between* entries, unbalanced braces or quotes); a Lua
+  syntax check before restarting saves time
+  ([config-validation-tools](config-validation-tools.md)). *(file-verified)*
+* **Which field makes an account an admin?** `accounts.admRole` (default
+  `player`), with privileges from `web_adm.admRoles`; see the batch 010
+  answer above. *(observed, V-10)*
+* **Why does building Tester's Agony always fail with "not enough credits"?**
+  Its recipe needs `unreachable_activator`, priced at 1 000 000 000 on
+  purpose ([event-ships](../05-configuration/event-ships-mail-and-clan-ship.md)).
+  The community grants it by inserting a `vessels` entry
+  (`Ship_ST_Rank5`) instead ⚠. Take the vessel id from the `vid` counter
+  and increment it ([mongodb §3a](../06-database/mongodb.md)).
+* **My new model or texture does not show.** The client loads models only on
+  a cold start; a client-started local Hub reportedly keeps running and the
+  next launch attaches to it - close both `game.exe` and `Hub.exe` ⚠. Client
+  logs: `%LOCALAPPDATA%\Targem\StarConflict\logs\`, crash dumps in
+  `...\exceptions\`.
+* **Can I hold more than the resource limit?** Raise `.player_stock_limit`
+  for that resource in `def/ex/prices_tradegoods.lua`, then `prepare_shared`
+  ([tuning-recipes](../05-configuration/tuning-recipes.md), S11 additions).
+  *(file-verified key; effect reported)*
 
 ## Modding
 

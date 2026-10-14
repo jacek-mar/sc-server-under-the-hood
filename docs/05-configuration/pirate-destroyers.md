@@ -150,3 +150,9 @@ these settles the question; it needs a runtime test.
   call boss-only spells (for example `Spell_PirateBossEntityRayPrepare`,
   `BossEvent_OnDeathEnemy` on the Enclave Emitter). Whether these work on a
   player-controlled ship is not known.
+* **Community grant recipe (S17, ⚠):** a vessel record inserted into
+  `accounts.vessels` with `defName: Ship_OW_Boss_PirateEvent1` and special
+  module `Module_PhaseBuff_Prec`. That `defName` does not occur in the shipped
+  data (only `Ship_OW_Boss_PirateEvent`); the hull has no store entry, so the
+  admin task `give` (`item`) cannot grant it. Test proposal
+  [Q53](../08-reverse-engineering/open-questions.md).

@@ -33,7 +33,10 @@ nothing. Restart the node after editing (data is loaded at start-up).
 
 Caveat from the community: copying an alien ship definition from
 `gameplay_leviathan.lua` into `ship.lua` did **not** work (missing
-properties) ⚠ — NPC defs are not drop-in player ships.
+properties) ⚠ — NPC defs are not drop-in player ships. A later community
+recipe (S17) claims the opposite for weapons only: a snippet in the ship's
+`ship.lua` entry plus emptied weapon slots in the hangar makes the ship fire
+the alien gun ⚠ - test proposal **Q55**.
 
 ## Events, battle pass, xenochips
 
@@ -267,6 +270,21 @@ Leads and file checks; see the "batch 007" digest (J1-J12) in the
 | Change **ship prices** | `data/gamedata/def/ex/prices_ship.lua` (stats, special module and recipe are in `def/ex/ship.lua`) | file-verified (files exist); edit order Lua -> `prepare_shared` |
 | Put a different model on a hull | The hull class binds each module slot to a **named bone** of its model (`slot_bones` in `data/gamedata/def/objects/ships.lua`, e.g. `PRIMARY_WEAPON_01 = "gun"`, `ACTIVE_01 = "gun_1"`), plus `weapon_slots` and `fire_sectors`. A model without the expected bones cannot mount those weapons or modules | file-verified fields; consequence *(inferred)*, matching a host's report (dreadnought model on a destroyer: flies, no weapons or modules) |
 | Alien/boss hulls as player ships | AI hulls are in `def/ex/ow_bot_preset.lua` and `def/ex/pvebot_preset.lua` (`ship4bot = true`, `_Mob` modules, `avtomat` AI behaviour). Reported: some move, others (e.g. `Ship_OW_Boss_Manta`) neither move nor turn although speed and engine values are set | lead ⚠ -> Q49 |
+
+## Additions from the community guide update (S11, 2026-10-14)
+
+| Goal | Where | Evidence |
+|------|-------|----------|
+| Raise how much of a resource a player may hold | `.player_stock_limit` per resource in `data/gamedata/def/ex/prices_tradegoods.lua` (148 entries; e.g. `ow_Impure_iridium` = Vanadium, `iridium_monocrystall`, `processor_block`, `resource_zeta`); edit the Lua, then `prepare_shared` | file-verified key; effect reported ⚠ |
+| Insignias / the "mole" event | Asteroid drop tables in `data/gamedata/def/objects/openworld_entities.lua`: each line `[chance] = { crate, crate, ... }` is one crate, the bracketed number its chance, the list the possible crate types; every asteroid type follows the generic table but has its own table per controlling faction. The mole crates (`LootCrate_OW2_MoleShipPart`, `..._MoleShipPartNormal`) are present only in trailing comments of those lines; moving them into the lists is the reported way to enable them | file-verified layout and comments; effect reported ⚠ |
+| Battle pass window and stages | `battlePassStart` and `battlePassEndTable = { {stage, "end time"}, ... }` at the top of `cloud/data/default_platform_config.lua` (passed to `Shard_SetupBattlePassActivation`); xenochip window `creditsEventStart` / `creditsEventEnd`. File comments (translated from Russian): an **empty end time** means the stage has no end; player progress is stored for **one** event only and is **lost when `battlePassStart` changes**; keep the end times of stages 1 and 2 of one battle pass equal | file-verified comments; reward errors after enabling stages -> Q59 |
+| Seed-chip generation | `shared/autogen.lua` (classes, effect counts, minimum ranks, prices) and the effect groups `def/ex/autogen_common.lua`, `autogen_balanced.lua`, `autogen_special.lua`; `cloud/data/autogen.xml` is generated from them - run `prepare_shared`, do not edit the XML ([progression-xml-semantics §6](progression-xml-semantics.md)) | file-verified file roles; class composition reported (COMMON 4 common; BALANCED 1+3; SPECIAL 1+3; DOUBLE 2 special + 3 common) |
+| Bot behaviour presets | PvE `def/ex/bot_preset.lua`, open world `def/ex/ow_preset.lua` (AI hulls: `ow_bot_preset.lua`) | files exist; see [bot-presets](bot-presets.md) |
+| Battle-pass rewards fail after enabling stages | No server-side DLC check exists (the `premium_dlc*` keys are read only by the client UI); the reward must be an existing `Def` bundle with `is_rewardable`, otherwise the Shard logs `cannot find store item` / `is not bundle`. Shard console command for tests: `dbg_testBattlePassUnlockPremium <uid> <eventStart> <stage> [<unlockLevels>]` | static (2026-10-14), Q59 |
+| Currency caps | `ai.credits_cap`, `ai.tokens_cap`, `ai.event_credits_cap` in `shared/reputation.lua` (-> `aux_limits.xml`); maximum accepted value 2 147 483 647 (signed 32-bit) | static (2026-10-14), Q52 |
+| Alien weapon on a player ship | Put the weapon (`Weapon_AlienGun_Prec`, `Weapon_AlienGun2_Prec`, `Weapon_ReaverGun_Prec`, `Weapon_ScoutGun_Prec`) into the hull's `default_modules[ ai.SpaceShipModuleSlot.PRIMARY_WEAPON_01 ]` in `def/ex/ship.lua` and empty the slot in the hangar; the battle server spawns ships with their `default_modules` | mechanism static (2026-10-14), effect reported (S17) ⚠, Q55 |
+| Allied bots in Special Operations (raids) | Not configurable: the MatchMaker writes `botsCount = 0` for every raid game | static (2026-10-14) + V-12, Q50 |
+| Add a new ship | Chain of definitions, presets and assets - see [data-files](data-files.md) "Adding a ship (community guide)"; ship id for a DB grant -> Q57; `storeItemId` -> Q58 | community guide (S11 O12) ⚠ |
 
 ## Still to verify (candidates for Stage 3 experiments)
 

@@ -88,6 +88,28 @@ verification on Windows, Linux and LAN setups continues.
   definition ids, English display names, parent hulls, spawning events and
   module loadouts of the open-world pirate destroyer bosses, plus the
   static facts that bear on flying one (Q49).
+- **Fan-site Knowledge Base review** (S17 in the
+  [source register](docs/sources/source-register.md)): all 17 articles and
+  the setup guide checked against our docs; five community claims turned
+  into test proposals Q51-Q55 (PvE level limits and `nan`, currency
+  overflow, Experimental destroyer grant, editing resources, alien weapons
+  on player ships), linked from the FAQ, tuning recipes and pirate
+  destroyers.
+- **Community guide update** (S11, online version of 2026-10-14): delta
+  digest O1-O14 in the [source register](docs/sources/source-register.md);
+  new open questions Q56 (loose files vs `.pak`), Q57 (vessel-id
+  allocation), Q58 (`storeItemId` semantics), Q59 (battle-pass reward
+  errors); new recipes (resource holding limits, mole crates, battle-pass
+  comments translated), a "new ship" chain in
+  [data-files](docs/05-configuration/data-files.md), Linux DB editing, FAQ
+  entries.
+- **Static answers (2026-10-14):** id counters (`counters`, next free
+  id, `vid` unique per database) in [mongodb.md](docs/06-database/mongodb.md)
+  §3a (Q57, Q54); `storeItemId` duplicate rule (Q58); no server-side DLC
+  check on battle-pass rewards and the Shard command
+  `dbg_testBattlePassUnlockPremium` (Q59); signed 32-bit currency limit
+  (Q52); `default_modules` fallback at ship spawn (Q55); raid games always
+  get `botsCount = 0` from the MatchMaker (Q50).
 
 ### Changed
 - FAQ: the "Experimental destroyer" answer no longer says it cannot be

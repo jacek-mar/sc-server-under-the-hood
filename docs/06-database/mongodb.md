@@ -14,8 +14,9 @@
 | Shell | `cloud/mongodb/mongo.exe`; `admin.bat` opens `127.0.0.1/cosmosim` |
 | Tools | `mongodump`, `mongorestore`, `mongoexport`, `mongoimport` … in the same folder — use these for backups |
 
-> Modern MongoDB drivers/GUIs cannot talk to 2.6. Use NoSQLBooster ≤ 4.7.5
-> (or MongoBooster 3.5.x) or the bundled `mongo.exe`.
+> Modern MongoDB drivers/GUIs cannot talk to 2.6. Use NoSQLBooster 4.7.5
+> (Windows reports) or 5.2.12 (Linux AppImage report, S11 update), MongoBooster
+> 3.5.x, or the bundled `mongo.exe`. Newer versions may refuse the server.
 
 ## 2. Databases (observed on disk)
 
@@ -67,6 +68,31 @@ IDs of ships, modules etc. live in `data/gamedata/**.lua` (e.g.
 `stats_cosmosim_<user>.accountsStats` also contains per-account data. The
 community suspects (unconfirmed) that editing it is why some accounts got
 "bricked" — edit `accounts` first and leave `accountsStats` alone unless needed.
+
+## 3a. Id counters (`cosmosim_<user>.counters`) *(static + observed, 2026-10-14)*
+
+New ids are not computed from existing documents. The Shard takes them from
+the `counters` collection: `findAndModify({_id: <name>}, {$inc: {c: 1}})`
+(`m3d::persistence::AcquireCounter`; a batched variant reserves several ids
+for a new account's starting kit). The stored `c` is the **next free id**
+(lab node: `uid` 5 with four accounts, `vid` 12 with highest vessel id 11).
+
+| Counter | Used for |
+|---|---|
+| `uid` | accounts |
+| `vid` | `accounts.vessels[].vid` - unique per database, not per account |
+| `iid` | `accounts.items[].iid`, `autogenItems[].iid` (ids of consumed items are not reused) |
+| `mailId`, `sqid`, `leagueTmId`, `advertId`, `steamOID` | mail, squads, league teams, adverts, Steam orders |
+
+**Hand-made grants** (server stopped): give the new vessel or item the
+current counter value, then increment the counter by one. Copying "highest id
++ 1" without updating the counter makes the next purchase reuse the id
+(details and open runtime part: Q57/Q54 in
+[open-questions](../08-reverse-engineering/open-questions.md)).
+
+**Balances** are int64 in the database, but the game treats them as signed
+32-bit values: currency caps above 2 147 483 647 are refused when data is
+prepared. Keep hand-set balances below that value (Q52).
 
 ## 4. Safe editing procedure
 

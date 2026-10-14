@@ -12,7 +12,8 @@ Proton is required.
 ## Reported working recipe
 
 1. In Steam: *Properties → Compatibility → force Proton* (reports mention
-   **Proton 11.0-2**; any recent version may work).
+   **Proton 11.0-2** and **9.0-4**, the latter tested on Debian 13 with an
+   integrated Intel GPU; any recent version may work).
 2. Run *Validate files* — this then downloads the real depot.
 3. Start the game normally; the client spawns Mongo + Hub under Proton.
    Running the game fullscreen avoids accidentally clicking the console windows.
@@ -22,6 +23,13 @@ Proton is required.
    yourself from a Wine prefix pointing at the Steam install.
 5. To edit `default_platform_config.lua` and regenerate XML with
    `prepare_shared.bat`, use Wine (via winetricks) to execute the batch file.
+
+**Editing the database on Linux** *(community, S11 update)*: NoSQLBooster
+**5.2.12** as an AppImage (make it executable; it needs the FUSE 2 library,
+for example `libfuse2`/`libfuse2t64` on Debian, `fuse` on Fedora). Start the
+game, then close the game and the Hub window but leave `mongod` running, and
+connect to `localhost:27017`. Edit only while the Hub is stopped
+([mongodb.md](../06-database/mongodb.md)).
 
 Reports also say the whole thing "works fine with Proton" for a LAN server on a
 spare Linux box; ARM hosts would need x86 emulation (FEX) — untested.

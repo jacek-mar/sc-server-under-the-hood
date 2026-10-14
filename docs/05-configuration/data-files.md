@@ -99,6 +99,37 @@ definitions must read both roots. `local_data/` does not exist in the
 shipped install (an optional override root for the cloud services,
 *inferred*).
 
+## Adding a ship (community guide, S11 O12) *(community, ⚠ not tested by us)*
+
+A community guide (dated "checked in game, October 2026") describes a new
+ship as a chain; a missing link crashes the client or shows a black hull.
+Server-relevant links, with the reported symptom when one is missing:
+
+| File | What | Reported symptom if missing |
+|---|---|---|
+| `data/gamedata/def/ex/ship.lua` | definition: model, `storeItemId`, `base_preset`, tree icon and position (`treeIco`, `ui_tree_x`, `ui_tree_y`; a unique ship uses `race = ai.Race.SPECIAL`) | no ship / in the atlas but not in the tree |
+| `data/gamedata/def/ex/prices_ship.lua` | shop price, `is_atlas_entity = true` (a `premiumPrice` inside `ship.lua` is not the shop price) | not in the atlas |
+| `data/gamedata/def/ex/ship_preset.lua` | client preset `Ship_Preset_...` | empty modules |
+| `data/gamedata/shared/module_presets.lua` | `ModulePresets.<base_preset>`, name byte-for-byte equal to `base_preset` | `prepare_shared`: "has no ShipPreset" |
+| `data/gamedata/shared/vessel_tree.lua` | `VesselTree.<def> = {}` with `ods_export = true` | warning "not in the VesselTree" |
+| `cloud/data/vessel_presets.xml` | server preset (generated) | no loadout in hangar/battle |
+| `data/strings/<language>/string.txt` | name and description | raw key shown |
+| `data/ui/textures/common/ship_icons_230x150.txt` (+ `ship_icon.txt`, `ship_icon_small.txt`) | icon aliases pointing at DDS files; the tree icon is stored as DXT5 232x152 because 230x150 is not divisible by 4 | no icon |
+
+Then run `prepare_shared` (MongoDB running) and **cold-start** the client.
+The guide also covers the model package (4 meshes, DXT5 texture pairs,
+skeleton bone positions, convex collision) and a community asset toolkit
+that reads but does not write game assets; those details stay in the source
+(S11, link only). Two claims are open questions: loose files under `data/`
+override the pak, so no repacking is needed (**Q56**), and `storeItemId` must
+be a free id (**Q58**: the store export skips a definition whose
+`storeItemId` another definition already exported and logs
+`storeItemId %d (def '%s') is already exported to the store!`). A hand-made
+DB grant takes its vessel id from the `vid` counter
+([mongodb §3a](../06-database/mongodb.md), Q57). Every added definition also
+changes the battle server's entity-defs hash, so stock clients are locked
+out ([hub-protocol-and-framing §6a](../08-reverse-engineering/hub-protocol-and-framing.md)).
+
 ## Definition display names (B-8) *(file, 2026-10-13)*
 
 There is **no automatic rule that turns a definition name into a display
