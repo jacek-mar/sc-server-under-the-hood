@@ -79,5 +79,13 @@ community-edition server).
   [settings-reload-map](docs/05-configuration/settings-reload-map.md).
 * Runtime profile and logs: `%LOCALAPPDATA%\Targem\StarConflict\`.
 * Reference build: Hub 1.99.0.167293 (9 October 2026).
+* Database edits: only while the Hub is stopped, or through the Shard's
+  admin-task queue; new ids come from the `counters` collection (next free
+  id; `vid` is unique per database) and balances behave as signed 32-bit
+  values - see [mongodb.md](docs/06-database/mongodb.md) §3a.
+* Community sources (Discord exports, fan sites, the community Google
+  document) are digested as *deltas*: a statement/status table in the
+  [source register](docs/sources/source-register.md), demand and problem
+  signals, then test proposals in the open questions.
 * Open questions for contributors:
   [`docs/08-reverse-engineering/open-questions.md`](docs/08-reverse-engineering/open-questions.md).
