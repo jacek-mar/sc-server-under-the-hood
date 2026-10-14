@@ -127,6 +127,13 @@ verification on Windows, Linux and LAN setups continues.
   premium overflow; tuning recipes for bots, gold, iridium, infinite premium
   and the clan ship; open questions Q62 (NAT hosting) and Q63 (premium time
   limit); Q35, Q45, Q59 and security finding S-28 amended.
+- **`tools/queue_lint.py`: loot-rules checks** - L1 warns when a ship rank
+  1-17 has no row in `DedicatedServcerServices_SetLootRules` (the shipped
+  config has none for ranks 16-17, so those ships get no loot search), L2
+  reports row syntax errors (missing tier, `lt` or numeric `iter`, rank out
+  of range, duplicate rank, missing comma; exit status 1), L3 prints which
+  ranks share which tables. Documented in
+  [config-validation-tools](docs/07-administration/config-validation-tools.md).
 
 ### Changed
 - FAQ: the "Experimental destroyer" answer no longer says it cannot be

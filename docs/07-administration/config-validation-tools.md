@@ -71,10 +71,21 @@ only the text of `default_platform_config.lua` (no Lua interpreter).
 | W2 | warning | `(level, mode)` pair without a `Setting` row in `aux_limits.xml` LobbySettings |
 | W3 | warning | missing comma between two `levelsDesc` entries |
 | I1 | info | rank × `mmValue` coverage per (queue list, template): ranks and values no queue accepts |
+| L1 | warning | loot rules (`DedicatedServcerServices_SetLootRules`): a ship rank 1..17 without a row - ships of that rank silently get no loot search after battles |
+| L2 | error | loot rules row syntax: each row needs `common`, `rare`, `epic`, each with `lt = "<table>"` and a numeric `iter = {...}`; rank outside 1..17, a rank defined twice (the later row wins), missing comma between rows |
+| L3 | info | loot rules summary: which ranks share which tables (printed with the coverage block) |
 
 Reading the coverage block (I1): an account whose `mmRank`/`mmValue` falls
 into an uncovered cell is accepted by **no** queue of that template - the
 static counterpart of the "squad cannot start" reports (Q35).
+
+Reading the loot checks (L1-L3, added 2026-10-14): each row
+`[rank] = { common = { lt = "Table", iter = {...} }, rare = ..., epic = ... }`
+picks the after-battle loot tables for one ship rank; the battle server
+finds no row for a missing rank and gives no loot search, without an error
+line. L1/L2 check the shape and the rank coverage only; whether each table
+name exists in `data/gamedata/shared/loot_tables.lua` (including the case
+of `_v3`) is checked by [`ref_lint.py`](#2b-toolsref_lintpy) - run both.
 
 ### Result on the shipped config (2026-10-11)
 
@@ -104,6 +115,31 @@ Interpretation (all *(file)*; the consequences are static inferences):
 * The April/paper-airplane and hangar-games templates reference levels that
   the active-map list does not contain - they are inactive event modes.
 
+### Loot rules on the shipped config (2026-10-14)
+
+```
+L1 line 1315: loot rules: no row for rank(s) 16-17 - ships of these ranks get no loot search after battles
+
+L3 loot rules by rank (common / rare / epic table):
+      1-3: CommonRanks_1_3 / RareT1 / RareT1
+      4-6: CommonRanks_4_6 / RareT2 / RareT2
+        7: CommonRanks_7_8 / RareT3Mono / RareT3
+        8: CommonRanks_7_8 / RareT3Mono / NeodiumDrop
+        9: CommonRanks_9_10 / RareT3Mono / RareT3
+       10: CommonRanks_9_10 / RareT4Mono / RareT4
+       11: CommonRanks_11_12 / RareT4Mono / LezortiumDrop
+       12: CommonRanks_11_12 / RareT4Mono / RareT4
+    13-15: CommonRanks_13_15 / RareT5Mono / RareT5
+```
+
+The L1 finding matches the community report that rank 16-17 ships find no
+loot (source register S19 SF12). The summary also shows the names
+`ref_lint.py` reports as undefined (all `CommonRanks_*` without `_v3`,
+`NeodiumDrop`, `LezortiumDrop`; Q45). Tested on modified copies: rows 16 and
+17 added -> no L1; a missing comma, a missing `epic` entry, a duplicate
+rank, a non-numeric `iter` value and a row `[18]` each give one L2 and exit
+status 1.
+
 ### Not checked (known limits)
 
 * Lua semantics (the file is parsed textually); a queue built in a loop or via
@@ -112,6 +148,8 @@ Interpretation (all *(file)*; the consequences are static inferences):
 * Whether the engine accepts a field value (for example `maxPlayers`) - only
   syntax, arity, names and ranges are checked.
 * The mode ids' meaning; see [game-modes](../05-configuration/game-modes.md).
+* Loot rules: the `iter` numbers' meaning and balance, and whether a table
+  name exists (that is `ref_lint.py`).
 
 ## 2a. `tools/data_drift_check.py`
 

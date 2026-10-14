@@ -28,8 +28,17 @@ only read). Checks:
   I1 coverage: per (queue list, template) the mmRank x mmValue grid that no
      queue accepts (rank 1..17 x value 0..99) - explains "no match" for
      accounts whose rank/value falls into a gap
+  L1 loot rules (DedicatedServcerServices_SetLootRules): a ship rank 1..17
+     without a row - ships of that rank silently get no loot search after
+     battles
+  L2 loot rules row syntax: each row needs common / rare / epic, each with
+     lt = "<table>" and a numeric iter = {...} list; rank outside 1..17,
+     duplicate rank, missing comma between rows (counts as an error)
+  L3 loot rules summary: which ranks share which tables (shown with the
+     coverage block). Whether the table names exist is checked by
+     tools/ref_lint.py.
 
-Exit status 1 when an E-class finding exists. The tool never executes the
+Exit status 1 when an E-class or L2 finding exists. The tool never executes the
 config and never prints secrets.
 """
 import argparse
@@ -190,6 +199,98 @@ def lobby_modes(depot):
     return out
 
 
+LOOT_TIERS = ("common", "rare", "epic")
+
+
+def check_loot_rules(clean, findings):
+    """L1/L2 on the DedicatedServcerServices_SetLootRules table; return L3 summary rows.
+
+    Each row `[rank] = { common = { lt = "Name", iter = { n, ... } }, rare = ..., epic = ... }`
+    picks the after-battle loot tables for one ship rank. A rank without a row
+    silently gets no loot search. Table names themselves are checked by ref_lint.py.
+    """
+    summary = []
+    for m in re.finditer(r"DedicatedServcerServices_SetLootRules\s*\(", clean):
+        if re.search(r"function\s*$", clean[max(0, m.start() - 20):m.start()]):
+            continue  # a definition, not a call
+        o = clean.find("{", m.end())
+        if o < 0:
+            continue
+        c = match_close(clean, o, "{", "}")
+        if c < 0:
+            continue  # E1 already reports the imbalance
+        body = clean[o + 1:c]
+        base = o + 1
+        rows = {}
+        pos = 0
+        for rm in re.finditer(r"\[\s*(\d+)\s*\]\s*=\s*\{", body):
+            if rm.start() < pos:
+                continue  # inside an earlier row
+            rank = int(rm.group(1))
+            ro = rm.end() - 1
+            rc = match_close(body, ro, "{", "}")
+            ln = lineno(clean, base + rm.start())
+            if rc < 0:
+                findings.append(("L2", ln, f"loot rules: row [{rank}] is not closed"))
+                break
+            pos = rc + 1
+            row = body[ro + 1:rc]
+            if not RANK_MIN <= rank <= RANK_MAX:
+                findings.append(("L2", ln, f"loot rules: row [{rank}] outside ranks {RANK_MIN}..{RANK_MAX}"))
+            if rank in rows:
+                findings.append(("L2", ln, f"loot rules: rank {rank} defined twice (the later row wins)"))
+            names = []
+            for tier in LOOT_TIERS:
+                tm = re.search(tier + r"\s*=\s*\{", row)
+                if not tm:
+                    findings.append(("L2", ln, f"loot rules: row [{rank}] has no '{tier}' entry"))
+                    names.append("-")
+                    continue
+                to = tm.end() - 1
+                tc = match_close(row, to, "{", "}")
+                entry = row[to + 1:tc] if tc > 0 else ""
+                lt = re.search(r'\blt\s*=\s*"([^"]*)"', entry)
+                it = re.search(r"\biter\s*=\s*\{([^{}]*)\}", entry)
+                if not lt or not lt.group(1):
+                    findings.append(("L2", ln, f"loot rules: row [{rank}] '{tier}' has no lt = \"<table>\""))
+                if not it:
+                    findings.append(("L2", ln, f"loot rules: row [{rank}] '{tier}' has no iter = {{...}} list"))
+                elif not all(re.fullmatch(r"\s*\d+\s*", x) for x in it.group(1).split(",") if x.strip()):
+                    findings.append(("L2", ln, f"loot rules: row [{rank}] '{tier}' iter holds a non-number"))
+                names.append(lt.group(1) if lt else "-")
+            rows[rank] = tuple(names)
+            # a row must be followed by ',' or the end of the table
+            nxt = body[rc + 1:].lstrip()
+            if nxt and not nxt.startswith(","):
+                findings.append(("L2", ln, f"loot rules: missing comma after row [{rank}]"))
+        missing = [r for r in range(RANK_MIN, RANK_MAX + 1) if r not in rows]
+        ln = lineno(clean, m.start())
+        if missing:
+            spans, s = [], None
+            for r in missing:
+                if s is None:
+                    s = p = r
+                elif r == p + 1:
+                    p = r
+                else:
+                    spans.append(f"{s}-{p}" if s != p else str(s)); s = p = r
+            spans.append(f"{s}-{p}" if s != p else str(s))
+            findings.append(("L1", ln, f"loot rules: no row for rank(s) {','.join(spans)} - ships of "
+                                       "these ranks get no loot search after battles"))
+        # L3: consecutive ranks sharing the same (common, rare, epic) tables
+        cur = None
+        for r in sorted(rows):
+            if cur and rows[r] == cur[2] and r == cur[1] + 1:
+                cur = (cur[0], r, cur[2])
+            else:
+                if cur:
+                    summary.append(cur)
+                cur = (r, r, rows[r])
+        if cur:
+            summary.append(cur)
+    return summary
+
+
 TEMPLATE_DEF = re.compile(r"(?:local\s+)?([A-Za-z_][A-Za-z0-9_]*QueueTemplate)\s*=\s*\{")
 
 
@@ -246,6 +347,7 @@ def main():
     modes = lobby_modes(a.depot)
     templates = parse_templates(clean, findings, levels, modes)
     tnames = {t[0] for t in templates}
+    loot_summary = check_loot_rules(clean, findings)
 
     calls = []
     for m in re.finditer(r"InstantiateQueueTemplate\s*\(", clean):
@@ -335,7 +437,11 @@ def main():
                 print(f"   mmValue not served for any rank: {rng(allgaps)}")
             for r, miss in list(partial.items())[:6]:
                 print(f"   rank {r}: uncovered mmValue {rng(miss)}")
-    errs = [f for f in findings if f[0].startswith("E")]
+    if not a.no_coverage and loot_summary:
+        print("\nL3 loot rules by rank (common / rare / epic table):")
+        for r0, r1, names in loot_summary:
+            print(f"   {f'{r0}-{r1}' if r0 != r1 else r0:>6}: {' / '.join(names)}")
+    errs = [f for f in findings if f[0].startswith("E") or f[0] == "L2"]
     print(f"\n{len(errs)} error(s), {len(findings) - len(errs)} warning(s) in {cfg}")
     sys.exit(1 if errs else 0)
 

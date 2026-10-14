@@ -18,7 +18,7 @@ edit files.
 
 | Tool | What it checks | Typical use |
 |---|---|---|
-| [`queue_lint.py`](queue_lint.py) | the matchmaker queue block of `cloud/data/default_platform_config.lua`: syntax, `InstantiateQueueTemplate` arguments, rank/value ranges, unknown templates and bot presets, levels that are not active, rank coverage | `queue_lint.py --depot "<game>"` after editing queues |
+| [`queue_lint.py`](queue_lint.py) | the matchmaker queue block of `cloud/data/default_platform_config.lua`: syntax, `InstantiateQueueTemplate` arguments, rank/value ranges, unknown templates and bot presets, levels that are not active, rank coverage; the after-battle loot rules (a row for every rank 1-17, row syntax) | `queue_lint.py --depot "<game>"` after editing queues or loot rules |
 | [`defname_check.py`](defname_check.py) | whether definition names (ships, modules, resources, bot presets) exist, where they are defined and the closest matches | `defname_check.py --depot "<game>" --xml edited_store.xml` |
 | [`ref_lint.py`](ref_lint.py) | references that point at names nobody defines: loot tables in the loot rules, modules, spells, projectiles, bundles in auras and quest rewards, `inherit` parents, `defName` in `cloud/data` XML | `ref_lint.py --depot "<game>" --reference "<untouched copy>"` after editing definitions (shows only what your edits broke) |
 | [`data_drift_check.py`](data_drift_check.py) | an edited install against an untouched copy: changed/added/missing data files, generated XML that is stale or edited by hand, store ids shifted by inserted or removed definitions | `data_drift_check.py "<untouched copy>" "<game>"` |
