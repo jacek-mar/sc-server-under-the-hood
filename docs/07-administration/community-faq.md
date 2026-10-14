@@ -451,6 +451,52 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   (biomorph, open-world bosses and aliens) declare no seed-chip slots; the
   crafted rank-14/15 hulls declare 4 and 5 (Q49). *(file)*
 
+### Steam forum additions (S19, 2026-10-14)
+
+* **MongoDB starts and closes at once / localhost "cannot connect".** Check
+  which data folder is used: `cloud/mongodb/launch.bat` and the client's
+  `local_server.xml` use `%LOCALAPPDATA%\Targem\StarConflict\cloud\mongodb\data`;
+  an older installation may have its data elsewhere. Make sure no other
+  `mongod` already uses the folder (a Steam start launches one), that the
+  last shutdown was clean (`mongod.lock` empty) and that the disk has free
+  space (players report that `--smallfiles` helps). Starting `mongod.exe
+  --dbpath "<folder>"` by hand in a console shows the actual error.
+  *(file; causes partly inferred)*
+* **Which MongoDB GUI works?** The bundled MongoDB 2.6.12 is too old for
+  current tools; players use NoSQLBooster 3.5.7 or 5.2.12. *(community)*
+* **What does "Server under heavy load" mean?** It is the client's text
+  while the login waits in the queue (`login_connecting_desc`), not a load
+  measurement. Usually the services are not (yet) running, a client-started
+  server from an earlier session still runs, or a configuration edit broke
+  the start - check the service logs. *(static)*
+* **"Fatal error: can't initialize file server. Two or more files within
+  packages are the same."** The engine found the same path in more than one
+  `.pak` archive - look for added or leftover packages, then verify the game
+  files in Steam. *(static message; cause inferred)*
+* **Rank 16-17 ships never find a vs-AI battle and get no loot.** The
+  shipped co-op vs AI queues stop at rank 15 and the loot rules have rows
+  1-15 only ([tuning-recipes](../05-configuration/tuning-recipes.md),
+  Steam forum additions). *(file)*
+* **PvE missions with a friend do not start.** Both PvE queue blocks ship
+  with `maxPlayers = 1`; hosts set 4 (and `botsCount` in `special` for
+  allied bots). *(file key; effect reported)*
+* **How do I run a second client?** The client refuses a second copy;
+  `game.exe -multiCopies` skips that check (Q31). *(static)*
+* **Can I host for friends over the Internet?** Clients need TCP 3801,
+  3802, 3815 and UDP 35000 upwards; the node address must be the address
+  clients can reach **and** an address the PC owns. Behind a router or CGNAT
+  that conflicts (Q62); a VPS, a VPN shared by all players, or a LAN party
+  avoid the problem. *(observed V-9; NAT part open)*
+* **Do Steam achievements still unlock?** No. No Steamworks library ships
+  with the client or the services, so nothing reports achievements to
+  Steam. *(static)*
+* **Why is premium missing after I set a far-future date?** Reported: the
+  client shows no premium when the remaining time exceeds a 32-bit seconds
+  value (about 68 years); stay well below that, or use
+  `auth_infinitePremiumForRoles` (Q63). *(reported)*
+* **Can I get my official account back?** No - the official data was not
+  released. Never use your Gaijin password on community servers (S-07).
+
 ## Modding
 
 **Q: I added a new ship or item. Do players need my files?** Yes. Adding or

@@ -42,3 +42,9 @@
   "from the installation"** until clarified.
 * Trademark: "Star Conflict" naming in the project title — keep "unofficial /
   community" qualifiers.
+* Forum practice (2026-10-12, S19): the game's Steam forum pins a list for
+  unofficial-server announcements with three removal grounds - missing
+  "Unofficial Server" label, monetisation, and use of software
+  vulnerabilities with malicious intent. Players also warn that adding ship
+  designs from films or TV series is a separate copyright risk, unrelated to
+  the publisher's permission.

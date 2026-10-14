@@ -45,6 +45,11 @@ its patches against the shipped build and a hardened blueprint are in
 
 ## Ideas / open items
 
+* Steam on Linux (S19, 2026-10-14): without a Proton version selected, Steam
+  shows a 0-byte install or "game.exe not found" - there is no native Linux
+  build; choose a Proton version in the game's compatibility settings (or
+  download the Windows depot with SteamCMD). *(community)*
+
 * Headless Wine-in-Docker image — see above. Still open: Wine without the
   patches (DK-2), battle with a non-loopback node address (DK-3/DK-4).
   Requirements: Wine prefix, no X11 for services (they are

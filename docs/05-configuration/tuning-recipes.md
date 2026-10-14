@@ -297,6 +297,22 @@ Leads and file checks; see the "batch 007" digest (J1-J12) in the
 | Post-battle loot with iridium | loot rules in `DedicatedServcerServices_SetLootRules` (platform Lua), tables in `data/gamedata/shared/loot_tables.lua`; use the `_v3` table names (Q45) | file-verified layout; a host's tweak reported |
 | Grant cosmetic items (paints, decals, stickers) | custom elements in `shared/vessel_custom_elements.lua`, stickers in `shared/vessel_stickers.lua`; admin mail attachment type 16 `LAT_CUSTOM_ELEMENT` or a bundle with `ai.BundleContent.CUSTOM_ELEMENT` | static ⚠ untested |
 
+## Additions from the Steam forum (S19, 2026-10-14)
+
+| Goal | Where | Evidence |
+|------|-------|----------|
+| Co-op PvE missions for 2-4 players | both `-- PVE QUEUE` blocks in `cloud/data/default_platform_config.lua` (lines 376 and 701) ship with `maxPlayers = 1`; set 4. Allied bots: `botsCount = <n>` in that block's `special` | file-verified key; effect reported by several players ⚠ |
+| Rank 16-17 ships in vs-AI battles | the co-op vs AI queue queries accept `mmRank` 1-15; widen the ranges (and add queues per tier) | file-verified; hosts report it works |
+| Loot search for rank 16-17 | `DedicatedServcerServices_SetLootRules` has rows `[1]`-`[15]` only; add `[16]` and `[17]` (tables are case-sensitive names from `shared/loot_tables.lua`, e.g. `_v3`) | file-verified; effect reported |
+| More bots in PvP | `cvars.mm_botsCount` (shipped 6, range 0-31), `cvars.sv_kickExcessiveBotsEnabled` (1 -> 0), queue `optimalPlayers`, `maxExpandTime`; `botsCount` in a queue's `special` worked for some and caused endless "heavy load" for others | keys file-verified; mixed reports ⚠ |
+| Stronger bots / bots by tier | queues set no bot preset, so the default `AiPreset.Default` (weakened T1) is used; set `botPresetByTier` / `botPresetNames` per queue ([bot-presets](bot-presets.md)); the adaptive presets copy fits from players and stay empty on a fresh database | static; hosts confirm |
+| Squads with bots | make each queue's `mmSquadRank` range equal its `mmRank` range | reported ⚠, Q35 |
+| Gold for battle wins | `cvars.reward_bonusGoldForWinner` / `reward_bonusGoldForLooser` in `ConfigureGRD()`, window `cvars.reward_eventGoldTimePeriod` | keys file-verified; effect reported |
+| Iridium after battles | in `shared/loot_tables.lua` replace un-salvageable `Iridium_Junk_r<n>` entries by `Token_drop_T1`-`T5` (defined in `def/ex/junk.lua`) (converted to iridium automatically); daily quests can give `reward_tokens` (`BP_DAILY_*` in `shared/quests.lua`, UI does not show it) | reported ⚠ |
+| Infinite premium for everyone | `cvars.auth_infinitePremiumForRoles = "gm;support;player"` (shipped `"gm;support"`) | file-verified key; effect reported (24-hour display that refreshes) |
+| Clan ship (dreadnought) for one player | `clan_shipBuildHighRanks` is set twice in the platform Lua (inside `LoadBalancer_SetGreetingMessageCVars` and as a cvar); rank requirements also in `clan_upgrades.lua` / `aux_limits.xml`; costs and times in `shared/clan_ship.lua` -> `cloud/data/clan_ship.xml` (edit the Lua and regenerate) | reported; files exist |
+| Do not touch | `cvars.sm_sandboxAccess` (shipped 4 = "allow all", built-in description: 0 forbid all … 4 allow all); lower values lock players out of sandbox features such as the open world | static + reported |
+
 ## Still to verify (candidates for Stage 3 experiments)
 
 1. Does `store_allowAllItemsForBying = 1` make *every* def purchasable?

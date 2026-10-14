@@ -30,6 +30,7 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S12/S15 b008 | Batch 008: partial JSON exports `Star_Conflict_Preservation_Project_008.eng-json-part` (83 msgs, 73 new, 2026-10-12 16:50 → 21:03) and `...008.ru-json-part` (255 msgs, 205 new, 16:12 → 21:18); both overlap batch 007 (no gap) | `random-materials/Star_Conflict_Preservation_Project_008.*-json-part/` | C | Digest "batch 008" below (K1-K14); security S-07 note, S-29, S-30; Q47 |
 | S12/S15 b009 | Batch 009: partial JSON exports `Star_Conflict_Preservation_Project_009.eng-json-part` (63 msgs, 31 new, 2026-10-12 21:20 → 2026-10-13 06:11) and `...009.ru-json-part` (374 msgs, 199 new, 2026-10-12 21:19 → 2026-10-13 07:38); continue batch 008 without a gap | `random-materials/Star_Conflict_Preservation_Project_009.*-json-part/` | C | Digest "batch 009" below (M1-M9) |
 | S12/S15 b010 | Batch 010: partial JSON exports `Star_Conflict_Preservation_Project_010.eng-json-part` (11 msgs, 11 new, 2026-10-13 08:44 → 16:21) and `...010.ru-json-part` (348 msgs, 327 new, 07:46 → 16:16); continue batch 009 without a gap | `random-materials/Star_Conflict_Preservation_Project_010.*-json-part/` | C | Digest "batch 010" below (N1-N13); Q49 amended |
+| S19 | Steam community discussions of the game (app 212070): General discussions (56 threads active 2026-10-09 → 10-14) and comments under the official announcements (5 threads); 627 posts, 262 authors; includes the pinned official setup guides (same content as S1) and the forum's rules for unofficial-server posts | `https://steamcommunity.com/app/212070/discussions/` (private local copy) | C (official pins: A) | Digest "S19" below (SF1-SF24); Q62-Q63; Q35/Q45/Q52/Q59 amended |
 | S12/S15 b011 | Batch 011: partial JSON exports `Star_Conflict_Preservation_Project_011.eng-json-part` (99 msgs, 98 new, 2026-10-13 16:45 → 2026-10-14 07:32) and `...011.ru-json-part` (786 msgs, 783 new, 2026-10-13 17:42 → 2026-10-14 11:45); EN continues batch 010, RU leaves a gap of about 90 minutes (16:16 → 17:42) | `random-materials/Star_Conflict_Preservation_Project_011.*-json-part/` | C | Digest "batch 011" below (P1-P15); Q60-Q61, Q49 amended |
 | S18 | Community tool **SCPatcher / "Star Conflict Mod Manager" v0.1** by Furebel (Python/Tkinter text patcher with 8 bundled mods; released 2026-10-11 in `#general-eng` as `SCModManager_v0_1.zip`, temporary download link, no repository, **no licence stated**) | `random-materials/SCPatcher/` | C (claims) / B (fingerprints and patterns checked against S3/S4 by us) | Review: [community-mod-manager.md](../07-administration/community-mod-manager.md); loot-rule defect (Q45) |
 
@@ -644,6 +645,80 @@ guide (I11).
 
 Player and host interest behind them: generous test accounts without
 breaking the account, PvE progression by hand, special ships and weapons.
+
+## Digest of S19 (Steam community discussions, 2026-10-09 → 2026-10-14)
+
+> Same rules as for Discord: **leads, not facts**; anonymised and
+> paraphrased; no names, ids, addresses, server names, repository or file-host
+> links. A local copy (raw pages, parsed threads) is kept privately.
+
+**Scope.** Steam forum of the game (app 212070): 56 threads of the General
+discussions with activity since 9 October and 5 comment threads under the
+official announcements; 627 posts by 262 authors (EN, RU, a few DE/ES/ZH).
+Compared with the Discord slices the forum is more technical and more
+beginner-oriented: setup failures, step-by-step recipes, shared
+configuration packs, unofficial-server announcements.
+
+**Official material on the forum.** The pinned "Community Edition - Official
+instruction" threads (EN, RU; 12 October) link Steam guides that repeat the
+official website page S1 (architecture, launch methods, database handling,
+mode names, `-lang`, logs, the termination notice) and add a "Before you
+start" section *(official, compared with our 9 October copy of S1)*: Redis
+is needed only for leaderboards; the default address 127.0.0.1 "does not
+necessarily prevent the server from accepting connections through other
+network interfaces" (our S-30); "only connect to servers you trust - a
+malicious server may exploit vulnerabilities in the game client" (our
+S-29); and "passwords are stored in hashed or otherwise protected form"
+(compare S-07: one unsalted SHA-256, confirmed value-free). The pinned unofficial-server list states the forum's moderation rules:
+one post per server, the "Unofficial Server" label, no monetisation, no use
+of software vulnerabilities ([legal-and-licensing](../09-community-edition/legal-and-licensing.md)).
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| SF1 | "MongoDB does not start / the window flashes and closes" and "localhost: cannot connect to the server": fixed by starting `mongod.exe --dbpath "<game>\cloud\mongodb\data"` by hand (some add `--smallfiles`), or by correcting `MONGO_DATA_PATH` in `launch.bat`; reported mostly by players whose earlier non-Steam installation kept the data in the game folder | `launch.bat` uses `%LOCALAPPDATA%\Targem\StarConflict\cloud\mongodb\data` *(file, [mongodb](../06-database/mongodb.md))*. Other causes that fit: a second `mongod` on the same folder (client autostart, batch 011 P1), unclean `mongod.lock`; `--smallfiles` reduces MongoDB 2.6 preallocation, so low free disk space is a plausible cause *(inferred)*. Windows 11 compatibility of MongoDB 2.6.12 untested |
+| SF2 | Which MongoDB GUI works: NoSQLBooster 3.5.7 (supports MongoDB 2.2-3.4) or 5.2.12; current versions (11.x) fail to connect | Consistent with the bundled MongoDB 2.6.12 being too old for current drivers (FAQ) |
+| SF3 | The data is in `cosmosim_<Steam account name>`; `cosmosim_Admin` is empty | The official guide and our observation: `cosmosim_<Windows user name>` *(official S1, observed)*; the services import `GetUserNameA` *(static)*. The report most likely shows a Windows user named like the Steam account ⚠ |
+| SF4 | Shell guide to "top-tier" accounts: stop the server, then `$set` `credits`/`goldCredits` (`NumberLong(999999999)`), `accountExpPool`, `accountRank` (max 25), `premiumTill` (milliseconds), `raceRep` (five values), `prestigeBonus`, `vessels.<n>.exp`; resources via `craftResources` (Zeta parts `resource_zeta_final_*`) | Field names match [schema](../06-database/schema.md); balances stay below 2 147 483 647 (Q52); write only with the Hub stopped (Q32) |
+| SF5 | Premium: far-future `premiumTill` shows **no** premium - a host found the client keeps the remaining premium time in **seconds as a 32-bit number** (overflow beyond about 68 years); other reports: +10 years or "until 2063" works, "until 2068/2100" fails. Alternatives: add `player` to `auth_infinitePremiumForRoles` (shows a 24-hour counter that refreshes), or premium by welcome mail | `cvars.auth_infinitePremiumForRoles = "gm;support"` shipped *(file)*; premium attachment `LAT_PREMIUM` in admin mail ([admin-tasks-howto](../07-administration/admin-tasks-howto.md) §4b). Overflow limit -> **Q63** |
+| SF6 | "Server under heavy load" after config edits (often with `botsCount` in a queue's `special`) or while a client-started server still runs | **Static:** the text is the client string `login_connecting_desc` (English string table) shown while the login waits in the queue - it reports a login that does not complete, not a measured load. Causes reported: lingering Hub, broken queue edits, services not started |
+| SF7 | "Fatal error: can't initialize file server. Two or more files within packages are the same" | **Static:** the message is in `game.exe` and in every service executable (engine file system); it points to duplicate paths across `.pak` archives (leftover or added packages) *(inferred)* - see Q56 |
+| SF8 | Dialog "LobbyServer: Memory leak detected. Amount: 6, size: ..." and the Hub crashes | **Static:** the message exists in all 21 service executables (engine allocator check); trigger unknown, lead only |
+| SF9 | Hosting for friends abroad: ports TCP 3801/3802/3815 and UDP 35000+ (up to 35050 on one host); the node address in `cloud.xml` must be one the PC owns, so the public IP behind a router gives `there is no my node in xml`; workaround: a virtual network adapter (or VM) carrying the public IP, after which battles needed a VPN; CGNAT prevents port forwarding; routers may not loop back to the public IP | Ports and the error match V-9 *(observed)*. The node address is used both to bind and to announce, so NAT hosting has no clean setting -> **Q62** |
+| SF10 | More bots: `mm_botsCount` 6 -> 23, `sv_kickExcessiveBotsEnabled` 1 -> 0, `optimalPlayers` 4 -> 12, `maxExpandTime` 30 -> 60, mode 12 (TDM) added to `levelsDesc`; `botsCount` in a queue's `special` works for some and causes endless "heavy load" for others; PvE missions get allied bots with `botsCount = 3` in the PvE queue's `special`; arcade/vs-AI bots are always T1 because the queues set no bot preset; bots that copy fits from the leaderboard are weak on an empty database | Keys exist *(file)*; the T1 fallback matches the static finding (`AiPreset.Default`, [bot-presets](../05-configuration/bot-presets.md)); adaptive pools empty on a fresh DB *(static)*. Special Operations stay at 0 bots (Q50) |
+| SF11 | PvE missions with a friend fail; setting both `-- PVE QUEUE` blocks from `maxPlayers = 1` to `4` fixes it and adds allied bots; some missions stay grey ("needs a squad of 4") | **File-verified:** both PvE queue blocks (platform Lua lines 376 and 701) ship with `maxPlayers = 1`, `special = { pve = 1, gameMode = 7 }`. The "squad of 4" missions are not explained (`lobby_reqPlayersPvEMin` 3 applies to lobbies, batch 010 N5) |
+| SF12 | Rank 16-17 ships: endless search in vs-AI battles and no loot search after battles | **File-verified:** the co-op vs AI queues accept `mmRank` 1-15, and `DedicatedServcerServices_SetLootRules` has rows `[1]`-`[15]` only - both gaps were in our queue coverage check ([config-validation-tools](../07-administration/config-validation-tools.md)); hosts extend the ranges and add rows `[16]`, `[17]` |
+| SF13 | Loot: add `_v3` to the common tables (a host quotes the battle-server log line `got common loot table 'CommonRanks_1_3_v3'`); `NeodiumDrop` and `LezortiumDrop` are still missing; `_V3` (wrong case) breaks it; un-salvageable "iridium junk" (`Iridium_Junk_r<n>`) lands in the mailbox as an illegal item and blocks other trophies - replaced by `Token_drop_T1..T5` entries; daily quests `BP_DAILY_*` can reward iridium (`reward_tokens`) although the UI does not show it | Q45 independently reproduced, including the two missing epic tables *(file, V-10)*; table names are case-sensitive Lua keys. The mailbox bug is new ⚠ |
+| SF14 | Squads cannot find PvP or vs-AI battles with bots unless `mmSquadRank` ranges equal the `mmRank` ranges | Matches Q35 (squad queue failure) - amended |
+| SF15 | Battle pass: stage 1 works, stages 2-3 show rewards but claiming fails with a "wrong stage" error; 45 rewards enabled in Lua but 41 in the XML show as N/A; reports disagree whether `battle_pass.xml` is regenerated | `battle_pass.xml` is written by `prepare_shared` *(V-11)*; reward checks are bundle checks (Q59) - amended |
+| SF16 | `store_allowAllItemsForBying = 1` shows everything (test-only items at 999 999, orange parts, seed-chip packs) and "borks" accounts; do **not** change `sm_sandboxAccess` from 4 or the open world closes | **Static:** built-in description of `sm_sandboxAccess`: 0 forbid all, 1 privilege, 2 privilege or DLC, 3 privilege or achievement, **4 allow all** (shipped 4) - consistent |
+| SF17 | Clan ship alone: `clan_shipBuildHighRanks` is set twice (inside `LoadBalancer_SetGreetingMessageCVars` and as a cvar), ranks also in `clan_upgrades.lua` / `aux_limits.xml`, costs and times in `clan_ship.xml` (from `shared/clan_ship.lua`); dreadnought battles with bots work, Conquest queues forever | Consistent with [event-ships](../05-configuration/event-ships-mail-and-clan-ship.md); edit the Lua and regenerate rather than the XML |
+| SF18 | "Fatal error: cannot run another copy" when starting a second client | Client switch `-multiCopies` (Q31, static) |
+| SF19 | Inventory extensions (`special_values.xml`): deleting rows between tiers stops the game from starting; more than 3 500 slots stalls at "heavy load"; a larger `baseSize` works, but the next upgrade resets the size to 75 | **File:** `InventoryExtensions baseSize="50"`, first row `size="75"` - the account stores an upgrade step, not a size *(inferred)*; another invariant for [data-invariants](../05-configuration/data-invariants.md) ⚠ |
+| SF20 | A host lowered "trade after 50 battles" to 10 and removed "a check that blocked trading for players who played on more than one PC" | **Static:** mail/trade gate `shard_minAntibotCounterForMailSending` 50 (file); chat gate `chat_minAntibotCounterForSendMsg` default 0; the Shard keeps a per-PC flag (`isSingleUidOnPC`, `SetSingleUidForFingerprint`, `machineAntibotCounter`, admin functions to set/unset it) tied to the machine fingerprint (S-28) |
+| SF21 | Steam achievements no longer unlock on local or community servers | **Static:** no Steamworks client library is shipped with the client or the services; the client cannot report achievements to Steam |
+| SF22 | Linux: Steam shows a 0-byte install or "game.exe not found" unless a Proton version is selected | There is no native Linux build - [linux-proton](../04-installation/linux-proton.md) |
+| SF23 | Quest edits: changing rewards works; making daily quests repeatable gives "wrong quest type"; extra evolution points on alien ships give an error when applied | Quest data rules: [quests-semantics](../05-configuration/quests-semantics.md); leads only |
+| SF24 | Shared "solo configuration" packs (whole `default_platform_config.lua`, `ai_settings.lua`, batch files) on file hosts; one host publishes its server changes as a public repository | Third-party files that run as Lua with native-code access (S-29) - review before use; not copied |
+
+### Demand and problem signals (S19)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Database will not start, localhost cannot connect, wrong DB tool version | setup | SF1, SF2 -> FAQ; troubleshooting is a recurring gap |
+| "Server under heavy load" / "file server" fatal error / memory-leak dialog | setup | SF6-SF8 -> FAQ |
+| Bots everywhere (PvP, vs-AI, PvE missions, Special Operations) | configuration | SF10, SF11 -> tuning-recipes; raids not configurable (Q50) |
+| Rank 16-17 matchmaking and loot | configuration | SF12 -> tuning-recipes |
+| Squads with bots | configuration | SF14 -> Q35 |
+| Hosting for friends behind NAT/CGNAT | hosting | SF9 -> Q62 |
+| Premium, currencies and resources for solo play | economy | SF4, SF5 -> FAQ, Q52, Q63 |
+| Battle pass, xenochips, DLC items | economy | SF15 -> Q59, Q44 |
+| Steam Workshop, mod manifest, server-required mod list, TPAK/model/level/navmesh tools, mod validator | modding ecosystem | demand for downstream projects ([09-community-edition](../09-community-edition/)) |
+| Server browser, saved server address, in-game admin console, one-click server launcher | usability | Q46, admin-task queue; downstream |
+| Account recovery from the official service | support | impossible; do not reuse Gaijin passwords (FAQ, S-07) |
+
+Not adopted: farewell messages, the achievement-hunting dispute beyond
+SF21, PvP nostalgia, server advertisements (no names or addresses copied),
+open-world design wish lists.
 
 ## Digest of S16 (community Docker project)
 

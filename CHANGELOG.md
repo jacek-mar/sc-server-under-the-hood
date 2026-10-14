@@ -118,6 +118,15 @@ verification on Windows, Linux and LAN setups continues.
   cosmetic grants (custom elements, stickers) and seed-chip slots on alien
   hulls; new tuning recipes; open questions Q60 (account refused after
   edits) and Q61 (bots in the bomb mode); Q49 amended.
+- **Steam community discussions** (new source S19, 9-14 October; digest
+  SF1-SF24 in the [source register](docs/sources/source-register.md)):
+  the official setup guide's new "before you start" warnings; FAQ answers on
+  MongoDB start failures, "Server under heavy load" (a login-queue text),
+  the duplicate-package fatal error, rank 16-17 matchmaking and loot, co-op
+  PvE queues, a second client, hosting behind NAT, Steam achievements and
+  premium overflow; tuning recipes for bots, gold, iridium, infinite premium
+  and the clan ship; open questions Q62 (NAT hosting) and Q63 (premium time
+  limit); Q35, Q45, Q59 and security finding S-28 amended.
 
 ### Changed
 - FAQ: the "Experimental destroyer" answer no longer says it cannot be
