@@ -2,8 +2,11 @@
 sc-server-files/
 random-materials/
 _user_notes/
+_private/
+_restricted/
 _user_nodes/
 sc-galactic-beacon-bot/
+AGENTS.override.md
 
 # Local scratch / tooling output
 scratch/
