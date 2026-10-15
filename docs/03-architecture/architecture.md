@@ -104,7 +104,7 @@ Useful for correlating `Hub/logs/<id>_<name>_<date>.log`.
 >
 > Official warning: the Hub **accepts connections from any address**; the
 > `address` in `cloud.xml` only controls which address is *handed to clients*.
-> See [security](../07-administration/administration.md#security).
+> See [security](../07-administration/administration.md#5-security).
 
 ## 5. Data & configuration layers
 

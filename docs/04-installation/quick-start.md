@@ -85,7 +85,7 @@ Manual sequence:
 2. Forward/allow the ports in [architecture §4](../03-architecture/architecture.md#4-ports)
    (at minimum 3850, 3801, 3802, plus chat 3815; battle ports TBD ⚠).
 3. In the client login screen choose **`server`** and type address and port.
-4. Read the [security notes](../07-administration/administration.md#security)
+4. Read the [security notes](../07-administration/administration.md#5-security)
    before exposing anything to the internet — the stock configuration is
    **not hardened**.
 

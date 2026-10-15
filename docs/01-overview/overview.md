@@ -43,7 +43,7 @@ internals.
 * **Database:** MongoDB 2.6.12 (bundled), `127.0.0.1:27017`, DB names
   `cosmosim_<user>`, `stats_cosmosim_<user>` etc.
 * **Default endpoint:** `127.0.0.1:3850` (Hub); client talks to LoadBalancer
-  `3801` and Shard `3802` (see [ports](../03-architecture/architecture.md#ports)).
+  `3801` and Shard `3802` (see [ports](../03-architecture/architecture.md#4-ports)).
 * **Single node, no clustering by default:** `cloud.xml` defines one node with
   17 services.
 * **Out of the box:** a client login screen has a `localhost` option; unknown
