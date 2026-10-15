@@ -315,6 +315,16 @@ Leads and file checks; see the "batch 007" digest (J1-J12) in the
 | Clan ship (dreadnought) for one player | `clan_shipBuildHighRanks` is set twice in the platform Lua (inside `LoadBalancer_SetGreetingMessageCVars` and as a cvar); rank requirements also in `clan_upgrades.lua` / `aux_limits.xml`; costs and times in `shared/clan_ship.lua` -> `cloud/data/clan_ship.xml` (edit the Lua and regenerate) | reported; files exist |
 | Do not touch | `cvars.sm_sandboxAccess` (shipped 4 = "allow all", built-in description: 0 forbid all … 4 allow all); lower values lock players out of sandbox features such as the open world | static + reported |
 
+## Additions from batch 012 and the Steam forum (2026-10-16)
+
+| Goal | Where | Evidence |
+|------|-------|----------|
+| Repeatable quests | `data/gamedata/shared/quests.lua`: `intervalStartHour`, `intervalLongHours`, `intervalLongEnableHours`, `max_completions`; matching `maxCompletions` and rewards in `cloud/data/quests.xml` | host-reported, S19 SF25 ⚠ |
+| Clans for solo play | clan creation `ClanRegistrationCost` (`special_values.xml`, 1500 tokenCredits); clan rank threshold `ClanHighRank` 9 (`aux_limits.xml`); clan-ship product prices and build times in the clan-ship data | values file-verified; host's changes ⚠ (SF26) |
+| Brawl modes with bots | a shared solo configuration fixes "Last Hero" and "Fight Club" | host-reported, not checked (SF29) |
+| Gold without purchases | small gold amounts in the end-of-battle loot rules and in crafting for credits | host idea (SF35) |
+| Every ship for a new account | ships and currencies in `starter_pack.lua` (source of `starter_pack.xml`) | b012 R7; schema in batch 011 rows above |
+
 ## Still to verify (candidates for Stage 3 experiments)
 
 1. Does `store_allowAllItemsForBying = 1` make *every* def purchasable?

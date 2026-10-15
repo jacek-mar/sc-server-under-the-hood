@@ -127,6 +127,17 @@ verification on Windows, Linux and LAN setups continues.
   premium overflow; tuning recipes for bots, gold, iridium, infinite premium
   and the clan ship; open questions Q62 (NAT hosting) and Q63 (premium time
   limit); Q35, Q45, Q59 and security finding S-28 amended.
+- **Community reports, 14-15 October, and a second Steam forum crawl**
+  (digest R1-R19 and SF25-SF35 in the
+  [source register](docs/sources/source-register.md)): security finding
+  S-31 (an undisclosed client route to server console commands, with
+  interim hardening advice); a host-reported Wine start-up tip for Linux and
+  macOS; repeatable quests (answers SF23), clan values for solo play and the
+  clan creation cost; FAQ and tuning-recipe additions; open questions Q64
+  (login-name case), Q65 (client route to the console), Q66 (respawn times
+  and start countdown - partly solved: `countdown_duration` and the
+  per-death respawn penalty per mode in `gameplaysettings.lua`) and Q67
+  (asteroid visibility); Q44, Q49 and Q61 amended.
 - **`tools/queue_lint.py`: loot-rules checks** - L1 warns when a ship rank
   1-17 has no row in `DedicatedServcerServices_SetLootRules` (the shipped
   config has none for ranks 16-17, so those ships get no loot search), L2

@@ -30,8 +30,9 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S12/S15 b008 | Batch 008: partial JSON exports `Star_Conflict_Preservation_Project_008.eng-json-part` (83 msgs, 73 new, 2026-10-12 16:50 → 21:03) and `...008.ru-json-part` (255 msgs, 205 new, 16:12 → 21:18); both overlap batch 007 (no gap) | `random-materials/Star_Conflict_Preservation_Project_008.*-json-part/` | C | Digest "batch 008" below (K1-K14); security S-07 note, S-29, S-30; Q47 |
 | S12/S15 b009 | Batch 009: partial JSON exports `Star_Conflict_Preservation_Project_009.eng-json-part` (63 msgs, 31 new, 2026-10-12 21:20 → 2026-10-13 06:11) and `...009.ru-json-part` (374 msgs, 199 new, 2026-10-12 21:19 → 2026-10-13 07:38); continue batch 008 without a gap | `random-materials/Star_Conflict_Preservation_Project_009.*-json-part/` | C | Digest "batch 009" below (M1-M9) |
 | S12/S15 b010 | Batch 010: partial JSON exports `Star_Conflict_Preservation_Project_010.eng-json-part` (11 msgs, 11 new, 2026-10-13 08:44 → 16:21) and `...010.ru-json-part` (348 msgs, 327 new, 07:46 → 16:16); continue batch 009 without a gap | `random-materials/Star_Conflict_Preservation_Project_010.*-json-part/` | C | Digest "batch 010" below (N1-N13); Q49 amended |
-| S19 | Steam community discussions of the game (app 212070): General discussions (56 threads active 2026-10-09 → 10-14) and comments under the official announcements (5 threads); 627 posts, 262 authors; includes the pinned official setup guides (same content as S1) and the forum's rules for unofficial-server posts | `https://steamcommunity.com/app/212070/discussions/` (private local copy) | C (official pins: A) | Digest "S19" below (SF1-SF24); Q62-Q63; Q35/Q45/Q52/Q59 amended |
+| S19 | Steam community discussions of the game (app 212070): General discussions (56 threads active 2026-10-09 → 10-14) and comments under the official announcements (5 threads); 627 posts, 262 authors; includes the pinned official setup guides (same content as S1) and the forum's rules for unofficial-server posts | `https://steamcommunity.com/app/212070/discussions/` (private local copy) | C (official pins: A) | Digest "S19" below (SF1-SF24); Q62-Q63; Q35/Q45/Q52/Q59 amended ; **re-crawl 2026-10-16** (14 threads, 69 posts newer than the first crawl) -> SF25-SF35 |
 | S12/S15 b011 | Batch 011: partial JSON exports `Star_Conflict_Preservation_Project_011.eng-json-part` (99 msgs, 98 new, 2026-10-13 16:45 → 2026-10-14 07:32) and `...011.ru-json-part` (786 msgs, 783 new, 2026-10-13 17:42 → 2026-10-14 11:45); EN continues batch 010, RU leaves a gap of about 90 minutes (16:16 → 17:42) | `random-materials/Star_Conflict_Preservation_Project_011.*-json-part/` | C | Digest "batch 011" below (P1-P15); Q60-Q61, Q49 amended |
+| S12/S15 b012 | Batch 012: partial JSON exports `Star_Conflict_Preservation_Project_012.eng-json-part` (286 msgs, all new, 2026-10-14 13:00 → 2026-10-15 21:36; a gap of about 5.5 hours after batch 011) and `...012.ru-json-part` (1 067 msgs, 1 016 new, 2026-10-14 11:46 → 2026-10-15 21:08, continues batch 011) | `random-materials/Star_Conflict_Preservation_Project_012.*-json-part/` | C | Digest "batch 012" below (R1-R19); Q64-Q67; Q44, Q49, Q61 amended; security finding S-31 |
 | S18 | Community tool **SCPatcher / "Star Conflict Mod Manager" v0.1** by Furebel (Python/Tkinter text patcher with 8 bundled mods; released 2026-10-11 in `#general-eng` as `SCModManager_v0_1.zip`, temporary download link, no repository, **no licence stated**) | `random-materials/SCPatcher/` | C (claims) / B (fingerprints and patterns checked against S3/S4 by us) | Review: [community-mod-manager.md](../07-administration/community-mod-manager.md); loot-rule defect (Q45) |
 
 ## Digest of S11 (community wiki)
@@ -579,6 +580,60 @@ game modes for bots, karma, seed chips and multi-region hosting.
 Not adopted: PvP tactics and nostalgia, the flame war, hardware and phone
 debates, image-generation talk, film-ship wish lists beyond the legal note.
 
+## Digest of batch 012 (partial exports of S12 and S15, 2026-10-14 noon → 2026-10-15 evening)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names or quotes. Server, site and file-host addresses
+> posted in the chat were not copied.
+
+**Scope.** EN: 286 new messages - playable boss and pirate hulls, "all ships"
+account arrays, public servers and their mode lists, Wine start-up times,
+a community re-implementation of the services, and an undisclosed security
+report. RU: 1 016 new messages, again mostly a flame war and off-topic talk
+(operating systems, hardware, personal disputes); the useful part repeats the
+hull-modding recipes and adds a community launcher and toggle-mode modules.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| R1 | **Security:** a host reports an attack vector that lets a game client run **administrative console commands** (such as entering maintenance mode) and through them **arbitrary Lua, including shell calls**, on the server; details are withheld until a fix exists; the host keeps the node in an isolated virtual network | ⚠ **unverified, single source, no details.** Static context: the client and the battle server contain a full cheat command set (`cheat_*`, `GameStore_Cheat*`), gated by `net_allowCheats` (default 0, observed 0 on the battle server, not set by the shipped configs); service Lua is not sandboxed (S-29). Recorded as **S-31** in [security](../07-administration/security.md); test idea Q65 |
+| R2 | A community registration page allows only lower-case letters and digits for logins because "the game server sometimes rejects players whose login contains upper-case letters" | Not documented; static probe inconclusive (no login-specific case handling found by string search). New **Q64** |
+| R3 | **Linux/macOS start-up:** most of the start time under Wine is spent on timeouts; with a recent Wine every `cloud/*.exe` stalls about 10 s in `StartServiceCtrlDispatcher`. Tips: run the Hub as a Windows service inside Wine, or patch that call; a recent kernel with `ntsync` and a recent Wine help (one host: 40 s → about 10 s). The S16 maintainer measures about 20 s with Wine 8 (Debian bookworm) and calls the README figure outdated | Plausible and **consistent with the imports**: the services import `StartServiceCtrlDispatcherA` and the other service-control functions ([pe-imports](../08-reverse-engineering/pe-imports.md)). Added to [linux-proton](../04-installation/linux-proton.md) as a host-reported tip ⚠ |
+| R4 | A community developer is re-implementing the server applications with AI help: a partial Hub already lets a client log in and reach the hangar; the code is to be published later. Others: Hub and Shard are the interesting parts, the LoadBalancer is simple, a new DedicatedServer is a multi-month effort; estimate for a full replacement 6-12 months | Effort indicators for [09-community-edition](../09-community-edition/); not verified |
+| R5 | **Playable boss, alien and pirate-destroyer hulls** (both channels): add a vessel with an **unused `vid`**, then grant it (it appears in the tech tree) or put it in a battle slot; the clone needs edits in four or five client files for the tech tree; if the launch fails with "ranks too low", one value in the vessel's equipment array (reported as 45 000 or 54 000) must be set to 0; removing a cruise missile fixed a hull that could not launch; the Manta hull still does not move (warp module as workaround); one alien hull behaves as if the AI took over | Host-reported recipes. `vid` must be unique per database; new ids come from `counters` ([mongodb](../06-database/mongodb.md) §3a). The equipment values are not verified → **Q49 amended** |
+| R6 | **"All ships" account:** `vessels` and `items` arrays pasted into an empty account with a MongoDB client give every ship, aliens included, fully equipped; storage capacity must be raised; some unique module slots stay empty; a shared table maps ship ids to names; names via `cloud/data/store.xml` | Host-reported. Database edits only with the Hub stopped ([mongodb](../06-database/mongodb.md) §3a); demand for a ship id ↔ name list ([ship-defs](../05-configuration/ship-defs.md)) |
+| R7 | Starter pack with every ship plus currencies by replacing `cloud/data/starter_pack.xml`; given when a new account registers, so the first login takes longer | Consistent with the batch 011 finding; `starter_pack.xml` is generated from `data/gamedata/shared/starter_pack.lua` ([data-files](../05-configuration/data-files.md)), so edit the Lua source or a regeneration overwrites the XML |
+| R8 | **Toggle-mode active modules:** a timed module can be made to run until pressed again (ship Lua), but its visual and sound effects still end after the original ~2 s; looping them reportedly needs repacked game files. Four landing-platform modules on one destroyer by adding four active-module rows in `ship.lua` and emptying the hangar slots | Host-reported modding; effects live in the client paks ([pak-contents](../02-inventory/pak-contents.md)) |
+| R9 | Module data: player modules in `active.lua` (very large); alien, PvE and open-world bot modules in separate files | Consistent with [module-defs](../05-configuration/module-defs.md) |
+| R10 | Question: where are **ship respawn times** and the **battle-start countdown** defined? One answer points to ship definition files | No such folder in the shipped loose data; the `respawn_time` fields in `def/objects` belong to world objects (bonuses, cargo ships, adventure objects); respawn cvars `sv_respawnTime*` are documented ([cvar-notes](../05-configuration/cvar-notes.md)). **Static (file):** the countdown is `countdown_duration` and the per-death penalty `spawn_time_penalty_per_death` in `data/gamedata/gameplaysettings.lua`, per mode → **Q66** (partly solved) |
+| R11 | Question: how to make **asteroids easier to see** in open space | Unanswered → **Q67** |
+| R12 | Events: "how do I start the second and third phase of an event - the page stays empty"; how to open earlier battle-pass archives | Gap; related to Q59 (DLC checks on rewards) |
+| R13 | **Public servers and their modes:** one offers beacon capture, control and team battle and has removed Detonation and the captain mode for now; another runs "old-style" progression without PvE attack/defence levels and seed chips and says its bots **now plant the bomb**; a third keeps the original progression | Host-reported; the bomb claim contradicts SF30 → **Q61 amended** |
+| R14 | Request to a host: sector conquest in more time zones | Demand; conquest schedules: [game-modes](../05-configuration/game-modes.md) |
+| R15 | **Account restoration and DLC:** a host plans an archive server that restores accounts by hand from players' screenshots; the missing piece is crediting DLC; a community admin panel (several languages) reportedly credits DLC; another player built an AI-assisted panel that grants all bot ships | Demand for admin tooling; DLC crediting → **Q44 amended** |
+| R16 | Community launcher (RU): play without Steam or VPN; installs into the user's local programs folder without shortcuts; the installer fails on Windows 7; full client about 13 GB; its server has temporarily removed the biomorph ships and the rank-17 destroyers for rebalancing | Information; third-party client files are code (S-29) |
+| R17 | A player thinks the client sends a password **hash** instead of the password to protect players from scam servers | Our captures: the login frame carries an encrypted-looking block, the stored hash is not sent in clear ([verification-log](../04-installation/verification-log.md) V-10, Q24); the "hash as credential" claim stays ⚠ (S-19) |
+| R18 | Steam starts restore modified client files ("the client updates everything back") | Known: Steam file verification replaces changed depot files; keep mods outside the depot or use a launcher |
+| R19 | The community mod manager (S18) has a new version (dark mode, Russian translation) | Watch item |
+
+Not adopted: the flame war and personal disputes, operating-system and
+hardware debates, server advertisements (no names or addresses copied),
+balance opinions, 3D-model talk.
+
+### Demand and problem signals (batch 012)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Client-side attack on the console / Lua (undisclosed) | security | R1 -> S-31, Q65; isolate the node |
+| Login names with upper-case letters refused | support | R2 -> Q64 |
+| Slow start under Wine (Linux, macOS, Docker) | hosting | R3 -> linux-proton |
+| Boss, alien and pirate hulls as player ships | modding | R5 -> Q49 |
+| Every ship on an account; ship id ↔ name list | administration | R6, R7 -> FAQ |
+| Respawn times, battle-start countdown, asteroid visibility | configuration | R10, R11 -> Q66, Q67 (gaps) |
+| Event phases and battle-pass archives | economy | R12 -> Q59 context |
+| Bots and the bomb mode | AI | R13 -> Q61 |
+| Restoring old accounts, crediting DLC | administration | R15 -> Q44 |
+| Replacement services, community launchers | downstream | R4, R16 -> 09-community-edition |
+
 ## Digest of S17 (The Outpost, fan site: Server Guide Modules)
 
 * A community-run site that collects short snippets (XML, Lua, MongoDB,
@@ -719,6 +774,29 @@ of software vulnerabilities ([legal-and-licensing](../09-community-edition/legal
 Not adopted: farewell messages, the achievement-hunting dispute beyond
 SF21, PvP nostalgia, server advertisements (no names or addresses copied),
 open-world design wish lists.
+
+### S19 re-crawl (2026-10-16) - delta only
+
+Second crawl of the same forum (threads active since 14 October): 14
+threads, 69 posts newer than the first crawl.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| SF25 | **Repeatable quests - a working recipe:** in `quests.lua` add `intervalStartHour`, `intervalLongHours`, `intervalLongEnableHours` and `max_completions` (and raise `locks_on_account_rank`); the quest's active state and rewards must also be set in `quests.xml` (`maxCompletions`, reward attributes) | **Answers SF23** ("wrong quest type"): both layers must agree. Fields as in [quests-semantics](../05-configuration/quests-semantics.md); host-reported |
+| SF26 | **Clans for solo players:** lower prices and build times of clan-ship products; one member of rank 9+ instead of ten; clan creation for 5 instead of 1 500 | **File-verified values:** `ClanRegistrationCost tokenCredits="1500"` in `cloud/data/special_values.xml`, `ClanHighRank` 9 in `aux_limits.xml` ([xml-schemas](../05-configuration/xml-schemas.md)); the host also plans bot clans for clan wars (idea) |
+| SF27 | Confusion about "Lua versus XML": which one wins, entries that must exist in both, and the claim that Lua edits are picked up at the next start without the update step | Layer order and generated files: [config-system](../05-configuration/config-system.md) (`default_platform_config.lua` runs last for cvars; `cloud/data/*.xml` come from the shared Lua via `prepare_shared.bat`); reload behaviour: [settings-reload-map](../05-configuration/settings-reload-map.md). The forum statements partly conflict with each other |
+| SF28 | Weapon and module stats live in `data/gamedata/def/ex` (one file per family: capacitor, armor, ...); the chip generator in `autogen_common.lua` | Consistent with [gamedata-catalogue](../05-configuration/gamedata-catalogue.md) |
+| SF29 | A shared solo configuration fixes the brawl modes "Last Hero" and "Fight Club" so that they start and fill with bots | Host-reported; not documented yet ([game-modes](../05-configuration/game-modes.md)) |
+| SF30 | Bots in Detonation stall after picking up the bomb, "since 2016"; the logic is probably in the binaries | Matches our static result (no bot-side bomb behaviour found, Q61); contradicts R13 |
+| SF31 | MongoDB and the Hub do not start on some Windows 10 PCs from the shipped batch files (relative paths); workarounds: own batch files, starting `mongod --dbpath ...` by hand, adding `cloud/mongodb` to `PATH` | Start failures: [troubleshooting](../04-installation/troubleshooting.md); host-reported workarounds ⚠ |
+| SF32 | Rank-1 bots for a rank-13 player in PvP, explained as cross-rank matching with hidden scaling to the highest ship in the player's slots | Explanation unverified; bot ranks: [community-faq](../07-administration/community-faq.md) |
+| SF33 | Players expected their official accounts and got an empty new one | Known (S19): the local server has no official account data |
+| SF34 | A shared configuration had calendar events (Halloween, "claws") switched on permanently by mistake; wish for a switch for event visuals | Shared configuration packs are code to review (SF24) |
+| SF35 | Gold without purchases: small amounts added to end-of-battle salvage and to crafting for credits | Tuning idea; loot rules in [tuning-recipes](../05-configuration/tuning-recipes.md) |
+
+Not adopted: a hardware stutter fix (monitor on another graphics card),
+server advertisements, farewell posts, an AI-generated answer quoted as a
+source.
 
 ## Digest of S16 (community Docker project)
 

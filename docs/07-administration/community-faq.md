@@ -519,6 +519,40 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
 * **Can I get my official account back?** No - the official data was not
   released. Never use your Gaijin password on community servers (S-07).
 
+### Batch 012 and Steam forum additions (2026-10-16)
+
+* **How do I make a quest repeatable?** Two layers must agree: in
+  `quests.lua` add the interval fields (`intervalStartHour`,
+  `intervalLongHours`, `intervalLongEnableHours`) and `max_completions`, and
+  set the active state and rewards in `quests.xml` (`maxCompletions`).
+  Changing only one layer gives "wrong quest type" (host-reported, S19 SF25;
+  [quests-semantics](../05-configuration/quests-semantics.md)).
+* **Where is the price of creating a clan (corporation)?**
+  `cloud/data/special_values.xml`, `<ClanRegistrationCost tokenCredits="1500" />`;
+  the rank used for clan requirements is `ClanHighRank` (9) in
+  `aux_limits.xml`. Both files are generated from the shared Lua, so change
+  the Lua source and regenerate ([config-system](../05-configuration/config-system.md)).
+* **How do I add a boss or alien hull to my account?** Hosts add a vessel
+  with an **unused `vid`** while the Hub is stopped ([mongodb](../06-database/mongodb.md)
+  §3a) and ship extra client files for the tech tree; several hulls still
+  misbehave (Q49). Everything here is host-reported.
+* **Where are ship ids and names?** Store rows in `cloud/data/store.xml`;
+  hull definitions in [ship-defs](../05-configuration/ship-defs.md).
+* **Where are respawn times and the start countdown?** Per game mode in
+  `data/gamedata/gameplaysettings.lua` (`GameplayDef[...]` blocks):
+  `countdown_duration` (10 s in most modes), `first_spawn_delay` (12 s),
+  `spawn_time_penalty_per_death` (3 s per death, reset after 90 s alive);
+  plus the cvars `sv_respawnTimeMultiplier` and `sv_respawnTimePenalty`
+  ([cvar-notes](../05-configuration/cvar-notes.md)). The base respawn time
+  and whether clients need the same file are still open (Q66).
+* **The server starts slowly under Wine.** Hosts report that each service
+  waits on a service-control call; see the tip in
+  [linux-proton](../04-installation/linux-proton.md) ⚠.
+* **Is it safe to run a public node?** A host reports an undisclosed client
+  route to console commands (S-31 ⚠). Until it is understood, isolate the
+  node, open only the client ports and run nothing as Administrator
+  ([security](security.md)).
+
 ## Modding
 
 **Q: I added a new ship or item. Do players need my files?** Yes. Adding or

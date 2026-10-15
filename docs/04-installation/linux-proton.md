@@ -43,6 +43,19 @@ its patches against the shipped build and a hardened blueprint are in
 [docker.md](docker.md). Use that document rather than the Proton recipe for
 24/7 Linux hosting.
 
+## Start-up time under Wine (batch 012, 2026-10-15)
+
+Host reports ⚠ (b012 R3): most of the node's start time under Wine is spent
+on timeouts. With a recent Wine every `cloud/*.exe` is said to stall for about
+10 s in `StartServiceCtrlDispatcher` (the services import the Windows
+service-control functions, see [pe-imports](../08-reverse-engineering/pe-imports.md)).
+Suggested fixes: run `Hub.exe` as a Windows service inside the Wine prefix
+(`sc.exe`), or patch that call; a recent kernel with `ntsync` and a recent
+Wine build also help. One host went from about 40 s to about 10 s; the
+community Docker image (S16) reports about 20 s with Wine 8 (Debian
+bookworm). Not measured here; patching executables carries the same caveats
+as the Docker image's patches ([docker.md](docker.md)).
+
 ## Ideas / open items
 
 * Steam on Linux (S19, 2026-10-14): without a Proton version selected, Steam
