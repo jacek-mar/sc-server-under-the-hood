@@ -5,7 +5,7 @@ first, then [`docs/00-index.md`](docs/00-index.md) and
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 > Maintainers keep a private, git-ignored working log
-> (`_user_notes/handoff.md`). If that file exists in your checkout, read it
+> (`_private/handoff.md`). If that file exists in your checkout, read it
 > after this one; it never goes into the public repository.
 
 ## 1. Project
