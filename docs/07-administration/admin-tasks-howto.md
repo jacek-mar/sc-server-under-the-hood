@@ -97,13 +97,30 @@ Which changes are audited: the game database's audit collection
 **not** recorded there (V-11) - keep your own log if you need one (the task
 documents in `adminTasks` remain and carry `requestedByUid`).
 
+### 3a. More verified tasks and queue behaviour *(observed, V-13)*
+
+| Task | Parameters | Effect |
+|---|---|---|
+| `give` (premium) | `uid`, `reason`, `value: "premiumTill"`, `amount` = **hours** | `premiumTill` (epoch ms) = max(`premiumTill`, now) + `amount` x 3 600 000; negative `amount` shortens it (static: `premium already expired`, `premiumTime underflow`) |
+| `give` (iridium) | `value: "tokenCredits"`, `amount` | adds |
+| `set` | `uid`, `reason`, `value` (e.g. `"credits"`), `amount` | **sets** the exact value |
+| `giveTitle` | `uid`, `title` (id from `cloud/data/titles.xml`) | adds the title to `acquiredTitles` |
+| `giveVesselCustomElement` | `uid`, `item` (custom element name from `vessel_custom_elements.xml`) | `freeVesselCustomElements.<name>` |
+| `mutePermanent` / `banPermanent` | as `mute` / `ban` | `chatMutedTill` / `bannedTill` = 2^63 - 1 (int64 maximum - tools must not convert it to a floating-point number); lifted by `cancelMute` / `cancelBan` |
+| `enterMMode` / `leaveMMode` | `minutesLeft` / none | maintenance mode without a console: countdown in the Hub log, at zero the Shard disconnects all clients; tasks keep working; `leaveMMode` ends it |
+| `createAccount` | `username`, `nickName`, `password`, `role`, `allowLogin` | new account (uid from `counters`, `accountsStats` created; starter kit at first login). **`password` is stored as given** - pass a value in the stored format or the account cannot log in |
+| `assignRolePrivileges` | `role`, `privileges` | merges the role into `web_adm.admRoles`; effective after a Shard restart (§4a) |
+
+Queue behaviour: **one task every ~5 s** (about 12 per minute); identical
+documents with different `_id`s are both executed; a task left "picked"
+without `finishedAt` (Shard stopped mid-task) is never re-picked; extra
+top-level fields are ignored.
+
 ## 4. Other tasks *(static - parameters from the binary, untested)*
 
 | Task | Parameters found in the handler | Privilege | Notes |
 |---|---|---|---|
-| `banPermanent` | as `ban` | banPermanent | |
-| `give` (premium) | `uid`, `reason`, `value: "premiumTill"`, `amount` = **hours** | propertyEdit | new expiry = max(`premiumTill`, now) + `amount` x 3 600 000 ms; negative `amount` shortens it (`premium already expired`, `premiumTime underflow`); `premiumTill` itself = Unix epoch **milliseconds** (static, 2026-10-13) |
-| `give` (other) | `item` (store item), `achievement`, `factionRep`, `tokenCredits`, `eventCredits`, `accountRank` (refused on a `live` server) | propertyEdit | ship values: see §3; message: "Specify the vid = <vid> (if changing vessel attr) value = <name>, index = <index> (if value is array), amount" |
+| `give` (other) | `item` (store item), `achievement`, `factionRep`, `eventCredits`, `accountRank` (refused on a `live` server) | propertyEdit | ship values: see §3; message: "Specify the vid = <vid> (if changing vessel attr) value = <name>, index = <index> (if value is array), amount" |
 | `resetAccount` | `uid` | (see table) | destructive |
 
 Full list with all 58 tasks and their privilege ids:
@@ -111,7 +128,12 @@ Full list with all 58 tasks and their privilege ids:
 Some tasks refuse to run while `cl_versionType` is `live` (the default), e.g.
 `set rank`, `giveTestAutogenModule` *(static)*.
 
-## 4a. Custom roles: `web_adm.admRoles` *(static, 2026-10-13; not yet tested)*
+## 4a. Custom roles: `web_adm.admRoles` *(static 2026-10-13; read timing and a grant/deny case observed, V-13)*
+
+> **Observed (V-13):** the Shard reads `admRoles` **only at start-up**. A role
+> written directly or with `assignRolePrivileges` while the node runs grants
+> nothing until the next restart; afterwards a role `{gmView: 1}` may run
+> `playerInfo` and is refused `give` (`Not enough privilege`).
 
 Read from `Shard.exe` (`AcquireAdminRoles`, `AssignRolePrivileges`, the
 privilege check next to `AccessPrivileges.cpp`):
@@ -155,8 +177,8 @@ privilege check next to `AccessPrivileges.cpp`):
 * Give an account the role with the task `assignRole` (privilege
   `roleAssignment`) or by setting `accounts.admRole` directly; the role name
   is also what `auth_infinitePremiumForRoles` (shipped `gm;support`) matches.
-* Not yet observed: when the Shard re-reads `admRoles` after a direct edit
-  (at start-up for sure; a periodic reload is not proven).
+* Re-read *(observed, V-13)*: at Shard start-up only; no reload while the
+  node runs, also not after `assignRolePrivileges`.
 * **What a role shows in the game client** *(static, client UI scripts,
   2026-10-13)*: the only account-privilege checks in the shipped client are
   in the chat moderation UI (`data/ui/scripts/work/uigamefuncs.lua`,

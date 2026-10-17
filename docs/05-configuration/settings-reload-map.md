@@ -40,6 +40,18 @@ whether each live-changed gameplay cvar is re-read by the code (only
 `ctm_debugTaskPickup` was observed changing behaviour; for the others only
 the stored value was confirmed).
 
+### 2a. Layer order including `cloud.xml` *(observed, V-13)*
+
+With the Shard cvar `ctm_debugTaskPickup` (visible in the log as `Pick up
+adming task...` every 5 s): `cloud.xml` `<ServiceCVars>` value 1 beat
+`shard_local.cfg` value 0, and a platform-Lua assignment of 0 beat
+`cloud.xml`. Effective order for a service: **cfg chain (`common.cfg` →
+`common_local.cfg` → `<service>.cfg` → `<service>_local.cfg`) → `cloud.xml`
+cvars ("Applying service options") → platform Lua**. A block placed before
+the dispatcher at the end of the platform Lua that wraps a `Configure*`
+function (call the original, then assign cvars) takes effect, which is a
+way to keep overrides in one place without editing the stock assignments.
+
 ## 3. Practical rules for operators
 
 1. Look up the cvar in the platform Lua first. If the Lua assigns it, change

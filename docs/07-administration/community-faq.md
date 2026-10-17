@@ -553,6 +553,35 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   node, open only the client ports and run nothing as Administrator
   ([security](security.md)).
 
+### Batch 013 and Steam forum additions (2026-10-17)
+
+* **I edited the config and nothing changed.** Closing the game does not
+  always stop the node: MongoDB (and a client-started Hub) can keep running,
+  so the edited files are never read again. Stop everything, MongoDB
+  included, then start the node and the game again; most settings are read
+  only at start-up ([settings-reload-map](../05-configuration/settings-reload-map.md)).
+  A "data error" right after a partial restart went away when game and node
+  were restarted together (host-reported).
+* **A campaign mission needs Detonation, but my config removed that mode.**
+  The story quest `CAMPAIGN_QUEST_23` requires planting a bomb, and six more
+  quests use bomb objectives (`shared/quests.lua`) *(file)*. Keep mode 11 in
+  at least one queue, or edit the quest in both layers (`quests.lua` and
+  `quests.xml`); bots handle the bomb badly (Q61).
+* **Can pirates own the middle open-world sectors again?** Hosts force it in
+  `ConfigureScriptsServer()` of `cloud/data/default_platform_config.lua` with
+  `ScriptsServer:ConfigureGlobalEvents{ forceEvents = { ... } }` - one entry
+  per sector with `eventDefName = 18` and `newEventState = 1000`; the shipped
+  function already contains commented examples of the same call
+  ([zone-events](../05-configuration/zone-events.md)) ⚠.
+* **Seed chips appear only in open space.** A Steam answer sets
+  `sv_autogenModulesEnabled = 1` and `sv_dbgAutogenDefs = 2` in
+  `ConfigureZoneInstance()`, `ConfigureDediServer()` and
+  `ConfigureDediServerFlags()` ⚠; how the shipped values (both 0) relate to
+  the open-space drops is open (Q68).
+* **Can I play an older game version?** No. Steam offers only the `public`
+  branch, build 25826043 of 9 October 2026 (Hub 1.99.0.167293); checked
+  2026-10-17.
+
 ## Modding
 
 **Q: I added a new ship or item. Do players need my files?** Yes. Adding or

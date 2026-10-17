@@ -634,6 +634,51 @@ balance opinions, 3D-model talk.
 | Restoring old accounts, crediting DLC | administration | R15 -> Q44 |
 | Replacement services, community launchers | downstream | R4, R16 -> 09-community-edition |
 
+## Digest of batch 013 (partial exports of S12 and S15, 2026-10-15 evening → 2026-10-17 evening)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names or quotes. Server, repository and file-host
+> addresses posted in the chat were not copied.
+
+**Scope.** EN: 160 new messages - forced faction ownership of open-world
+sectors, a public host's start-up and ship-ban troubles, seed chips outside
+open space, hull models and unpack tools. RU: 908 new messages, mostly a
+flame war and off-topic talk (another space game, hardware, guild history);
+the useful part is a registration-rules dispute, a "settings do nothing"
+support case, storage limits and model/texture tooling.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| T1 | **Pirate ownership of open-world sectors:** in `ConfigureScriptsServer()` of `cloud/data/default_platform_config.lua` call `ScriptsServer:ConfigureGlobalEvents{ forceEvents = { { eventDefName = 18, eventLocation = <zone id>, newEventState = 1000 }, ... } }` (one entry per sector, the middle sectors listed) after `cvars.sv_enableCommunticationWithSS = 1`; the host's full function replaces the shipped one | **Consistent with the file:** the shipped function sets `sv_enableCommunticationWithSS = 1` and calls `ConfigureGlobalEvents` with commented `forceEvents` examples (one with `eventDefName = 4, eventLocation = 247, newEventState = 998`). Event ids: [zone-events](../05-configuration/zone-events.md); mechanism: [open-world-and-services](../05-configuration/open-world-and-services.md). Value 18 = pirate ownership and the state 1000 are host-reported ⚠ |
+| T2 | "Server under heavy load" right after a fresh install: the client was started before the node had finished starting; it connects once start-up completes | Known start-order symptom ([troubleshooting](../04-installation/troubleshooting.md)) |
+| T3 | A public host shortened its boot time; the change used up file descriptors and left the server locked; reverted. Separately, `DedicatedServer.exe` stopped launching after a binary patch, so the host plans an unpatched server with other service management | Host-specific (Linux/Wine node); supports keeping binaries stock and changing behaviour through configuration ([linux-proton](../04-installation/linux-proton.md)) |
+| T4 | **Banning ships from PvP only:** the host blocked rank-16/17 and unique ships, which removed them from every queue (players could not queue at all with them); wish: keep them for PvE, open space and vs-AI | Gap → **Q69** |
+| T5 | **Seed chips** work only in open space; to enable them elsewhere set `sv_autogenModulesEnabled = 1` and `sv_dbgAutogenDefs = 2` in `ConfigureZoneInstance()`, `ConfigureDediServer()` and `ConfigureDediServerFlags()` (Steam answer, SF41); a host notes vs-AI would then need seed-chip bots | **Contradiction:** the engine default of `sv_autogenModulesEnabled` is 0 and the shipped config sets 0 (and `sv_dbgAutogenDefs` 0) in `ConfigureZoneInstance()` *(file)*, yet players see chips in open space → **Q68** |
+| T6 | Check the Hub logs in the runtime profile (`...\Targem\StarConflict\cloud\Hub\logs\`) to find errors after a config edit | Consistent with [administration](../07-administration/administration.md) (runtime profile, logs) |
+| T7 | Hosting behind an unclear address: a guild bound the node to a virtual loopback adapter with a static address to have a stable `cloud.xml` address (Windows Server guide published by the host) | Same family as Q62 (NAT, announced address); host-reported workaround |
+| T8 | **"My edits change nothing"** (RU): the player edited the platform Lua but MongoDB kept running after the game closed, so the node never restarted; a full stop (MongoDB included) and start fixed it; then a "data error" until game and node were restarted together | Confirms the restart rule in [settings-reload-map](../05-configuration/settings-reload-map.md); FAQ candidate |
+| T9 | Storage full after granting many items: purchases blocked; one player spent a day deleting about a thousand modules; no bulk select beyond Ctrl+click | Demand: storage limit and bulk cleanup through the database (Hub stopped, [mongodb](../06-database/mongodb.md) §3a) |
+| T10 | A community registration page requires lower-case logins; the dispute is about whether the password rule is digits only (it is "characters", per the page) | Context for **Q64** |
+| T11 | Ship models: attachment points (guns, engines, modules) are bones in the model skeleton (`.mdl-skl`); a definition only names the bone; skins use three colour masks; textures tested only as DXT5; a public tool set for unpacking and model conversion exists and a pack/edit SDK is being written | Client-asset modding; out of scope beyond [pak-contents](../02-inventory/pak-contents.md) |
+| T12 | Account-starter kit: a new player at clearance level 14 asks how to get the starter pack | Known: given at registration only (b012 R7) |
+| T13 | Hosts discuss one shared community server versus many small ones, donations, and a long-term "new content" project; a host claims to manage 22 servers | Context for [09-community-edition](../09-community-edition/) and the [legal notes](../09-community-edition/legal-and-licensing.md) (no monetisation) |
+
+Not adopted: the flame war and personal disputes, another game's mechanics,
+hardware, guild history, server advertisements (no names or addresses
+copied), balance opinions, film-ship wish lists.
+
+### Demand and problem signals (batch 013)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Faction ownership of open-world sectors | configuration | T1 -> zone-events (recipe) |
+| Ship bans per mode (PvP only) | configuration | T4 -> Q69 (gap) |
+| Seed chips outside open space | configuration | T5, SF41 -> Q68 |
+| Edits without effect (node not restarted) | support | T8 -> settings-reload-map, FAQ |
+| Storage full after grants | administration | T9 -> database edit with the Hub stopped |
+| Detonation mode removed, campaign mission needs it | configuration | SF44 -> Q61 |
+| Model and texture tools | modding | T11 -> out of scope |
+
 ## Digest of S17 (The Outpost, fan site: Server Guide Modules)
 
 * A community-run site that collects short snippets (XML, Lua, MongoDB,
@@ -797,6 +842,27 @@ threads, 69 posts newer than the first crawl.
 Not adopted: a hardware stutter fix (monitor on another graphics card),
 server advertisements, farewell posts, an AI-generated answer quoted as a
 source.
+
+### S19 re-crawl (2026-10-17) - delta only
+
+Third crawl (threads active since 15 October): 22 threads, about 60 posts
+newer than the second crawl.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| SF36 | Clan creation cost is `ClanRegistrationCost` in `cloud/data/special_values.xml` | **File-verified** (`tokenCredits="1500"`); same as SF26 |
+| SF37 | A database guide uses `use cosmosim_Admin`; a reader finds the database name follows the local user name, and `mongo.exe` fails with "connection refused" when `mongod` is not running | Database naming and start order: [mongodb](../06-database/mongodb.md), [config-system](../05-configuration/config-system.md); the guide's `premiumTill` for 2100 shows no premium (Q63) |
+| SF38 | **Linux:** with the Steam runtime the install shows 0 B and an empty folder; selecting a Proton version downloads about 10 GB (the old Linux client depot has no server files) | Repeat of the 2026-10-14 tip already in [linux-proton](../04-installation/linux-proton.md) *(community)* |
+| SF39 | A shared solo pack now also fills brawls with bots and rotates the brawl mode daily, gives premium to new accounts, raises the daily credit limit; another pack mixes PvP presets into bot fits and plays 12 v 12 | Shared configuration packs are code to review (SF24) |
+| SF40 | Bots on the player's side are much weaker than the enemy bots; a reader suspects a hidden skill value that the pack lets act from battle 0 instead of 2 000 | Unverified; bot settings: [community-faq](../07-administration/community-faq.md) |
+| SF41 | Seed chips outside open space: set `sv_autogenModulesEnabled = 1`, `sv_dbgAutogenDefs = 2` in three config functions | See batch 013 T5 → Q68 |
+| SF42 | Low-rank seed chips rarely drop for low-rank ships | Lead for Q68 (drop rules) |
+| SF43 | A public server's bots fly a premium rank-13 ship in rank-2/3 battles | Bot ship pools per rank: [community-faq](../07-administration/community-faq.md) |
+| SF44 | **A campaign mission requires Detonation**, but the pack removed that mode (bots cannot use the bomb), so the campaign stalls and fails after five days; the player asks how to back up the account before switching configs | **File-checked:** the story quest `CAMPAIGN_QUEST_23` requires planting a bomb (six more quests use bomb objectives) → **Q61 amended**; backup: database copy with the Hub stopped ([administration](../07-administration/administration.md) §4) |
+| SF45 | Players ask for older game versions | **Checked 2026-10-17:** Steam lists only the `public` branch (build 25826043 of 2026-10-09, Hub 1.99.0.167293); no older branch is offered |
+
+Not adopted: cheating complaints without detail, farewell posts, account-loss
+complaints (known, SF33), server advertisements.
 
 ## Digest of S16 (community Docker project)
 

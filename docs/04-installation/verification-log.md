@@ -365,3 +365,28 @@ Gotchas: setting the host clock **back** while the node runs stalls the
 login queue (the LoadBalancer accepts clients, never hands them on; the
 client reports heavy load) until the node is restarted; battle-log file
 times then run backwards, so pick battle logs by number, not by time.
+
+## V-13 - server-only tests: admin-task queue, roles, layer order, database port (2026-10-16)
+
+Node copy with its own database folder (a copy of a seeded test database: four
+test accounts), no game client. Every config edit was backed up and restored
+byte-identical; the game folder matched its manifest afterwards. *(observed)*
+unless marked otherwise.
+
+| Topic | Result |
+|---|---|
+| Queue throughput | The Shard picks up **one task per poll, every ~5 s**: five tasks inserted together finished at 1.6, 6.6, 11.6, 16.6 and 21.6 s (about 12 tasks per minute). Plan bulk actions accordingly |
+| Duplicate content | Two documents with the same content and different `_id`s are **both executed** (a `give` of 1 credit applied twice). Re-inserting the same `_id` fails on the unique `_id` index, so a client-generated `_id` makes submission idempotent |
+| Interrupted task | A document left "picked" (`pickedBy` = the Shard's service id, `pickedAt` set, no `finishedAt`) is **not re-picked or recovered** after a node restart; its effect is not applied. Other tasks are not blocked by it. `pickedBy` is the Shard's service id (`0x1010000000000002`) |
+| Unknown fields | Extra top-level fields in a task document are ignored (`playerInfo` succeeded) |
+| `ctm_taskDebugDelay` | set to 20000 in `shard_local.cfg`, no visible delay (task finished within 1.5 s); meaning unclear |
+| Tasks newly verified | `give` `premiumTill` (amount = hours; +24 h = +86 400 000 ms), `give` `tokenCredits`, **`set`** (`value: "credits"`: sets the exact value), `giveTitle` (`title` = id from `titles.xml`), `giveVesselCustomElement` (`item` = custom element name; stored in `freeVesselCustomElements`), `mutePermanent` / `banPermanent` (store the int64 maximum **2^63 - 1** in `chatMutedTill` / `bannedTill`; `cancelMute` / `cancelBan` reset to 0), `enterMMode` / `leaveMMode`, `createAccount`, `assignRolePrivileges` |
+| Maintenance mode via admin task | `enterMMode` with `minutesLeft: 5` → Hub log counts down once per minute (`Entering maintenance mode in N minute(s)`), at zero `Hub state: HS_ONLINE -> HS_MAINTENANCE`, and the Shard logs **`Disconnecting all clients due to maintenance mode`**. Admin tasks keep working in maintenance; `leaveMMode` returns to `HS_ONLINE`. What the client shows is not yet observed |
+| `createAccount` | creates the account with a uid from `counters` and an `accountsStats` document (26 fields; the starter kit is added at first login). **`password` is stored verbatim**, not hashed: a value the client can log in with must already be in the stored format ([security S-07](../07-administration/security.md)). `allowLogin: 1` is stored; `0` was not stored |
+| Custom roles | Roles in `web_adm.admRoles` (layout as in [admin-tasks-howto §4a](../07-administration/admin-tasks-howto.md)) are read **only at Shard start-up**: neither a role written directly nor one created with `assignRolePrivileges` granted anything until the node was restarted; afterwards a role with `gmView` could run `playerInfo` and was refused `give` (`Not enough privilege`). `assignRolePrivileges` merges the role into the existing document |
+| Layer order of cvars (Shard, `ctm_debugTaskPickup`, visible as `Pick up adming task...` every 5 s) | `cloud.xml` `<ServiceCVars>` (value 1) **beats** `shard_local.cfg` (0); the platform Lua (0) **beats** `cloud.xml` (1). Effective order: cfg chain → `cloud.xml` service cvars ("Applying service options") → platform Lua |
+| Wrapping `Configure*` functions | A block inserted before the dispatcher at the end of the platform Lua that replaces the global `ConfigureShard` with a wrapper (call the original, then assign cvars) takes effect: the dispatcher calls the globals by name |
+| Database on a non-default port | `set db_mongoHosts "127.0.0.1:27118"` in `common_local.cfg` + `mongod --port 27118`: the Shard logs `mongo://127.0.0.1:27118`, all service connections go there, tasks work (answers the port part of Q9; another host is untested) |
+| Connections of a running node | `currentOp` with `$all: true` lists **15 client connections** from the services while the node runs and none when only MongoDB runs (a tool's own sockets, including a driver's monitoring connection, must be excluded) |
+| Ship document | `vessels[]`: `vid` (int64), `defName`, `equipped` (35 int64 slots: 0 or the `iid` of an `items[]` entry), `munition` (2 × `{def, amount, res}`), `skillRating`, `exp`, `level`, `hullCondition` (double), `conserved`, `customElements` (14 × `{defName, till}`); `unlockedMask` (int64) only after unlocking research nodes |
+| Client libraries | PyMongo 3.13 (last line with MongoDB 2.6 support) works against 2.6.12 from Python 3.12 and 3.13 (int64, `findAndModify`, collection and index listing, `currentOp`); the bundled `mongodump` works with `--host/--port` |

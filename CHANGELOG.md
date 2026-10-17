@@ -7,6 +7,19 @@ verification on Windows, Linux and LAN setups continues.
 ## [Unreleased] - 0.3.0
 
 ### Added
+- **Community digest batch 013** and a third Steam forum re-crawl
+  ([source register](docs/sources/source-register.md), T1-T13, SF36-SF45):
+  forced faction ownership of open-world sectors, edits without effect when
+  the node is not restarted, storage limits, the Steam branch check (only
+  build 25826043 exists); new open questions Q68 (seed-chip scope) and Q69
+  (PvP-only ship bans), Q61 amended (campaign mission needs Detonation).
+- **Server-only tests V-13** ([verification-log](docs/04-installation/verification-log.md)):
+  admin-task queue throughput (one task per ~5 s), duplicate and interrupted
+  tasks, nine more verified tasks incl. maintenance mode, permanent
+  mute/ban and account creation ([admin-tasks-howto §3a](docs/07-administration/admin-tasks-howto.md)),
+  custom roles read only at start-up, full cvar layer order including
+  `cloud.xml` ([settings-reload-map §2a](docs/05-configuration/settings-reload-map.md)),
+  database on a non-default port, ship document structure.
 - **Verification on real hardware** ([verification-log](docs/04-installation/verification-log.md)):
   a node hosted on one Windows PC with clients on two PCs in a LAN - remote
   login, matchmaker battles, squads, concurrent battles, the minimal set of
