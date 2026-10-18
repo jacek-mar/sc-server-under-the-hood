@@ -134,6 +134,16 @@ The project publishes (TCP **and** UDP): `3800–3830`, the Hub port `3850`,
 | **9000–9010** | **9001 = Hub HTTP status endpoint with a static key (S-04)** | the project calls this range "spare"; **do not publish it** |
 | 2222 | Hub SSH console | keep on loopback (as the project does) |
 
+**Applied-diff check (2026-10-18)** *(observed: the entrypoint's config
+writes reproduced on a copy of the stock files with placeholder values and
+compared; reviewed; no script executed)*. The generated `common_local.cfg`
+gives `db_mongoHosts` and `db_redisHost` to **all 13 services** that include
+it. `hub_local.cfg` sets `ssh_port` 2222, `ssh_passwd` and the host-key paths.
+This **enables the Hub SSH console**, a full Lua prompt
+([security S-03](../07-administration/security.md)). That is safe only while
+the port stays on loopback, as the project publishes it. Nothing in either
+file is overridden by a later layer.
+
 ## 4. Assessment
 
 ### 4.1 Strengths

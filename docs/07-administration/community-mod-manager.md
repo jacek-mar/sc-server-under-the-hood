@@ -114,6 +114,25 @@ mod expects.
 | GS from missions (`quest_rewards`) | on | Adds `reward_gold_credits` to quests in `quests.lua` (card display) **and** `rewardGoldCredits` to `<Quest>` tags in `quests.xml` (server payout), 3 GS per 1 000 credits; multiplies xenochip rewards ×20 and also converts them to GS | **Match:** 820 `Quests[QuestId.X]` blocks (26 already pay gold), 49 xenochip lines; `quests.xml` has 912 `<Quest>` tags (6 with `rewardGoldCredits`, 12 with `rewardEventCredits`). The 92 XML-only quests ([quests-semantics](../05-configuration/quests-semantics.md)) get gold only from the xenochip/fallback rules, because the mod looks up their credits by name in the Lua. It edits both files on purpose, which is the edit-order question **Q36** |
 | Buy everything! (`store_unlock`) | **off**, experimental | `store_allowAllItemsForBying` → 1 | **Match:** 1 line (shipped 0). Author warns: obsolete/dev items can break a save; see [tuning-recipes](../05-configuration/tuning-recipes.md) |
 
+**Applied-diff check (2026-10-18)** *(observed: each mod applied on its own
+to a copy of the stock files and compared field by field; reviewed; no mod
+code executed)*. Every target in the table exists, and no transformation
+failed to match. Results per mod:
+* `arena_bots`: both cvars take effect. No later layer overrides them.
+* `store_unlock`: one effective change, `store_allowAllItemsForBying`
+  0 -> 1 (platform Lua line 83).
+* `iridium_multiplier`: 15 changes.
+* `ore_drops`: 14 changes.
+* `canister_loot` and `arena_search_fix`: 6 each.
+* `enemy_rarity`: 2.
+* `quest_rewards`: gold is added to **203** quests in `quests.lua`
+  (card display) but only **161** `<Quest>` tags in `quests.xml` (server
+  payout). Xenochip rewards are multiplied in 49 Lua and 12 XML entries.
+  The display and the payout layer therefore change different numbers of
+  quests. Which quests differ was not paired one by one ⚠.
+* Whether the loot and quest changes take effect could not be decided
+  statically; their files are outside the config layer chain.
+
 ### 4.1 Why the quest mod also says "Xenochips vanish"
 
 The mod description reports that xenochips "disappear from the account in the

@@ -13,6 +13,12 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Applied-diff check of community packs** (playground task 004 Follow-up 1,
+  reviewed): the eight SCPatcher mods and the Docker project's generated
+  config compared with stock; `quest_rewards` changes 203 Lua but only 161 XML
+  quests; the Docker config enables the Hub SSH console
+  ([community-mod-manager §4](docs/07-administration/community-mod-manager.md),
+  [docker §3](docs/04-installation/docker.md)).
 - **Second opinion on Q56 and Q62** (playground task 015, reviewed): an
   independent static re-check of 85 claims; 5 confirmed, none contradicted,
   80 need a runtime test (open questions amended).
