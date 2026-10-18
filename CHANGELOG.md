@@ -13,6 +13,9 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Second opinion on Q56 and Q62** (playground task 015, reviewed): an
+  independent static re-check of 85 claims; 5 confirmed, none contradicted,
+  80 need a runtime test (open questions amended).
 - **Developer warnings** ([05-configuration/developer-warnings.md](docs/05-configuration/developer-warnings.md)),
   a new document from playground task 012 (reviewed): 30 operator-relevant
   Russian comments from the shipped Lua files, translated and checked, for
