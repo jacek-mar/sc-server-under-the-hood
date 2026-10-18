@@ -7,6 +7,10 @@ verification on Windows, Linux and LAN setups continues.
 ## [Unreleased] - 0.3.0
 
 ### Added
+- **Quest-vs-queue lint** (playground task 002, reviewed): the seven quests
+  blocked when Detonation (11) is removed from every queue, and four quests
+  whose mode (8 or 10) no shipped queue offers
+  ([community FAQ](docs/07-administration/community-faq.md), Q61 amended).
 - **Static parse of the Lua data** (playground task 001, reviewed):
   559,236 statically readable assignments in 299 files, with the 4,209
   constructs that need run time listed by kind

@@ -567,6 +567,23 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   quests use bomb objectives (`shared/quests.lua`) *(file)*. Keep mode 11 in
   at least one queue, or edit the quest in both layers (`quests.lua` and
   `quests.xml`); bots handle the bomb badly (Q61).
+  A static check of every quest against every shipped queue list confirms
+  this. If 11 is removed from all queues, exactly these seven become
+  impossible through queues *(observed: static lint, reviewed)*:
+  `CAMPAIGN_QUEST_23` (line 1793, plant), `A25FOR30_13` (4085, assist
+  bomber), `A25FOR30_14` (4113, kill bomber), `BP_DAILY_02` (5495, plant),
+  `BP_DAILY_28` (5973, pick up), `HALLOWEEN_WITCH_2025_3` (8732, plant) and
+  `NewbieKnickers_8` (11130, pick up). With mode 11 still in the stock
+  queues, none of them is blocked.
+* **Some quests cannot be finished through any queue, even on a stock
+  config.** In the shipped queue lists *(observed: static lint, reviewed)*:
+  `CAMPAIGN_QUEST_9` (`shared/quests.lua:1508`) needs king of the hill (10);
+  `RoP2025Ammo_3` (:3219), `OWFEST_24_1` (:10402) and `OW2DESTROYER`
+  (:10675) need free space (8). The three free-space quests are event or
+  open-world quests and are probably completed in the open world, not in a
+  queue. Whether the campaign quest has another route is ⚠ unverified.
+  Seven `CAPTURE_BEACON`/`DEFEND_BEACON` objectives were not mapped to a
+  mode and were not checked.
 * **Can pirates own the middle open-world sectors again?** Hosts force it in
   `ConfigureScriptsServer()` of `cloud/data/default_platform_config.lua` with
   `ScriptsServer:ConfigureGlobalEvents{ forceEvents = { ... } }` - one entry
