@@ -13,6 +13,10 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Queue reference cross-check** (playground task 006, reviewed): 55 queue
+  instances and 395 map/mode combinations; every named queue and brawl pair
+  confirmed; `leagueQueue` row completed
+  ([queue reference](docs/05-configuration/queue-reference.md)).
 - **Quest layer comparison** (playground task 003, reviewed): `quests.lua` and
   `quests.xml` disagree on event days in 18 quests and carry many one-sided
   fields ([tuning-recipes](docs/05-configuration/tuning-recipes.md)); new

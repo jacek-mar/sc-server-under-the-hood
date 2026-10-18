@@ -3,6 +3,15 @@
 > Status: **Stage 2, complete for the shipped file** (`default_platform_config.lua`,
 > `ConfigureMatchmaker()`, lines ≈330–995). Companion to the
 > [matchmaking guide](matchmaking-guide.md) (concepts and formulas).
+>
+> **Cross-check (2026-10-18)** *(observed: independent static expansion of
+> every registered queue, reviewed)*. The shipped file registers **55 queue
+> instances** (30 low-online, 25 normal), which expand to **395 map/mode
+> combinations**. All 19 named queues in this page and the 12 brawl map/mode
+> pairs in §4 were found as written. Removing mode 11 from the templates
+> removes 110 combinations: 30 low arcade, 30 low coop and 50 normal coop.
+> Normal arcade offers no 11. The remaining columns (timing, player counts,
+> bots) were not part of that check.
 
 ## 1. Two queue sets
 
@@ -114,7 +123,7 @@ existing.
 | Queue | qid | maxPlayers | Notable `special` / `query` |
 |-------|----:|-----------:|------------------------------|
 | `sectorQueue` | 501 | 20 | `universe = 1, minSizeWing = 5, minSizeTeam = 4, withBots = true, botPresetType = bpt_none, botPresetByTier = {BotsBZS_T3×3, T4, T5}, queueFlags = {universe = 1, rank = 15}`; maps `dreadnoughtbattle_map_01…` gameplay 14 (clanship); query `mmParams.universe` + `universe_bfs`; `regionLocalizedTimeInQueue 1` |
-| `leagueQueue` | 502 | 12 | `minSizeWing = 3, minSizeTeam = 1, withBots = false`; maps `s8256_thar_barrierdebris, s1338_devilsjaw, s1338_pandora_dreadnwreck, s1340_thar_aliendebris13, s1340_thar_gasgiant, s1420_ceres3_asteroidcity, s1338_pandora_anomaly, s8256_thar_concourse, s8256_thar_lavastone, desttown` gameplay 3; query `universe` + `universe_arena` |
+| `leagueQueue` | 502 | 12 | `universe = 1, minSizeWing = 3, minSizeTeam = 1, withBots = false`, the same `botPresetByTier` and `queueFlags = {universe = 1, rank = 15}` as `sectorQueue`; maps `s8256_thar_barrierdebris, s1338_devilsjaw, s1338_pandora_dreadnwreck, s1340_thar_aliendebris13, s1340_thar_gasgiant, s1420_ceres3_asteroidcity, s1338_pandora_anomaly, s8256_thar_concourse, s8256_thar_lavastone, desttown` gameplay 3; query `universe` + `universe_arena` |
 | `raidQueue` | – | 12 (min 1, opt 12) | `special = { pve_raid = 1, gameMode = 7 }`, query `mmParams.pve_raid`; composition via `mm_raidSquadFilter` (the per-queue `squadFilter = 4` is commented out) |
 
 Bot preset types (`bpt_*`): `0 none`, `1 mirror`, `2 adaptive`,
