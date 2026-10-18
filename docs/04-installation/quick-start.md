@@ -26,7 +26,8 @@
 5. First start (or after config changes) takes a while — wait until all server
    applications are up before logging in.
 
-Closing the client (when started via Steam) shuts the server down gracefully.
+Closing the client does **not** stop a server it started, on this build
+*(observed)*; stop it as in [§4](#4-stopping-the-server-cleanly).
 
 ## 3. Three ways to start the server
 

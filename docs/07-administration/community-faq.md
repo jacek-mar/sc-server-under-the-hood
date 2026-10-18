@@ -55,8 +55,10 @@ image ([docker.md](../04-installation/docker.md)).
 **Q: How do I connect a client to my (or a friend's) node?** *(community, S15 +
 official page)* On the client login screen pick the **server** entry instead of
 *localhost*, enter the node's IP and any login/password (the account is created
-on first login). Give the plain IP: the Hub port is the default (3850); users
-who typed another port from the logs failed. ⚠ not verified by us (Q2).
+on first login). Give the plain IP and keep the port box at its default,
+3801 *(observed V-9)*. Users who typed another port from the logs failed;
+3850 is the Hub's internal port, not the login port (see the ports question
+below).
 
 **Q: "Network error" / "OnDisconnect reason 0" when connecting to another PC.**
 *(community, S15)* Most reports are from first attempts across a LAN or the
