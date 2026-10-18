@@ -13,6 +13,11 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Developer warnings** ([05-configuration/developer-warnings.md](docs/05-configuration/developer-warnings.md)),
+  a new document from playground task 012 (reviewed): 30 operator-relevant
+  Russian comments from the shipped Lua files, translated and checked, for
+  example "do not renumber titles" and "changing an event start time discards
+  progress".
 - **Queue reference cross-check** (playground task 006, reviewed): 55 queue
   instances and 395 map/mode combinations; every named queue and brawl pair
   confirmed; `leagueQueue` row completed

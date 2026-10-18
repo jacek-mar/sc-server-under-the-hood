@@ -40,6 +40,7 @@ Status legend: ✅ substantive draft · 🟡 partial · ⬜ planned (no file yet
 | [gamedata-readers.md](05-configuration/gamedata-readers.md) — **generated**, which program reads each `data/gamedata` file (client / battle server / both / via XML) | ✅ |
 | [cvar-notes.md](05-configuration/cvar-notes.md) — curated English notes | 🟡 |
 | [cvar-reference.md](05-configuration/cvar-reference.md) — **generated**, 271 cvars, English + original RU comments | ✅ |
+| [developer-warnings.md](05-configuration/developer-warnings.md) — 30 developer warnings from Russian comments in the shipped files, translated (do not change, DB, restart, read-by, limits) | 🟡 |
 | [gamedata-catalogue.md](05-configuration/gamedata-catalogue.md) — **generated**, Lua game-data files, def-name families, ship matrix | ✅ |
 | [level-catalogue.md](05-configuration/level-catalogue.md) — **generated**, 194 active levels with mode entities | ✅ |
 | [xml-schemas.md](05-configuration/xml-schemas.md) — **generated**, structure of `cloud/data/*.xml` | ✅ |
