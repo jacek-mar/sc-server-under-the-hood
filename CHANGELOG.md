@@ -13,6 +13,10 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Quest layer comparison** (playground task 003, reviewed): `quests.lua` and
+  `quests.xml` disagree on event days in 18 quests and carry many one-sided
+  fields ([tuning-recipes](docs/05-configuration/tuning-recipes.md)); new
+  open question Q70.
 - **Russian translations** (playground task 011, reviewed) of the quick
   start, troubleshooting and the operator FAQ, plus the translators' term list,
   in [docs/ru/](docs/00-index.md). They are brought up to date with today's

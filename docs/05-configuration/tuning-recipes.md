@@ -128,6 +128,27 @@ Leads only; see the "batch 004" digest in the
   shows only one reward but several can be granted. Example reported:
   credit-reward quests also pay gold (1 gold per 1 000 credits). ⚠ Untested
   (Q36).
+* **The two quest layers do not fully agree in the shipped build**
+  *(observed: static field-by-field comparison of every quest in both files,
+  reviewed 2026-10-18; values checked by hand)*:
+  * Counts: 820 quests in `quests.lua` and 912 in `quests.xml`. All 820 Lua
+    names exist in the XML; 92 are XML-only
+    ([quests-semantics](quests-semantics.md)).
+  * **Event days are off by one in 18 quests.** `SpaceDay_main`,
+    `SpaceDay_1`-`_3` and `_5`-`_14`, `A25FOR30_1`-`_3` and
+    `A25FOR30_FINAL` have `event_day_min`/`event_day_max` exactly 1 higher in
+    Lua than `eventDayMin`/`eventDayMax` in the XML. Example: `SpaceDay_main`
+    is 9/21 in Lua and 8/20 in the XML. The other 174 quests with these
+    fields match. So the shipped XML is not a fresh conversion of the Lua
+    file. Which layer the server checks is open (Q70). Set the value in both
+    layers.
+  * Many fields are written in one layer only. For example
+    `CAMPAIGN_QUEST_23` has `maxCompletions="1"` in the XML and no
+    `max_completions` in Lua. This fits SF25, where repeat limits had to be
+    set in the XML. One-sided fields are not defects in themselves.
+  * `OW_FEDERATION_12` and `OW_JERICHO_ms3l` repeat the key `disabled`
+    inside one table (both times `true`, so the effect is the same). A
+    strict Lua checker reports them as duplicate keys.
 * **Seeing DB edits.** A client must log in again to see edited account data;
   no refresh trigger is known (Q32). Do edits with the client logged out.
 * **Ship speed.** Raising a ship's speed value works (800 sent a ship almost
