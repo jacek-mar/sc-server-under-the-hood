@@ -6,7 +6,7 @@ Status legend: ✅ substantive draft · 🟡 partial · ⬜ planned (no file yet
 | Doc | Status |
 |-----|:------:|
 | [overview.md](01-overview/overview.md) — what was released, goals, key facts, legal summary | ✅ |
-| glossary.md — terms (MMV, shard, node, wing…) | ⬜ |
+| [glossary.md](01-overview/glossary.md) — terms (MMV, shard, node, wing…) with the EN/RU words players use (74 entries) | 🟡 |
 
 ## 02 Inventory
 | Doc | Status |
