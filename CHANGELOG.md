@@ -7,6 +7,10 @@ verification on Windows, Linux and LAN setups continues.
 ## [Unreleased] - 0.3.0
 
 ### Added
+- **Glossary** ([01-overview/glossary.md](docs/01-overview/glossary.md)), a new
+  document from playground task 008 (reviewed): 74 game and server terms with
+  the English and Russian words players use, each checked against its doc or
+  game-file source, plus the core matchmaking terms.
 - **Quest-vs-queue lint** (playground task 002, reviewed): the seven quests
   blocked when Detonation (11) is removed from every queue, and four quests
   whose mode (8 or 10) no shipped queue offers
