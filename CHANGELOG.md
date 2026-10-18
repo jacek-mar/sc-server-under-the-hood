@@ -6,7 +6,17 @@ verification on Windows, Linux and LAN setups continues.
 
 ## [Unreleased] - 0.3.0
 
+### Fixed
+- Quick start no longer says that closing the client stops the server (the
+  verified §4 says it does not), and the FAQ's connect answer gives login port
+  3801 instead of Hub port 3850 (V-9). Both contradictions were found while
+  translating (playground 011).
+
 ### Added
+- **Russian translations** (playground task 011, reviewed) of the quick
+  start, troubleshooting and the operator FAQ, plus the translators' term list,
+  in [docs/ru/](docs/00-index.md). They are brought up to date with today's
+  English text, including the 002 additions.
 - **Glossary** ([01-overview/glossary.md](docs/01-overview/glossary.md)), a new
   document from playground task 008 (reviewed): 74 game and server terms with
   the English and Russian words players use, each checked against its doc or

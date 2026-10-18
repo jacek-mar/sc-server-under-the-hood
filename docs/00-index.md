@@ -116,6 +116,17 @@ Status legend: ✅ substantive draft · 🟡 partial · ⬜ planned (no file yet
 | [linux-native-and-portable-server.md](09-community-edition/linux-native-and-portable-server.md) — Linux-native/portable options L0-L4, Minecraft-ecosystem analogy, porting hazards, lab backlog LX-1..8 | ✅ |
 | [implementation-options.md](09-community-edition/implementation-options.md) — architectures A-E, language comparison, formats, practices, work packages WP-1..8 | ✅ |
 
+## Translations (Russian)
+| Doc | Status |
+|-----|:------:|
+| [ru/04-installation/quick-start.md](ru/04-installation/quick-start.md) — Установка и быстрый запуск | 🟡 translation |
+| [ru/04-installation/troubleshooting.md](ru/04-installation/troubleshooting.md) — Устранение неполадок | 🟡 translation |
+| [ru/07-administration/community-faq.md](ru/07-administration/community-faq.md) — FAQ операторов | 🟡 translation |
+| [ru/GLOSSARY.md](ru/GLOSSARY.md) — terms chosen for the translations | 🟡 |
+
+Each translation names its English source and commit in line 1; the English
+text wins where they differ.
+
 ## Sources
 | Doc | Status |
 |-----|:------:|
