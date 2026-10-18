@@ -29,6 +29,28 @@
 | Arcade template `levelsDesc` | 5 maps × `{4,9,11}` (control, sentinel, bomb the base) | **only `s1338_devilsjaw = {9}`** (others commented out) |
 | Arcade query ranks | `mmRank 1..17` in instantiations | `mmRank 1..15` |
 
+### How the function builds the sets
+
+*(file: S3, `ConfigureMatchmaker()` lines 330-995; counts from a full
+static parse, checked by hand)*
+
+* The two sets are filled by **51 `table.insert` calls**. **32** of them
+  insert an `InstantiateQueueTemplate(...)` band; the rest insert fixed
+  queues.
+* Templates are function-local tables: `arcadeQueueTemplate` (line 391) and
+  `coopQueueTemplate`. The name `coopQueueTemplate` is declared **twice**
+  (lines 429 and 763). The first instance feeds the low set (first coop band
+  at line 448). The second is a fresh `local` for the normal set, so editing
+  one does not change the other.
+* Registration happens exactly twice, at the end:
+  `MatchMaker_ReconfigureQueues(queuesConfig)` (line 878) and
+  `MatchMaker_ReconfigureQueues(queuesConfigLo, true)` (line 881). Nothing
+  is inserted after line 881. Add new queues before the registration calls.
+  *(inferred: an insert after them is probably ignored, unless the engine
+  re-reads the table later; ⚠ unverified)*
+* Line numbers refer to the reference build (Hub 1.99.0.167293). Community
+  packs shift them, so search by name.
+
 ## 2. Training, PvE (both sets)
 
 | Queue | min/opt/max | regionLocalized / maxTime | levels | query | special |

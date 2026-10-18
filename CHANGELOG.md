@@ -7,6 +7,12 @@ verification on Windows, Linux and LAN setups continues.
 ## [Unreleased] - 0.3.0
 
 ### Added
+- **Static parse of the Lua data** (playground task 001, reviewed):
+  559,236 statically readable assignments in 299 files, with the 4,209
+  constructs that need run time listed by kind
+  ([inventory §4a](docs/02-inventory/inventory.md)). How
+  `ConfigureMatchmaker()` builds and registers the two queue sets
+  ([queue reference §1](docs/05-configuration/queue-reference.md)).
 - **Community digest batch 013** and a third Steam forum re-crawl
   ([source register](docs/sources/source-register.md), T1-T13, SF36-SF45):
   forced faction ownership of open-world sectors, edits without effect when

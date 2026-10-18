@@ -114,6 +114,20 @@ Detailed digests: [sources/source-register.md](../sources/source-register.md).
   is in `gamedata/locale.lua`.
 * **Lua gamedata:** 298 plain-text `.lua` files (≈ 44 MB), no bytecode — see
   [gamedata-catalogue](../05-configuration/gamedata-catalogue.md).
+* **Static readability of the Lua data** *(observed: full static parse by the
+  maintainers' tooling, no Lua executed; spot-checked by hand against S3)*.
+  The 298 gamedata files plus `cloud/data/default_platform_config.lua` hold
+  **559,236 assignments** that a static reader can recover without running
+  Lua, and 7,836 function calls. Almost all data files are plain table
+  literals. The largest are `def/ex/active.lua` (84,144 assignments),
+  `def/ex/prices_modules.lua` (43,118), `def/ex/craft.lua` (34,070) and
+  `def/ex/ship.lua` (26,960). 4,209 constructs stay opaque to static
+  reading: 2,264 standalone calls (for example in `def/designersdefs.lua`),
+  1,330 function bodies kept as expressions, 568 unsupported statements and
+  47 multi-value returns. Their effect is known only at run time. Tools that
+  edit or check this data can treat it as data, except for those constructs
+  and the `Configure*` functions of the platform config (20 definitions, see
+  [config-system](../05-configuration/config-system.md)).
 * **Levels:** 193 active maps — see [level-catalogue](../05-configuration/level-catalogue.md).
 
 ## 5. Not yet inventoried (Stage 2+)
