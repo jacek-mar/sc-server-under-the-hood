@@ -412,3 +412,21 @@ admin-task queue; the account document was read back afterwards.
 Still open: delivery of `adminMail` item attachments (needs a client login)
 and where junk items are stored.
 
+## V-15 - server-only tests: HTTP store and quest patches (Q72) (2026-10-19)
+
+Node copy with its own database folder (a copy of a seeded test database),
+no game client. Two new files `shard_local.cfg` and `quest_server_local.cfg`
+pointed the patch cvars at a loopback HTTP server (interval 15 s); both
+files were removed afterwards. *(observed)*
+
+| Test | Result |
+|---|---|
+| Store items patch, one item, arriving during start-up | Shard logs `new patch content arrived` + XML, then dies (Hub `OnDisconnect … reason 5`); the node keeps running without a Shard |
+| Same patch arriving after the Shard is ready (file served 404 first) | 404 handled: `ReceiveItemsPatch() failed, err: 404`; once the file is served, the Shard dies 0.15 s after `new patch content arrived` |
+| Patch with the complete original `<Item>` line, only `price` changed | same crash |
+| Crash dumps (3) | exception **0xC00000FD stack overflow** in `_chkstk`; static: `ApplyItemsPatchReal` needs a 0x130174-byte frame, `Shard.exe` reserves 1 MiB of stack -> **every items patch crashes the stock Shard** |
+| Special values patch | fetched, logged, ignored; no crash |
+| Quest patch (unchanged copy of `quests.xml`) | polled every 15 s; applied once per start (`Quest groups patched`, `UpdateQuestsNewPatch`), unchanged content ignored; no errors |
+
+Details: [http-store-quest-patch §2a](../05-configuration/http-store-quest-patch.md).
+

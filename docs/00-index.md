@@ -37,7 +37,7 @@ Status legend: ✅ substantive draft · 🟡 partial · ⬜ planned (no file yet
 | [game-modes.md](05-configuration/game-modes.md) — gameplay ids, maps, brawl schedule | ✅ |
 | [data-files.md](05-configuration/data-files.md) — `cloud/data` catalogue | 🟡 |
 | [settings-reload-map.md](05-configuration/settings-reload-map.md) — when a setting takes effect: live console, `_local.cfg` vs platform Lua, `prepare_shared` (lab V-11) | ✅ |
-| [http-store-quest-patch.md](05-configuration/http-store-quest-patch.md) — live store price/availability and quest-group patches over HTTP (`store_patchItemsUrl`, `quests_patchUrl`): format, what they change, failure modes, security (static; Q72) | 🟡 |
+| [http-store-quest-patch.md](05-configuration/http-store-quest-patch.md) — live store price/availability and quest-group patches over HTTP (`store_patchItemsUrl`, `quests_patchUrl`): format, what they change, failure modes, security; **items patch crashes the stock Shard** (V-15) | ✅ |
 | [gamedata-readers.md](05-configuration/gamedata-readers.md) — **generated**, which program reads each `data/gamedata` file (client / battle server / both / via XML) | ✅ |
 | [cvar-notes.md](05-configuration/cvar-notes.md) — curated English notes | 🟡 |
 | [cvar-reference.md](05-configuration/cvar-reference.md) — **generated**, 271 cvars, English + original RU comments | ✅ |

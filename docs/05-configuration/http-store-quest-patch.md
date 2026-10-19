@@ -4,7 +4,13 @@
 > configuration overlay (source S20, CO1) sets these cvars with a 60 s
 > interval *(community)*. Everything below was read from the release
 > binaries (Hub 1.99.0.167293) *(static, 2026-10-19)* unless marked
-> otherwise; it has **not yet been tested on a node** ⚠ unverified.
+> otherwise. Lab test V-15 (2026-10-19, server only) *(observed)*: the quest
+> patch works; **the store items patch crashes the stock Shard every time**
+> (§2a).
+
+> ⚠ **Operators: do not set `store_patchItemsUrl` on the stock Shard.** The
+> first patch that arrives kills the Shard with a stack overflow, whatever
+> its content (§2a).
 
 ## 1. Summary
 
@@ -12,9 +18,9 @@ Two services can poll a URL and apply what they receive **while running**:
 
 | Service | Cvars | Default | Patch content | Effect |
 |---|---|---|---|---|
-| Shard (and GameRewardDispencer, same code) | `store_patchItemsUrl`, `store_patchItemsInterval` | empty, `0` (off) | XML `<Store><Items><Item id=… price=…/>` | changes **prices and availability flags** of existing store items; online clients get the new store pushed at once |
+| Shard (and GameRewardDispencer, same code) | `store_patchItemsUrl`, `store_patchItemsInterval` | empty, `0` (off) | XML `<Store><Items><Item id=… price=…/>` designed to change **prices and availability flags** of existing store items and push them to online clients - **crashes the Shard in this build** *(observed, V-15)* |
 | Shard (and GameRewardDispencer) | `store_patchSpecialValuesUrl` (same interval) | empty | XML | **parsed and then discarded** - no effect in this build |
-| QuestServer | `quests_patchUrl`, `quests_patchInterval` | empty, (interval default not decoded) | XML `<QuestGroups><QuestGroup id=…><quest id=…/>` (same layout as `cloud/data/quests.xml`) | replaces the quest-group membership; players' offered/active quests that are no longer available are removed |
+| QuestServer | `quests_patchUrl`, `quests_patchInterval` | empty, (interval default not decoded) | XML `<QuestGroups><QuestGroup id=…><quest id=…/>` (same layout as `cloud/data/quests.xml`) replaces the quest-group membership; players' offered/active quests that are no longer available are removed - **works** *(observed, V-15)* |
 
 The three `store_patch*` cvars are also registered by AchievementServer,
 AdventureServer, ClanServer, LobbyServer and MatchMaker (shared code), but
@@ -97,6 +103,34 @@ and change only what you need. ⚠ unverified: whether the root must be
 `Store` or whether the reader also accepts `<Items>` at the top, and whether
 `flags` uses the same notation as in `store.xml`.
 
+## 2a. Lab result: the items patch crashes the Shard *(observed, V-15)*
+
+Three runs on a node copy (own database, loopback HTTP server, interval
+15 s): a minimal one-item patch arriving during start-up, the same patch
+arriving after the Shard was fully ready, and a patch with the complete
+original `<Item>` line and only `price` changed. Every time the Shard logged
+`GameStore::ApplyItemsPatch: new patch content arrived`, the XML, and died
+0.15-0.25 s later (Hub: `OnDisconnect … reason 5`; the node stays without a
+Shard until restarted). The three crash dumps carry exception **0xC00000FD
+(stack overflow)** at the same address, inside the stack-probe helper
+`_chkstk` *(observed)*.
+
+Cause *(static, matches the dumps)*: `ApplyItemsPatchReal` builds the new
+store as a local array and requests a **0x130174-byte (≈1.19 MiB) stack
+frame**, while the PE header of `Shard.exe` reserves only **1 MiB** of stack
+(`SizeOfStackReserve` 0x100000). The probe runs past the end of the stack
+before any item is examined, so the content of the patch does not matter -
+an unknown id would crash the same way *(inferred)*. `GameRewardDispencer.exe`
+has the identical function (same 0x130174 frame, 1 MiB stack) and is
+expected to crash too *(static; not run)*. A host that reports using this
+feature (S20) may run a modified binary or a different stack setting
+⚠ unverified. Changing the binary's stack reserve is a binary patch and is
+out of scope here.
+
+Side observations: a missing file is handled cleanly (`ReceiveItemsPatch()
+failed, err: 404` - `err` is the HTTP status); the special-values patch is
+fetched and ignored without harm.
+
 ## 3. Special values patch (Shard): no effect
 
 `store_patchSpecialValuesUrl` is requested on the same timer
@@ -123,17 +157,28 @@ invalid quest group %d`, `invalid quest %d in group %d`) and logged as
 longer have (`Remove unavailable active quest %d, user %s`, `Remove
 unavailable offered quest %d, user %s`, `Remove expired active interval
 quest %d, user %s`) and logs `UpdateQuestsNewPatch: took %…`.
+
+*(observed, V-15)*: with an unchanged copy of `quests.xml` as the patch,
+the QuestServer polled every 15 s, applied it once per start (`ApplyPatch:
+new patch content arrived`, `Quest groups patched`, `UpdateQuestsNewPatch:
+took 0.0001 ms, 0 users`) and ignored the unchanged file afterwards; no
+errors. The effect on online players' quests was not tested (no client).
 ⚠ unverified: which `QuestGroup` attributes the patch reads besides the
 ids, and whether a patch must list every group.
 
 ## 5. Operator notes
 
+* **Store items patch: do not enable** on the stock Shard (§2a). The rest
+  of this list applies to the quest patch, and to the store patch only if a
+  future binary fixes the crash.
 * **Off by default.** With interval `0` nothing is requested. Enable in the
   service's `*_local.cfg` (or `cloud.xml` service cvars), for example
   `set store_patchItemsUrl "http://127.0.0.1:8080/store_patch.xml"` and
   `set store_patchItemsInterval 60`; the platform Lua does not assign these
-  cvars, so `_local.cfg` is enough ([config-system](config-system.md)).
-  ⚠ unverified on a node.
+  cvars, so `_local.cfg` is enough ([config-system](config-system.md))
+  *(observed, V-15: `shard_local.cfg` and `quest_server_local.cfg` took
+  effect)*. GameRewardDispencer reads its own
+  `game_reward_dispencer_local.cfg`.
 * **What it is for:** timed sales and withdrawing items without a restart.
   Base store edits (new items, ranks, stacks) still need `store.xml` and a
   restart ([settings-reload-map](settings-reload-map.md)).
@@ -147,12 +192,8 @@ ids, and whether a patch must list every group.
   decoded). libcurl 7.62.0 (2018) has known vulnerabilities; do not point
   it at untrusted servers. See [security](../07-administration/security.md).
 
-## 6. Lab test proposal (Q72, remaining part)
+## 6. Still open
 
-On a node copy with its own database: serve a one-item patch from
-`python -m http.server --bind 127.0.0.1`, set the two Shard cvars in
-`shard_local.cfg`, start the node and check (1) the `new patch content`
-and `ApplyItemsPatchReal` log lines, (2) the store price in a client
-before/after one interval without relog, (3) an unknown id blocks the
-patch, (4) the special values URL has no effect, (5) removing the item from
-the file restores the base price.
+* Quest patch with a changed group membership and a logged-in client: are
+  removed quests visible to players at once?
+* Whether the S20 host's Shard differs (stack reserve) or crashes as well.
