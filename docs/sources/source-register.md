@@ -31,6 +31,8 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S12/S15 b009 | Batch 009: partial JSON exports `Star_Conflict_Preservation_Project_009.eng-json-part` (63 msgs, 31 new, 2026-10-12 21:20 → 2026-10-13 06:11) and `...009.ru-json-part` (374 msgs, 199 new, 2026-10-12 21:19 → 2026-10-13 07:38); continue batch 008 without a gap | `random-materials/Star_Conflict_Preservation_Project_009.*-json-part/` | C | Digest "batch 009" below (M1-M9) |
 | S12/S15 b010 | Batch 010: partial JSON exports `Star_Conflict_Preservation_Project_010.eng-json-part` (11 msgs, 11 new, 2026-10-13 08:44 → 16:21) and `...010.ru-json-part` (348 msgs, 327 new, 07:46 → 16:16); continue batch 009 without a gap | `random-materials/Star_Conflict_Preservation_Project_010.*-json-part/` | C | Digest "batch 010" below (N1-N13); Q49 amended |
 | S19 | Steam community discussions of the game (app 212070): General discussions (56 threads active 2026-10-09 → 10-14) and comments under the official announcements (5 threads); 627 posts, 262 authors; includes the pinned official setup guides (same content as S1) and the forum's rules for unofficial-server posts | `https://steamcommunity.com/app/212070/discussions/` (private local copy) | C (official pins: A) | Digest "S19" below (SF1-SF24); Q62-Q63; Q35/Q45/Q52/Q59 amended ; **re-crawl 2026-10-16** (14 threads, 69 posts newer than the first crawl) -> SF25-SF35 |
+| S20 | Public community host's configuration overlay (Git repository `star-conflict-overlay` of the `cosmosim-infra` organisation on the host's own Gitea; 27 commits 2026-10-09 → 10-17; no licence). Sibling repos: `ansible` (Gitea/SSO deployment, not game-related, not read), `doc` (empty) | `https://git.cosmosim.dev/cosmosim-infra` (private local clone) | C (one host's settings) | Store/quest HTTP patch channel (Q72); host tuning examples |
+| S21 | Community tool **sc-proxy** ("Star Conflict Shard and Chat Proxy"): Python man-in-the-middle proxy for client ↔ load balancer / Shard / chat with Kaitai packet schemas (`client.ksy`, `server.ksy`), a 249-entry client-message dispatch table (`ac_dispatch_table.json`: id, handler address, `AC_*` name), body decoders and a Qt inspector; Unlicense (public domain); "heavily vibe coded" per its README; last updated 2026-06-25 (captures made against the official servers) | linked from The Outpost (S17) resources; private local copy `random-materials/sc-proxy-2026-10-19/` | B (names verified in our binaries) | Protocol catalogue, Q73 |
 | S12/S15 b011 | Batch 011: partial JSON exports `Star_Conflict_Preservation_Project_011.eng-json-part` (99 msgs, 98 new, 2026-10-13 16:45 → 2026-10-14 07:32) and `...011.ru-json-part` (786 msgs, 783 new, 2026-10-13 17:42 → 2026-10-14 11:45); EN continues batch 010, RU leaves a gap of about 90 minutes (16:16 → 17:42) | `random-materials/Star_Conflict_Preservation_Project_011.*-json-part/` | C | Digest "batch 011" below (P1-P15); Q60-Q61, Q49 amended |
 | S12/S15 b012 | Batch 012: partial JSON exports `Star_Conflict_Preservation_Project_012.eng-json-part` (286 msgs, all new, 2026-10-14 13:00 → 2026-10-15 21:36; a gap of about 5.5 hours after batch 011) and `...012.ru-json-part` (1 067 msgs, 1 016 new, 2026-10-14 11:46 → 2026-10-15 21:08, continues batch 011) | `random-materials/Star_Conflict_Preservation_Project_012.*-json-part/` | C | Digest "batch 012" below (R1-R19); Q64-Q67; Q44, Q49, Q61 amended; security finding S-31 |
 | S18 | Community tool **SCPatcher / "Star Conflict Mod Manager" v0.1** by Furebel (Python/Tkinter text patcher with 8 bundled mods; released 2026-10-11 in `#general-eng` as `SCModManager_v0_1.zip`, temporary download link, no repository, **no licence stated**) | `random-materials/SCPatcher/` | C (claims) / B (fingerprints and patterns checked against S3/S4 by us) | Review: [community-mod-manager.md](../07-administration/community-mod-manager.md); loot-rule defect (Q45) |
@@ -795,6 +797,38 @@ guide (I11).
 Player and host interest behind them: generous test accounts without
 breaking the account, PvE progression by hand, special ships and weapons.
 
+### S17 re-read (2026-10-19) - delta only
+
+The site now also runs under a new domain (b014). Knowledge Base: about 30
+modules (17 on 2026-10-14); Resources: about 35 entries over five pages,
+mostly fan-kit media (sounds, wallpapers, fonts, screenshots). This
+repository is listed there as a documentation link. Code in screenshots and
+download archives with game files were not opened.
+
+| # | Item (paraphrased) | Our status |
+|---|--------------------|------------|
+| OP1 | **Respawn times:** `spawn_timeout` in `data/gamedata/def/objects/ships.lua`, different per ship type | **File-verified:** `Ship_Base` 15, `Ship_Small` 13, `Ship_Medium` 15, `Ship_Large` 17, `Ship_HUGE` 60, `Ship_ST` 3 (seconds per the file comment) → **Q66 solved** (static) |
+| OP2 | Pirate control of open-space zones with `forceEvents` (`eventDefName = 18`, `newEventState = 1000`, one entry per zone) | Same recipe as b013 T1 and S20 |
+| OP3 | "Ultimate ship collection": two JSON files with every ship and item, pasted into an account's `vessels` / `items` arrays | Risky: pasted vessels need unique `vid`s from `counters` ([mongodb](../06-database/mongodb.md) §3a); asked about in b014 |
+| OP4 | All-ships CSV sheet; English translations of `ships.lua`, `default_platform_config.lua`, `dediserver.cfg`, `special_values.xml`, `gameplay_leviathan.lua`, the shipped `docs/matchmaking.md`, and of all `shared` and `objects` Lua files | Translations of shipped files: research aid only, cite the install ([translations](#s17-evaluation)) |
+| OP5 | Higher-rank bots: `botPresetType` (`bpt_mirror`, `bpt_adaptive`, `bpt_mirror_and_save`) or `special.botPresetNames` per queue | Known ([bot-presets](../05-configuration/bot-presets.md)); same host as S20 |
+| OP6 | Alien bosses in the terramorphing open-space location via its level Lua | Lead only; [level-catalogue](../05-configuration/level-catalogue.md) |
+| OP7 | New tools: **sc-proxy** (packet-capture proxy, see S21), an in-game "instance launcher" (proxy `d3d9.dll` that hooks client Lua functions to run maps locally), a config table editor, a chat translator (online translation service), a long community "science" document | sc-proxy → S21; the d3d9 hook injects code into the client (not reviewed; treat like any unsigned DLL, [security](../07-administration/security.md)); others context only |
+| OP8 | A "capture coverage" site of a player who recorded server traffic before shutdown | Not reachable on 2026-10-19 (site and forum thread); watch list |
+
+### S21 evaluation (sc-proxy, 2026-10-19)
+
+* **Matches our build:** 246 of the 249 `AC_*` message names in
+  `ac_dispatch_table.json` occur as strings in both `win64/game.exe` and
+  `cloud/Shard.exe` of Hub 1.99.0.167293 *(static)*; our docs named 25 of
+  them ([protocol-observed](../08-reverse-engineering/protocol-observed.md)).
+* What it adds: per-message body layouts (Kaitai schemas checked against its
+  own captures), server notification ids, a load-balancer and chat proxy.
+  Not run here; captures are not in the archive.
+* Use for us: a cross-check source for a message catalogue built from our
+  own binaries (Q73); not copied into this repository.
+
+
 ## Digest of S19 (Steam community discussions, 2026-10-09 → 2026-10-14)
 
 > Same rules as for Discord: **leads, not facts**; anonymised and
@@ -934,6 +968,30 @@ newer than the third crawl.
 
 Not adopted: cheating complaints, farewell posts, language quarrels, AI-tool
 advice, download links of configuration packs (code to review, SF24).
+
+## Digest of S20 (public host's configuration overlay, read 2026-10-19)
+
+> Leads, not facts: one public host's settings. Addresses, database names,
+> key paths and the patch-server address are not copied.
+
+The repository holds only the files the host changed (diffed against the
+reference build). It is the same host as b013 T1 (forced faction events) and
+b014 U1/U7 (rank-16/17 loot, new-account kit); commit messages give the
+order of changes.
+
+| # | Statement / change | Our status |
+|---|--------------------|------------|
+| CO1 | **Live store patching over HTTP:** `shard_local.cfg` sets `store_patchItemsUrl`, `store_patchSpecialValuesUrl` (an XML on the host's web server) and `store_patchItemsInterval 60` | **New to us.** Static *(file, 2026-10-19)*: Shard and GameRewardDispencer log `GameStore: Failed to g_httpClient->Request( store_patchItemsUrl )` / `( store_patchSpecialValuesUrl )`; DedicatedServer has `StoreSvc::ApplyStorePatch`; QuestServer has a matching `quests_patchUrl`. Engine defaults: empty URL, interval 0 ([engine-cvars](../05-configuration/engine-cvars.md)). Patch file format and reload scope unknown → **Q72** |
+| CO2 | Split node: MongoDB and Redis on another host (`db_mongoHosts`, `db_redisHost`), database names and `db_dedicatedDbCollectionSuffix` set to a non-user name; the services run under Wine (`Z:\home\...` key paths) | Consistent with [config-system](../05-configuration/config-system.md) and [linux-proton](../04-installation/linux-proton.md) |
+| CO3 | `bind_ip` commented out in `cloud/mongodb/config.cfg` so the database listens on all interfaces (needed for the split) | MongoDB 2.6 without authentication: reachable by anyone who can reach the port unless a firewall limits it → [security](../07-administration/security.md) (S-30 family) |
+| CO4 | Hub SSH console enabled with the host's own key pair | Known risk area (S16 Docker config, [security](../07-administration/security.md)) |
+| CO5 | Economy: infinite premium for the `player` role, start balances, store price multipliers 0.5, iridium daily limit 100 000, talent sets free (`skills.xml` + `talents.lua`), fourth battle slot from account rank 1, clan-ship parts price 0 / duration 1 in both `clan_ship.lua` and `clan_ship.xml`, `sm_overloadCounterLimit 200` | Levers all known ([tuning-recipes](../05-configuration/tuning-recipes.md), [event-ships](../05-configuration/event-ships-mail-and-clan-ship.md)); edits made in Lua **and** generated XML |
+| CO6 | Matchmaking: reworked queue templates, bot presets `BotsBZS_T3..T5`, longer PvP map lists with mode ids 4/10/11/12/23 | Host tuning; check with `tools/queue_lint.py` before reuse |
+| CO7 | `cloud.xml` node `region` 1 → 2 | Unexplained ⚠ |
+
+Not adopted: the `ansible` repository (infrastructure secrets in vault files;
+not opened), full copies of shipped files.
+
 
 ## Digest of S16 (community Docker project)
 
