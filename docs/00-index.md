@@ -48,6 +48,7 @@ Status legend: ✅ substantive draft · 🟡 partial · ⬜ planned (no file yet
 | [open-world-quests.md](05-configuration/open-world-quests.md) — **generated**, 11 personal open-world quests | ✅ |
 | [zone-events.md](05-configuration/zone-events.md) — **generated**, open-world event ids and parameters (from bytecode) | ✅ |
 | [locale-catalogue.md](05-configuration/locale-catalogue.md) — **generated**, 13 string tables: key counts, families, def coverage (no text) | ✅ |
+| [item-names.md](05-configuration/item-names.md) — how the client resolves an item's display name (own key, type prefix, `item_subtype` category, blueprint pattern) and labels tier/mark/rank (`mark_4` = Premium) | ✅ |
 | [tuning-recipes.md](05-configuration/tuning-recipes.md) — where to change economy/loot/bots/events (community leads cross-checked with files) | 🟡 |
 | [quests-semantics.md](05-configuration/quests-semantics.md) — **generated**, quest system: enums, Lua→XML mapping, cross-check | ✅ |
 | [module-defs.md](05-configuration/module-defs.md) — **generated**, weapon/module definition model, marks, price override merge, store.xml cross-check | ✅ |

@@ -147,7 +147,7 @@ Defs with `hull_health` (i.e. full stat rows): **428** (300 in `ship.lua`, 128 i
 | `default_slot_mask` | 128 |  |
 | `node_prices` | 128 | progression price table reference |
 | `beacon_capture_mul` | 125 |  |
-| `fake` | 125 | set on the rank/role variants of the progression ships (see §5); **not** a hidden or NPC marker ⚠ meaning unverified |
+| `fake` | 125 | set on the progression ships and their rank/role variants (see section 5); not a hidden or NPC marker, engine meaning unverified |
 
 ## 4. Statistic ranges (min / median / max)
 
@@ -174,7 +174,7 @@ By tier (all classes):
 
 * `store.xml` has 659 `Vessel` rows; 659 of them have a row in `ship.lua` (301) or `ship_green.lua` (358). Only 428 rows carry a full stat block; the other 231 (mostly green evolution variants) only add links/prices and inherit statistics from their parent def.
 * `storeItemId` in the Lua rows is a small sequence number (1..1101, 241 distinct values in 659 rows) and equals `store.xml` `Item@id` for 0 ships: it is an export-time counter, **not** the database id.
-* **`fake = true` marks player ships, not placeholders** *(file, 2026-10-19)*: all 355 occurrences are in `ship_green.lua` and belong to the progression ships - Ellydium (`Ship_Race5_*`), Tester's Agony (`Ship_ST_*`), Salyut, Helicon and UFO - including their base definitions (e.g. `Ship_Race5_S_RECON_Rank5`, `ship_green.lua:5887`) and the per-rank variants named `<base>_Rank<r>_<n>` or `Ship_ST_Rank<r>_<ROLE>`. Every one of them has a `store.xml` `Vessel` row, and the base ranks are the ships players own and hosts grant. Counted as player ships, the build has 655 of them (301 in `ship.lua` + 354 in `ship_green.lua`; 4 more Ellydium definitions lack a complete set of evidence). What the engine does with `fake` is ⚠ unverified - do not filter player ships by it.
+* `fake = true` is set on 355 definitions (355 in `ship_green.lua`), 355 of them with a `store.xml` `Vessel` row; families: `Ship_Helicon_*` 11, `Ship_Race5_*` 202, `Ship_ST_*` 110, `Ship_Salyut_*` 21, `Ship_UFO_*` 11. These are the progression ships (Ellydium, Tester's Agony, Salyut, Helicon, UFO) - their base definitions and the per-rank/role variants - i.e. **player ships, not placeholders**; do not filter player ships by `fake`. What the engine does with the flag is unverified.
 * `rank` agrees between Lua and `store.xml` for 428 of 428 comparable ships.
 * Numeric ids used by the DB (`items` / ship documents) are `store.xml` `Item@id` *(inferred from schema.md/F5)*; `shared/def_ids.lua` is only a stub (`DefId = {}` with a commented sample) and holds no ids in this build.
 
