@@ -47,16 +47,31 @@ The client builds the variant label from separate keys *(file)*:
 | Part | Keys | Text (EN / RU) |
 |---|---|---|
 | tier | `tier_1` … `tier_5` | `I` … `V` (both languages) |
-| mark | `mark_1`, `mark_2`, `mark_3` | `Mk.1`, `Mk.2`, `Mk.3` |
-| mark | **`mark_4`** | **`Premium`** - not Mk.4 |
-| mark | **`mark_7`** | **`Mk.4`** |
+| mark | `mark_<n>` | see the mark table below |
 | rank range | `itemTooltip_rankRange` | `For ranks:` / `Для рангов:` + the definition's `rank_min`-`rank_max` |
 | ship rank | `shipTooltip_rank` | `Rank $rank$` / `Ранг $rank$` |
 
 The tier and mark values come from the definition's own `tier` and `mark`
 fields (e.g. `def/ex/passive.lua:11609-11610`), and the rank range from
-`rank_min` / `rank_max`. Note that the mark number in the field is an enum,
-not a "Mk" number: `mark = 4` is Premium and `mark = 7` is Mk.4.
+`rank_min` / `rank_max`. The mark number in the field is an **enum**, not a
+"Mk" number *(file: definitions and string tables)*:
+
+| `mark` field | Typical name suffix | Key | Text (EN and RU) |
+|---:|---|---|---|
+| 1 | `_Mk1` | `mark_1` | `Mk.1` |
+| 2 | `_Mk2` | `mark_2` | `Mk.2` |
+| 3 | `_Mk3` | `mark_3` | `Mk.3` |
+| 4 | `_Prem` | `mark_4` | **`Premium`** |
+| 5 | `_Rel` | `mark_5` | **`Mk.5`** |
+| 6 | `_Rare` | `mark_6` | **`Mk.2`** - the same text as mark 2 |
+| 7 | `_Epic` | `mark_7` | **`Mk.4`** |
+
+Example: `ModulePassive_AccelerationCoil_T1_Epic` has `mark = 7`, so the game
+shows it as Mk.4; the `_Rare` variant (`mark = 6`) reads Mk.2 like the real
+`_Mk2`, so a tool listing both needs an extra tie-breaker. Variants such as
+`_RT` and `_ET` have no `mark` field. Caveat: some families (missiles) inherit
+`mark = 1` for every variant; for them the `Mk<n>` in the definition name is
+the reliable mark, not the field.
 
 The client's own wiki-export scripts (inside `scripts.pak`) group modules
 the same way: by `item_subtype`, with marks and tier as separate columns.
