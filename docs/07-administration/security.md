@@ -382,6 +382,7 @@ properties, derived from the weaknesses above:
 | SV-8 | Count how many new accounts per minute can be created from one client | §4.2 |
 | SV-9 | Packet capture: which messages are plaintext, token reuse - **partly done V-9** (host-side capture: no TLS, RakNet UDP; client->host TCP still missing) | S-10, §4.1 **V-10: done** - two-sided capture (each host's raw socket sees only its own outgoing TCP; both together = full view): no TLS anywhere, login frame layout recorded, stored hash not sent in clear. |
 | SV-10 | With a throw-away account: compare the value the client stores locally (profile files, no real credentials), the value in `accounts.password` and the Shard/Authenticator log; test whether a second client can log in using only the stored value; check whether the client transport is TLS (version, certificate use) - **partly done V-9:** no salt, no TLS on TCP; client storage location of the remembered login not yet found | S-19, S-07, Q24 **V-10: largely done** - stored value not on the client in clear (profile header encrypted/obfuscated), copy-reset works (V-10); open: decryption of the header/login block and portability of a copied profile. |
+| SV-11 | If store/quest HTTP patches are enabled ([http-store-quest-patch](../05-configuration/http-store-quest-patch.md)): confirm the services only contact the configured URL, and whether libcurl 7.62.0 verifies HTTPS certificates (self-signed test server) - the URL owner controls prices and quest groups | Q72 |
 
 ## 12. References inside the repository
 

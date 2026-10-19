@@ -76,3 +76,5 @@ way to keep overrides in one place without editing the stock assignments.
   authentication); retrying after a few seconds works (2-4 attempts).
 * Every typed character is echoed back, so the SSH session text is noisy;
   read results from the service log (`CONSOLE` lines).
+
+**Store prices without a restart:** the Shard can poll an HTTP patch file that overrides prices, `cantBeBought` and `flags` of existing store items and pushes the result to online clients; quest-group membership can be patched the same way (QuestServer) - see [http-store-quest-patch](http-store-quest-patch.md) *(static, Q72)*.
