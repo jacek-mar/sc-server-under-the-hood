@@ -13,6 +13,7 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Item-registry findings** (playground task 013, reviewed; values re-checked in the files): `fake = true` marks the progression player ships (Ellydium, Tester's Agony, Salyut, Helicon, UFO), not placeholders - [ship-defs §5](docs/05-configuration/ship-defs.md) corrected; 655 player ships in this build; Q58 amended with the counter-assigned ids (1 069 assignments) and the bulk default values 1 and 1000.
 - **The Outpost re-read and new source S21** (community packet proxy, public domain): S17 delta OP1-OP8 in the [source register](docs/sources/source-register.md); **Q66 solved** (per-class `spawn_timeout` in `ships.lua`); new **Q73** (client ↔ Shard message catalogue; 246 of 249 community message names confirmed in our binaries).
 - **New source S20** (a public host's configuration overlay repository): digest CO1-CO7 in the [source register](docs/sources/source-register.md); new open question **Q72** on the HTTP store/quest patch cvars found there and confirmed in the service binaries.
 - **Digest of Discord batch 014 and Steam forum re-crawl 4**
