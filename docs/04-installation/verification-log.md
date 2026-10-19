@@ -390,3 +390,25 @@ unless marked otherwise.
 | Connections of a running node | `currentOp` with `$all: true` lists **15 client connections** from the services while the node runs and none when only MongoDB runs (a tool's own sockets, including a driver's monitoring connection, must be excluded) |
 | Ship document | `vessels[]`: `vid` (int64), `defName`, `equipped` (35 int64 slots: 0 or the `iid` of an `items[]` entry), `munition` (2 × `{def, amount, res}`), `skillRating`, `exp`, `level`, `hullCondition` (double), `conserved`, `customElements` (14 × `{defName, till}`); `unlockedMask` (int64) only after unlocking research nodes |
 | Client libraries | PyMongo 3.13 (last line with MongoDB 2.6 support) works against 2.6.12 from Python 3.12 and 3.13 (int64, `findAndModify`, collection and index listing, `currentOp`); the bundled `mongodump` works with `--host/--port` |
+
+## V-14 - server-only tests: where granted items are stored on the account (2026-10-19)
+
+Node copy with its own database folder (a copy of a seeded test database),
+no game client. A `root` account granted items to a test account through the
+admin-task queue; the account document was read back afterwards.
+*(observed)*
+
+| Grant | Result on `accounts` |
+|---|---|
+| `giveTitle` `title: 3`, then `4` | `acquiredTitles: [{id: 3}, {id: 4}]` (numeric ids from `titles.xml`); `title` (active title id) stays `0` |
+| `giveVesselCustomElement` `item: "<element name>"` | `freeVesselCustomElements: {"<element name>": NumberLong(1)}` - an object of name -> count |
+| `giveAutogenModule` `classId: 0`, `rank: 10` | one `autogenItems[]` entry `{iid, upgradeLevel: 0, rollData: [19 numbers], exp: 0}`; `iid` taken from the `iid` counter |
+| `give` `item: <store id>`, `amount` (no `value`) | the `item` parameter is the **numeric store id** (`<Item id>` in `store.xml`); a `defName` or `value: "item"` gives `Incorrect value name` |
+| - a munition | `items[]` entry `{iid, defName, amount, ench, timeEnd}`; a second grant **adds to the same entry** (same `iid`) |
+| - craft resources, parts and blueprints (`CraftResource_Base`, `craft`) | `craftResources.<defName>` = amount (no `iid`) |
+| - an avatar / a motto (taunt) | `acquiredAvatars` / `acquiredMottos`: objects keyed by `defName` with value `1`; the active `avatar` / `motto` (a `defName` string) is set to the **last granted** one |
+| - junk (`Junk_Base`) | refused: `Unsupported item type` |
+
+Still open: delivery of `adminMail` item attachments (needs a client login)
+and where junk items are stored.
+

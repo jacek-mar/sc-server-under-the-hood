@@ -94,6 +94,22 @@ current counter value, then increment the counter by one. Copying "highest id
 32-bit values: currency caps above 2 147 483 647 are refused when data is
 prepared. Keep hand-set balances below that value (Q52).
 
+## 3b. Where owned items are stored *(observed, V-14; ship and module rows from the schema)*
+
+| Owned thing | Account field | Value |
+|---|---|---|
+| ship | `vessels[]` | `{vid, defName, equipped, munition, ...}` |
+| module, weapon, munition in storage | `items[]` | `{iid, defName, amount, ench, timeEnd}`; fitted items are referenced from `vessels[].equipped[]` by `iid` |
+| loaded munition | `vessels[].munition[]` | `{def, amount, res}` (field `def`, not `defName`) |
+| craft resource, part, blueprint | `craftResources.<defName>` | amount |
+| seed chip (autogen) | `autogenItems[]` | `{iid, upgradeLevel, rollData, exp}` |
+| title | `acquiredTitles[]`; active `title` | `{id: <id from titles.xml>}`; active id, 0 = none |
+| avatar / motto | `acquiredAvatars` / `acquiredMottos`; active `avatar` / `motto` | objects `{<defName>: 1}`; active = `defName` string |
+| custom element, not fitted | `freeVesselCustomElements` | `{<element name>: <count>}` |
+
+New `iid`s come from the `iid` counter (§3a). Not yet observed: where junk
+items are kept.
+
 ## 4. Safe editing procedure
 
 1. Start the server **at least once**, log in, then log out and close both the

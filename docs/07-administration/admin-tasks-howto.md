@@ -104,8 +104,10 @@ documents in `adminTasks` remain and carry `requestedByUid`).
 | `give` (premium) | `uid`, `reason`, `value: "premiumTill"`, `amount` = **hours** | `premiumTill` (epoch ms) = max(`premiumTill`, now) + `amount` x 3 600 000; negative `amount` shortens it (static: `premium already expired`, `premiumTime underflow`) |
 | `give` (iridium) | `value: "tokenCredits"`, `amount` | adds |
 | `set` | `uid`, `reason`, `value` (e.g. `"credits"`), `amount` | **sets** the exact value |
-| `giveTitle` | `uid`, `title` (id from `cloud/data/titles.xml`) | adds the title to `acquiredTitles` |
-| `giveVesselCustomElement` | `uid`, `item` (custom element name from `vessel_custom_elements.xml`) | `freeVesselCustomElements.<name>` |
+| `giveTitle` | `uid`, `title` (id from `cloud/data/titles.xml`) | appends `{id: <title>}` to `acquiredTitles`; the active title (`title`, a number, 0 = none) is not changed (V-14) |
+| `giveVesselCustomElement` | `uid`, `item` (custom element name from `vessel_custom_elements.xml`) | `freeVesselCustomElements.<name>` = count (NumberLong) (V-14) |
+| `giveAutogenModule` | `uid`, `classId` (from `autogen.xml`), `rank` | rolls a seed chip into `autogenItems[]`: `{iid, upgradeLevel, rollData, exp}` (V-14) |
+| `give` (store item) | `uid`, `reason`, **`item` = numeric store id** (`store.xml`), `amount`; no `value` | munitions -> `items[]` (stacks onto an existing entry); craft resources, parts, blueprints -> `craftResources.<defName>`; avatars / mottos -> `acquiredAvatars` / `acquiredMottos` and become active. Junk: `Unsupported item type` (V-14) |
 | `mutePermanent` / `banPermanent` | as `mute` / `ban` | `chatMutedTill` / `bannedTill` = 2^63 - 1 (int64 maximum - tools must not convert it to a floating-point number); lifted by `cancelMute` / `cancelBan` |
 | `enterMMode` / `leaveMMode` | `minutesLeft` / none | maintenance mode without a console: countdown in the Hub log, at zero the Shard disconnects all clients; tasks keep working; `leaveMMode` ends it |
 | `createAccount` | `username`, `nickName`, `password`, `role`, `allowLogin` | new account (uid from `counters`, `accountsStats` created; starter kit at first login). **`password` is stored as given** - pass a value in the stored format or the account cannot log in |
@@ -120,7 +122,7 @@ top-level fields are ignored.
 
 | Task | Parameters found in the handler | Privilege | Notes |
 |---|---|---|---|
-| `give` (other) | `item` (store item), `achievement`, `factionRep`, `eventCredits`, `accountRank` (refused on a `live` server) | propertyEdit | ship values: see §3; message: "Specify the vid = <vid> (if changing vessel attr) value = <name>, index = <index> (if value is array), amount" |
+| `give` (other) | `achievement`, `factionRep`, `eventCredits`, `accountRank` (refused on a `live` server) | propertyEdit | ship values: see §3; message: "Specify the vid = <vid> (if changing vessel attr) value = <name>, index = <index> (if value is array), amount" |
 | `resetAccount` | `uid` | (see table) | destructive |
 
 Full list with all 58 tasks and their privilege ids:
