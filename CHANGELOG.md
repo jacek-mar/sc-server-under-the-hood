@@ -13,6 +13,13 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Digest of Discord batch 014 and Steam forum re-crawl 4**
+  ([source register](docs/sources/source-register.md), U1-U10, SF46-SF56):
+  rank-16/17 loot rows, a host's `adminMail` welcome letter matching our
+  static layout, Glass-ship collision values checked against `def/ex/ship.lua`,
+  battle-pass price in Lua and XML, a MongoDB `dataPath` workaround for
+  Cyrillic profile paths; new open question **Q71** (storage/hangar cap of
+  4 096 slots reported by hosts).
 - **Applied-diff check of community packs** (playground task 004 Follow-up 1,
   reviewed): the eight SCPatcher mods and the Docker project's generated
   config compared with stock; `quest_rewards` changes 203 Lua but only 161 XML

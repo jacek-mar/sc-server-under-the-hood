@@ -72,6 +72,13 @@ dated "checked in game, October 2026", and gives byte layouts.
 | O13 | The client picks up a new model only on a cold start; `Hub.exe` does not exit on its own and the next launch attaches to the old cluster - kill both `game.exe` and `Hub.exe` | Consistent with the client-started local node (`win64/local_server.xml`) leaving the Hub running ⚠ -> FAQ |
 | O14 | Client logs in `%LOCALAPPDATA%\Targem\StarConflict\logs\`, crash dumps in `...\exceptions\` | Consistent with S8 -> FAQ |
 
+**Re-read 2026-10-19** (linked again in the RU chat, b014): no new sections
+since 2026-10-14; every part maps to O1-O14 or the earlier snapshot. Two
+minor points: a shared `battle_pass.lua` with "four passes, DLC requirement
+off" (chat attachment, not followed; DLC check: Q59), and the new-ship guide
+states that rams and hits use the convex `.mdp` collision hull, not the
+visible mesh (client asset; context for b014 U6).
+
 #### Demand and problem signals (S11 update)
 
 * Hosts want **generous accounts** (currencies, insignias, resources above
@@ -679,6 +686,48 @@ copied), balance opinions, film-ship wish lists.
 | Detonation mode removed, campaign mission needs it | configuration | SF44 -> Q61 |
 | Model and texture tools | modding | T11 -> out of scope |
 
+## Digest of batch 014 (partial exports of S12 and S15, 2026-10-17 evening → 2026-10-19 morning)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names or quotes. Links to file hosts, videos and private
+> documents posted in the chat were not copied.
+
+**Scope.** EN: 95 new messages - post-battle loot for rank 16/17, a welcome
+letter with synergy through `adminMail`, Glass-ship collision damage, a map
+material fix, an admin panel announced, item-list and icon requests. RU: 231
+new messages, mostly talk about AI tools; the useful part is the storage
+limit, a "client files error" on a foreign server, where the logs are, and a
+Docker-based admin panel.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| U1 | **No post-battle loot for rank-16/17 ships:** add rows for ranks 16 and 17 to `DedicatedServcerServices_SetLootRules`; the asker reports it works | **File-verified:** the shipped rules have rows 1-15 only (`queue_lint` L1, [config-validation-tools](../07-administration/config-validation-tools.md)); the `_v3` table names still apply (Q45). Recipe already in [tuning-recipes](../05-configuration/tuning-recipes.md) |
+| U2 | **Free synergy for every account:** a public host inserts a letter into `adminMail` (`amid` larger than any before, `sentAt`, `expTime` +7 days, `important`, `source`, `goldCost`, attachments type 2 = subject/body and type 7 = `vesselExpPool`); a second host warns that it silently does nothing when run in the wrong database | **Consistent with the static layout** in [admin-tasks-howto §4b](../07-administration/admin-tasks-howto.md); first field report of delivery *(community)*. Wrong database = the account database, not the game database |
+| U3 | **Storage limit:** more than 4 096 slots is "a technical limit"; a host shared a storage guide; the same applies to the number of ships | Same value reported on the Steam forum (SF47) → **Q71** ⚠ |
+| U4 | "Client files error" when joining a battle on someone else's server; answer: game file hashes differ (the host's community launcher had updated files) | Known mechanism: data-version check ([pak-contents](../02-inventory/pak-contents.md), Q3, b008 K4) |
+| U5 | Where the logs are: `%LOCALAPPDATA%\Targem\StarConflict\logs\<newest>\game.log` (Lua errors and crash cause); crash reporter logs in `...\Targem\Targem Crash Reporter\logs`; Proton path under `compatdata/212070/pfx/.../AppData/Local/...` | Consistent with [administration](../07-administration/administration.md) (runtime profile); the crash-reporter folder is new to us ⚠ |
+| U6 | Glass (GS) ships take very high collision damage at low speed | **File-verified:** `def/ex/ship.lua` gives the `_T4_Glass` hulls `contact_damage_cf` 250 / 400 / 900 (S / M / L) against 20-160 for most hulls, and `contact_damage_min_speed = 20` (most hulls 3-5). Stock data, not a host setting |
+| U7 | A public host's new-account kit: free basic T3 dreadnoughts, rank-10/11 ships, all crew and ship slots, e-sports weapons for credits, large starting balances | Host-specific; levers: `starter_pack.lua` (b012 P6), [event-ships](../05-configuration/event-ships-mail-and-clan-ship.md) |
+| U8 | Fort Muerto map: black flickering (Z-fighting) fixed by restoring two `UserParam` lines of the asteroid material in `s1515_piratebay.mdf`, dropped in map version `1.6.5c.138647` | Client asset; out of scope beyond [pak-contents](../02-inventory/pak-contents.md) |
+| U9 | Range chips on a weapon show no effect on range or heat | Report only; no test |
+| U10 | A Docker-based admin panel (Docker Desktop + WSL, about 15 GB archive with the game) with seed-chip generation from containers; another panel announced in the EN channel | Downstream tools; distributed archives contain game files (not adopted, rule 1) |
+
+Not adopted: talk about AI tools and prompting, video-like requests, memes,
+another game, offers of paid or like-gated tools.
+
+### Demand and problem signals (batch 014)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Loot for rank 16/17 | configuration | U1 -> tuning-recipes (known) |
+| Granting currency to all accounts | administration | U2 -> admin-tasks-howto §4b |
+| Storage and hangar caps | administration | U3, SF47, SF48 -> Q71 (gap) |
+| Joining foreign servers fails | support | U4 -> data-version check |
+| Where are the logs | support | U5 -> administration |
+| More trade offers; picking up several items at once in open space | configuration | gap (not researched) |
+| Full item list; uploading corporation icons | administration | gap; item names: `def/ex` + [locale-catalogue](../05-configuration/locale-catalogue.md) ⚠ |
+| A stats HTTP API for a fan site | downstream | gap; no such service in the shipped node |
+
 ## Digest of S17 (The Outpost, fan site: Server Guide Modules)
 
 * A community-run site that collects short snippets (XML, Lua, MongoDB,
@@ -863,6 +912,28 @@ newer than the second crawl.
 
 Not adopted: cheating complaints without detail, farewell posts, account-loss
 complaints (known, SF33), server advertisements.
+
+### S19 re-crawl (2026-10-19) - delta only
+
+Fourth crawl (threads active since 17 October): 17 threads, about 35 posts
+newer than the third crawl.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| SF46 | Iridium crystals are `tokenCredits` in the account document | Known ([community-faq](../07-administration/community-faq.md)) |
+| SF47 | **Storage above 2 750:** raise the `InventoryExtensions` steps in `cloud/data/special_values.xml`; above 4 096 slots a host saw packet loss on bot connections and a stuck server at about 11-12 connections; suspects a cap in the database. Another player un-commented the shipped `size="3000"` step (developer comment: postponed "until spring 2026") and set 4 000. A third warns that deleting rows breaks the game start | Steps and the commented 3 000 step **file-verified**; never delete rows = invariant **I-12** ([data-invariants](../05-configuration/data-invariants.md)). The 4 096 limit and its symptom → **Q71** ⚠ |
+| SF48 | Ships cannot be added without limit either (RU chat, U3) | → Q71 |
+| SF49 | **Battle-pass stage price:** `cost` in `data/gamedata/shared/battle_pass.lua` (xenochips, `gold = false`); after editing the Lua the purchase failed until the generated XML was changed too | `cost = 100, gold = false` **file-verified**; matches the Lua → XML layer rule (`prepare_shared`, [config-system](../05-configuration/config-system.md)) |
+| SF50 | Writing `craftResources.resource_xenochips` into an account made the xenochip counter vanish from the HUD; workaround: buy xenochips in the unlocked store (max 400) | Unsafe database edit; xenochips are not a craft resource ⚠. Lead for the Q52 balance family |
+| SF51 | Premium "disappears" with `premium_on_start = 2147483647`; tip: add `player` to `auth_infinitePremiumForRoles` (shows 24 h, refreshes at login) | Overflow = **Q63**; shipped `auth_infinitePremiumForRoles = "gm;support"` *(file)* |
+| SF52 | **Cyrillic profile path:** start `mongod --dbpath C:\SC_MongoData` and point `dataPath` in `win64/local_server.xml` to it | `dataPath` key and its comment *(file)*; Steam file verification may restore the XML ⚠. Troubleshooting candidate |
+| SF53 | `mongod.exe --dbpath` without a folder fails with "required parameter is missing" | Usage error; [troubleshooting](../04-installation/troubleshooting.md) |
+| SF54 | Friends cannot queue together for PvE skirmish with a solo pack (endless search); a co-op map without bots or beacon | Packs set `maxPlayers` 1 (SF8 family, Q35) |
+| SF55 | Clan ship solo: auto-created extra accounts, level 9 and three members | Consistent with [event-ships](../05-configuration/event-ships-mail-and-clan-ship.md) |
+| SF56 | Wish: offline simulation of the old player market to buy blueprints | Demand signal; the market service is not in the node ⚠ |
+
+Not adopted: cheating complaints, farewell posts, language quarrels, AI-tool
+advice, download links of configuration packs (code to review, SF24).
 
 ## Digest of S16 (community Docker project)
 
