@@ -69,9 +69,13 @@ fields (e.g. `def/ex/passive.lua:11609-11610`), and the rank range from
 Example: `ModulePassive_AccelerationCoil_T1_Epic` has `mark = 7`, so the game
 shows it as Mk.4; the `_Rare` variant (`mark = 6`) reads Mk.2 like the real
 `_Mk2`, so a tool listing both needs an extra tie-breaker. Variants such as
-`_RT` and `_ET` have no `mark` field. Caveat: some families (missiles) inherit
-`mark = 1` for every variant; for them the `Mk<n>` in the definition name is
-the reliable mark, not the field.
+`_RT` and `_ET` have no `mark` field. Caveat: some families set `mark = 1`
+explicitly on every variant - missiles, e.g. `SpaceMissile_AAMEMP_T1_Mk2` and
+even `SpaceMissile_AAMEMP_T1_Prem` (`def/ex/rockets.lua:6655`, `:6693`). For
+them the `Mk<n>` in the definition name is the reliable mark; trust the field
+for a `_Prem` / `_Rel` / `_Rare` / `_Epic` suffix only when it has the
+matching value (4 / 5 / 6 / 7). Across `def/ex`, roughly 90-130 definitions
+per suffix carry `mark = 1` instead.
 
 The client's own wiki-export scripts (inside `scripts.pak`) group modules
 the same way: by `item_subtype`, with marks and tier as separate columns.
