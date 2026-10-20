@@ -13,6 +13,15 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Digest of Discord batch 015, the new `#mod-releases` channel (source
+  S22), Steam forum re-crawl 5 and an Outpost re-read**
+  ([source register](docs/sources/source-register.md), W1-W10, MR1-MR9,
+  SF57-SF63, OP9-OP11): five of the six ships that break an "all ships"
+  starter pack have no `store.xml` row (new open question **Q74**); the
+  open-world NPC weapon names used by playable alien-hull mods checked in
+  `def/ex/ow_preset.lua`; **Q71** amended with a reported 320-ship hangar
+  limit and the `baseSize` route above 4 096 storage slots. The community
+  Google document is unchanged since 2026-10-19.
 - **V-15: HTTP store patch crashes the Shard** ([verification-log](docs/04-installation/verification-log.md), [http-store-quest-patch §2a](docs/05-configuration/http-store-quest-patch.md)): every `store_patchItemsUrl` patch kills the stock Shard with a stack overflow (`ApplyItemsPatchReal` needs a 1.19 MiB stack frame, the binary reserves 1 MiB), whatever the content; the quest patch (`quests_patchUrl`) works. Q72 solved.
 - **Live store and quest patches over HTTP** ([05-configuration/http-store-quest-patch.md](docs/05-configuration/http-store-quest-patch.md), new; static part of **Q72**): `store_patchItemsUrl` / `store_patchItemsInterval` (seconds, 0 = off) override only prices, `cantBeBought` and `flags` of existing store ids, rebuilt from the base store on every change, rejected as a whole on one unknown id, and pushed to all logged-in clients; `store_patchSpecialValuesUrl` is parsed and discarded in this build; `quests_patchUrl` replaces quest-group membership. Security backlog SV-11.
 - **Where granted items are stored** (lab test V-14, [verification-log](docs/04-installation/verification-log.md)): field formats of titles, avatars, mottos, free custom elements, seed chips, munitions and craft resources, in [mongodb §3b](docs/06-database/mongodb.md); [admin-tasks-howto §3a](docs/07-administration/admin-tasks-howto.md) gains `giveAutogenModule` and `give` with a numeric store id (`item`). From playground task 017.

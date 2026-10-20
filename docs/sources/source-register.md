@@ -36,6 +36,7 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S12/S15 b011 | Batch 011: partial JSON exports `Star_Conflict_Preservation_Project_011.eng-json-part` (99 msgs, 98 new, 2026-10-13 16:45 → 2026-10-14 07:32) and `...011.ru-json-part` (786 msgs, 783 new, 2026-10-13 17:42 → 2026-10-14 11:45); EN continues batch 010, RU leaves a gap of about 90 minutes (16:16 → 17:42) | `random-materials/Star_Conflict_Preservation_Project_011.*-json-part/` | C | Digest "batch 011" below (P1-P15); Q60-Q61, Q49 amended |
 | S12/S15 b012 | Batch 012: partial JSON exports `Star_Conflict_Preservation_Project_012.eng-json-part` (286 msgs, all new, 2026-10-14 13:00 → 2026-10-15 21:36; a gap of about 5.5 hours after batch 011) and `...012.ru-json-part` (1 067 msgs, 1 016 new, 2026-10-14 11:46 → 2026-10-15 21:08, continues batch 011) | `random-materials/Star_Conflict_Preservation_Project_012.*-json-part/` | C | Digest "batch 012" below (R1-R19); Q64-Q67; Q44, Q49, Q61 amended; security finding S-31 |
 | S18 | Community tool **SCPatcher / "Star Conflict Mod Manager" v0.1** by Furebel (Python/Tkinter text patcher with 8 bundled mods; released 2026-10-11 in `#general-eng` as `SCModManager_v0_1.zip`, temporary download link, no repository, **no licence stated**) | `random-materials/SCPatcher/` | C (claims) / B (fingerprints and patterns checked against S3/S4 by us) | Review: [community-mod-manager.md](../07-administration/community-mod-manager.md); loot-rule defect (Q45) |
+| S22 | Discord forum channel `#mod-releases` of the same server (one thread per release; batch 001: 11 threads, 290 messages, 2026-10-11 → 2026-10-20; EN with some RU) | `random-materials/Star_Conflict_Preservation_Project_001.mod-releases-json-part/` | C | Digest "S22" below (MR1-MR9); Q74; Q71 amended |
 
 ## Digest of S11 (community wiki)
 
@@ -80,6 +81,9 @@ minor points: a shared `battle_pass.lua` with "four passes, DLC requirement
 off" (chat attachment, not followed; DLC check: Q59), and the new-ship guide
 states that rams and hits use the convex `.mdp` collision hull, not the
 visible mesh (client asset; context for b014 U6).
+
+**Re-read 2026-10-20:** the text export is byte-identical to the
+2026-10-19 read; no delta.
 
 #### Demand and problem signals (S11 update)
 
@@ -730,6 +734,63 @@ another game, offers of paid or like-gated tools.
 | Full item list; uploading corporation icons | administration | gap; item names: `def/ex` + [locale-catalogue](../05-configuration/locale-catalogue.md) ⚠ |
 | A stats HTTP API for a fan site | downstream | gap; no such service in the shipped node |
 
+## Digest of batch 015 (partial exports of S12 and S15, 2026-10-19 → 2026-10-20 morning)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names or quotes. Links to file hosts, videos and private
+> documents posted in the chat were not copied.
+
+**Scope.** EN: 75 new messages (2026-10-19 12:32 → 2026-10-20 08:08; a gap
+of about five hours after batch 014) - a paid-mod proposal, an item-index
+tool, icon extraction for a fan site, invite links. RU: 171 new messages
+(2026-10-19 08:00 → 2026-10-20 10:45, continues batch 014) - the same
+paid-mod proposal, a hangar limit, AI-tool talk, NPC alien ships as
+playable ships.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| W1 | A modder proposes a **paid subscription** for a large single-player mod (full version; a higher tier adds an admin panel with cheats); says it contains only own files. Most replies object (paid mods, a barrier to entry for servers); one notes that the published terms name servers, not mods | Out of scope: this project does not cover payment or financial rules; our [legal notes](../09-community-edition/legal-and-licensing.md) cover servers only (no monetisation, "Unofficial Server"). Demand signal only |
+| W2 | **320 ships per account** is "the technical limit": adding the remaining ships needed selling others; above it the client reportedly crashes at start | No 320 in the shipped config or data files *(file: `cloud/data/*.xml`, `*.cfg`, `default_platform_config.lua`)*; the item registry has 655 account ships, so a cap below that would bite → **Q71** amended ⚠ |
+| W3 | Currency added through a third-party admin panel shows only after a re-login | Consistent with the Shard's account cache (Q32; live changes go through the admin-task queue) |
+| W4 | One host's admin panel is built for Docker; on Windows that means WSL and the Windows binaries under Wine/Proton | Known ([docker](../04-installation/docker.md), b014 U10) |
+| W5 | A player-kit generator gives every player gun ordinary munitions; to keep an NPC ship's own projectile the modder needed an exception; NPC alien hull figures quoted (very high hull, shield and resists) | Lead for the new-ship chain (S11 O12); munition defaults not checked |
+| W6 | Removing low-rank ships from the tree breaks the progression dependencies | Consistent with the `VesselTree` links (`shared/vessel_tree.lua`) *(inferred)*; same family as invariant I-12 |
+| W7 | A player reports an account taken over by password guessing (which service is unclear) | Context for [security](../07-administration/security.md) §4.1 (passwords stored verbatim, V-13); no detail ⚠ |
+| W8 | A fan site cut item icons out of icon sheets defined by rectangles in text files and mapped them to internal names (no English names in the client locale) | Consistent with `data/gamedata/atlas_defs.lua` *(file exists)* and the naming rules in [item-names](../05-configuration/item-names.md) |
+| W9 | An item-index tool with a search site was announced (SC Scrap Metal Index) | Related project; built from the same static data |
+| W10 | How to add custom ships - unanswered in the channel | S11 O12 new-ship chain ([data-files](../05-configuration/data-files.md)) |
+
+Not adopted: AI-tool and prompting talk, memes, other games, invite links,
+screenshots without text.
+
+### Demand and problem signals (batch 015)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Hangar cap (ships per account) | administration | W2 -> Q71 (gap) |
+| Paid mods and paid admin panels | community | W1 -> out of scope |
+| NPC and alien ships as playable ships | configuration | W5, S22 MR3 -> lead; Q74 |
+| Account takeover by guessed passwords | security | W7 -> security §4.1 |
+| Item names and icons | downstream | W8, W9 -> item-names |
+
+## Digest of S22 (`#mod-releases` forum channel, batch 001)
+
+First export of this channel. Most threads repeat recipes already digested
+from The Outpost (S17) and earlier batches; only the deltas are listed.
+Attachments (XML, JSON, Lua, archives, executables) were not opened.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| MR1 | **Starter pack with almost every ship** (`cloud/data/starter_pack.xml`, or `starter_pack.lua` + `prepare_shared`; new accounts only; the first login is slow). Six ships cannot be included - they cause a "network error": the four `Ship_Leviathan_*` hulls, `Ship_OW_Boss_PirateEvent1` and `Ship_ST_Rank17` | **File check:** the first five have no row in `store.xml`; `Ship_ST_Rank17` has one (`<Item>` type 0, `<Vessel>` rank 17, premium) → **Q74** (new) |
+| MR2 | "Ultimate ship collection" (OP3): after pasting, `vid`s start at 1000 and `iid`s at 100000; open-space missions show "wrong contract type" for a while; a high-rank hull gets no co-op matches, PvE works | Hand-made ids bypass `counters` ([mongodb](../06-database/mongodb.md) §3a); unlocks and ranks are separate account fields; matchmaking by rank ([matchmaking-guide](../05-configuration/matchmaking-guide.md)) ⚠ |
+| MR3 | Playable alien hulls: the Hunter/Predator conversions get the open-space NPC weapons when their slots name `Weapon_AlienGun_T4` / `Weapon_AlienGun2_T4`; "ship rank too small" until fixed; one hull cannot move | **File-verified names:** both are `default_modules` of open-world presets (`def/ex/ow_preset.lua`, `ow_bot_preset.lua`). The conversions edit `gameplay_leviathan.lua` |
+| MR4 | Localisation: rename `data/strings.pak` and unpack the strings into `data/strings/<language>/`; the game reads the loose files | Consistent with the loose-file override (**Q56**, S11 O12); not tested |
+| MR5 | Store unlock through `store_allowAllItemsForBying = 1` and the `store_*PriceMod` cvars in `default_platform_config.lua`; one user saw no change | Known cvars ([cvar-reference](../05-configuration/cvar-reference.md)); does not unlock every ship (MR1 is the ship route) |
+| MR6 | Mod manager (S18) 0.2+: iridium cap removal, easier crafting, premium booster (warns that large day counts overflow), a GS mod that works only when the server has the same mod | S18; premium overflow = **Q63**; client/server pairing = data-version check |
+| MR7 | A server-list mod replaces the client's login-window Lua to keep several servers and a default | Client file replacement; same caution as other unsigned client mods ([security](../07-administration/security.md)) |
+| MR8 | A launcher downloads game files from each server's patch server (SHA-256), with a malware warning | Known (b008 K1, **S-29**) |
+| MR9 | A Russian "extended account panel" (executable + Python scripts): the database name `cosmosim_<name>` must be edited in its script | Downstream tool; database naming as in [mongodb](../06-database/mongodb.md) ⚠ |
+
 ## Digest of S17 (The Outpost, fan site: Server Guide Modules)
 
 * A community-run site that collects short snippets (XML, Lua, MongoDB,
@@ -815,6 +876,17 @@ download archives with game files were not opened.
 | OP6 | Alien bosses in the terramorphing open-space location via its level Lua | Lead only; [level-catalogue](../05-configuration/level-catalogue.md) |
 | OP7 | New tools: **sc-proxy** (packet-capture proxy, see S21), an in-game "instance launcher" (proxy `d3d9.dll` that hooks client Lua functions to run maps locally), a config table editor, a chat translator (online translation service), a long community "science" document | sc-proxy → S21; the d3d9 hook injects code into the client (not reviewed; treat like any unsigned DLL, [security](../07-administration/security.md)); others context only |
 | OP8 | A "capture coverage" site of a player who recorded server traffic before shutdown | Not reachable on 2026-10-19 (site and forum thread); watch list |
+
+### S17 re-read (2026-10-20) - delta only
+
+Checked because the site owner announced Knowledge Base updates. The 30
+modules and their dates are unchanged (newest 19 October). Changes:
+
+| # | Item (paraphrased) | Our status |
+|---|--------------------|------------|
+| OP9 | Site renamed to "Star Conflict CE: The Outpost"; the download page points to the Community Edition on Steam | Naming only |
+| OP10 | New **"Game Items (in progress)"** section: one page per item with the source string keys (`ItemSubtype_*`) and an icon; pages "still being styled" | No values to check yet; compare with [item-names](../05-configuration/item-names.md) when the pages carry data |
+| OP11 | Resources: an item-index tool added (W9); the capture-coverage entry (OP8) removed | OP8 dropped from the watch list |
 
 ### S21 evaluation (sc-proxy, 2026-10-19)
 
@@ -968,6 +1040,23 @@ newer than the third crawl.
 
 Not adopted: cheating complaints, farewell posts, language quarrels, AI-tool
 advice, download links of configuration packs (code to review, SF24).
+
+### S19 re-crawl (2026-10-20) - delta only
+
+Fifth crawl (threads active since 19 October): 9 threads, 39 posts.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| SF57 | **Storage above 4 096:** comment out the `Extension` steps and raise `baseSize` (one player uses 20 000) - works; the error appears only when extension sizes go above about 4-5 000; buying an extension resets the size to that step. The same change on `AutogenInventoryExtensions` (seed-chip storage) fails | `InventoryExtensions baseSize="50"`, `AutogenInventoryExtensions baseSize="10"` *(file: `cloud/data/special_values.xml`)* → **Q71** amended ⚠ |
+| SF58 | Seed chips work only in open space, and not in its PvP zones | Lead; the per-mode rule is not located |
+| SF59 | Ship parts as drops: add craft parts to the end-of-match search loot, per rank range | Same lever as the loot rules (b014 U1, Q45); tuning-recipes candidate |
+| SF60 | A modified `store.xml` + `craft.lua` pack for special parts (third-party download) | Not adopted (rule 1, code to review) |
+| SF61 | Rare paint schemes: unlock the whole store | Known (S22 MR5) |
+| SF62 | A pinned forum thread links an official Star Conflict Discord server | Pointer only; not followed |
+| SF63 | "The server does not run on Linux; the client does under Proton" | Contradicts the Wine reports for the server ([docker](../04-installation/docker.md)); one player's view |
+
+Not adopted: farewell and balance-history posts, AI-tool talk, requests for
+step-by-step help.
 
 ## Digest of S20 (public host's configuration overlay, read 2026-10-19)
 
