@@ -13,6 +13,14 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Digest of Discord batch 016, `#mod-releases` batch 002 and Steam forum
+  re-crawl 6** ([source register](docs/sources/source-register.md), X1-X9,
+  MR10, SF64-SF67): the unused "Manta" hull checked in the files
+  (`Def.Ship_Manta` in `def/objects/ships.lua`, an open-world boss preset
+  that nothing references); a PvP-only loss of the reward multiplier after a
+  shared solo configuration (new open question **Q75**); account arrays
+  replaced by JSON imports; demand for screening shared launchers. The
+  Outpost and the community Google document had no new snapshot.
 - **Digest of Discord batch 015, the new `#mod-releases` channel (source
   S22), Steam forum re-crawl 5 and an Outpost re-read**
   ([source register](docs/sources/source-register.md), W1-W10, MR1-MR9,

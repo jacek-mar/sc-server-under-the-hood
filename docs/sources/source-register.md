@@ -36,7 +36,8 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S12/S15 b011 | Batch 011: partial JSON exports `Star_Conflict_Preservation_Project_011.eng-json-part` (99 msgs, 98 new, 2026-10-13 16:45 → 2026-10-14 07:32) and `...011.ru-json-part` (786 msgs, 783 new, 2026-10-13 17:42 → 2026-10-14 11:45); EN continues batch 010, RU leaves a gap of about 90 minutes (16:16 → 17:42) | `random-materials/Star_Conflict_Preservation_Project_011.*-json-part/` | C | Digest "batch 011" below (P1-P15); Q60-Q61, Q49 amended |
 | S12/S15 b012 | Batch 012: partial JSON exports `Star_Conflict_Preservation_Project_012.eng-json-part` (286 msgs, all new, 2026-10-14 13:00 → 2026-10-15 21:36; a gap of about 5.5 hours after batch 011) and `...012.ru-json-part` (1 067 msgs, 1 016 new, 2026-10-14 11:46 → 2026-10-15 21:08, continues batch 011) | `random-materials/Star_Conflict_Preservation_Project_012.*-json-part/` | C | Digest "batch 012" below (R1-R19); Q64-Q67; Q44, Q49, Q61 amended; security finding S-31 |
 | S18 | Community tool **SCPatcher / "Star Conflict Mod Manager" v0.1** by Furebel (Python/Tkinter text patcher with 8 bundled mods; released 2026-10-11 in `#general-eng` as `SCModManager_v0_1.zip`, temporary download link, no repository, **no licence stated**) | `random-materials/SCPatcher/` | C (claims) / B (fingerprints and patterns checked against S3/S4 by us) | Review: [community-mod-manager.md](../07-administration/community-mod-manager.md); loot-rule defect (Q45) |
-| S22 | Discord forum channel `#mod-releases` of the same server (one thread per release; batch 001: 11 threads, 290 messages, 2026-10-11 → 2026-10-20; EN with some RU) | `random-materials/Star_Conflict_Preservation_Project_001.mod-releases-json-part/` | C | Digest "S22" below (MR1-MR9); Q74; Q71 amended |
+| S22 | Discord forum channel `#mod-releases` of the same server (one thread per release; batch 001: 11 threads, 290 messages, 2026-10-11 → 2026-10-20; EN with some RU) | `random-materials/Star_Conflict_Preservation_Project_001.mod-releases-json-part/` | C | Digest "S22" below (MR1-MR9); Q74; Q71 amended; **batch 002** (`...016.mod-releases-json-part`, 1 thread, 6 msgs, 2026-10-20) -> MR10 |
+| S12/S15 b016 | Batch 016: partial JSON exports `Star_Conflict_Preservation_Project_016.eng-json-part` (38 msgs, all new, 2026-10-20 14:52 → 2026-10-21 04:19; a gap of about seven hours after batch 015) and `...016.ru-json-part` (108 msgs, all new, 2026-10-20 10:31 → 2026-10-21 08:04, continues batch 015) | `random-materials/Star_Conflict_Preservation_Project_016.*-json-part/` | C | Digest "batch 016" below (X1-X9); Q75 new |
 
 ## Digest of S11 (community wiki)
 
@@ -773,6 +774,42 @@ screenshots without text.
 | Account takeover by guessed passwords | security | W7 -> security §4.1 |
 | Item names and icons | downstream | W8, W9 -> item-names |
 
+## Digest of batch 016 (partial exports of S12 and S15, 2026-10-20 → 2026-10-21 morning)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names or quotes. Screenshots and links were not followed.
+
+**Scope.** EN: 38 new messages (2026-10-20 14:52 → 2026-10-21 04:19) -
+hacked chat accounts, seed-chip icons, a question about publishing an "SDK".
+RU: 108 new messages (2026-10-20 10:31 → 2026-10-21 08:04) - alien NPC
+ships and their weapons, an unused ship ("Manta"), custom modules, hacked
+accounts and a call to screen shared launchers, the same "SDK" question.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| X1 | An unused large ship ("Manta") is in the game files; a modder has it in the ship tree, can launch with it, it fires and its modules can be changed; others ask where its files are | **File check:** `Def.Ship_Manta` in `data/gamedata/def/objects/ships.lua`; an open-world boss preset `Ship_OW_Boss_Manta` (`def/ex/ow_bot_preset.lua`, `ship4bot`, model `ships_huge/prec_manta`, `Weapon_AlienGun_T4` plus three `*Manta_Mob` modules) that no other Lua or `cloud/data` XML file references *(observed, static)*. Same family as Q74 (playable hull without a store row) |
+| X2 | Alien NPC ships fire different weapons in the open world than in the earlier event mode (projectile speed, rate, homing); converted hulls need the open-world weapons | Consistent with S22 MR3 (`Weapon_AlienGun*_T4` in the open-world presets) |
+| X3 | A modder built a new module and a special variant of a cluster weapon; asked whether it reuses old modules' effects, others name an event weapon as its look | Lead for the new-item chain (S11 O12, Q58 `storeItemId`) |
+| X4 | Seed-chip icons are composed of two stacked parts and supposedly encode the chip's effects | ⚠ unverified; the icon rule is not located (autogen definitions, `atlas_defs.lua`) |
+| X5 | A second chat account in two days was taken over and used for spam; one player asks that launchers and mods be screened in a moderation channel before release; another replies that Lua and config mods contain nothing dangerous, the risk is in executables | Matches our split: data-only mods are reviewable text, executables and DLLs are not ([security](../07-administration/security.md), **S-29**); the account takeovers are chat accounts, not game servers |
+| X6 | A player asks whether publishing a reverse-engineered "SDK" written with an AI tool could bring legal action; replies: free release is probably fine, engine reverse engineering may be a problem | Demand signal; [legal notes](../09-community-edition/legal-and-licensing.md) (no legal advice here) |
+| X7 | A player has joined another public server and founds a corporation there | Context only; server not named here |
+| X8 | "There was an update for Star Conflict today" (2026-10-20) | ⚠ unverified; no build change checked |
+| X9 | Mockery of "vibe-coded" local servers and AI-written guides | Context; see SF64 (an AI-written guide whose commands do not all work) |
+
+Not adopted: chat about balance history and lore, jokes, food, other games,
+screenshots without text.
+
+### Demand and problem signals (batch 016)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Unused or NPC-only hulls as playable ships | configuration | X1, X2 -> Q74 (store row), data-files new-ship chain |
+| Trust in shared launchers and mods | security | X5 -> security, S-29 |
+| May reverse-engineered tools be published? | community | X6 -> legal notes |
+| What a seed chip does, from its icon | administration | X4 -> gap |
+| Account arrays replaced by JSON imports | database | S22 MR10 -> mongodb §3a |
+
 ## Digest of S22 (`#mod-releases` forum channel, batch 001)
 
 First export of this channel. Most threads repeat recipes already digested
@@ -790,6 +827,14 @@ Attachments (XML, JSON, Lua, archives, executables) were not opened.
 | MR7 | A server-list mod replaces the client's login-window Lua to keep several servers and a default | Client file replacement; same caution as other unsigned client mods ([security](../07-administration/security.md)) |
 | MR8 | A launcher downloads game files from each server's patch server (SHA-256), with a malware warning | Known (b008 K1, **S-29**) |
 | MR9 | A Russian "extended account panel" (executable + Python scripts): the database name `cosmosim_<name>` must be edited in its script | Downstream tool; database naming as in [mongodb](../06-database/mongodb.md) ⚠ |
+
+### S22 batch 002 (2026-10-20) - delta only
+
+One thread ("Ultimate Ship Collection", the MR2 pack), 6 messages.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| MR10 | Replacing an account's `vessels` / `items` arrays with a pasted JSON file failed with "not an array but objects"; the fix given: remove the field in all documents of the collection in a GUI tool, then paste JSON that is an **array** (children numbered 0, 1, 2, …) | Consistent with the document layout ([mongodb](../06-database/mongodb.md) §3b: these fields are arrays) *(inferred)*; "all documents" changes every account - an operator should limit it to one account, stop the Hub first and keep a backup (§3a) |
 
 ## Digest of S17 (The Outpost, fan site: Server Guide Modules)
 
@@ -1057,6 +1102,20 @@ Fifth crawl (threads active since 19 October): 9 threads, 39 posts.
 
 Not adopted: farewell and balance-history posts, AI-tool talk, requests for
 step-by-step help.
+
+### S19 re-crawl (2026-10-21) - delta only
+
+Sixth crawl (threads active since 20 October): 8 threads, 14 posts newer
+than the fifth crawl.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| SF64 | Under a Russian "top account" guide: one reader says the guide reads like an AI draft and not all its commands work; another asks how to add bots to every mode | Bots per mode: [queue-reference](../05-configuration/queue-reference.md), [bot-presets](../05-configuration/bot-presets.md); the guide itself not adopted |
+| SF65 | After installing a shared solo-play configuration, the raised reward multiplier no longer applies **in PvP only** (other modes get it), and a "(bot)" tag appears in some modes | → **Q75** (new) ⚠ |
+| SF66 | "game.exe not found" at start; reply: verify the files or reinstall | Known client-side fix ([troubleshooting](../04-installation/troubleshooting.md)) |
+| SF67 | A player's local server works, but their ships, cosmetics and progress are gone | Expected: official accounts were not released; a local server starts with an empty database, so accounts are new *(inferred)* |
+
+Not adopted: balance-history essays, farewell posts.
 
 ## Digest of S20 (public host's configuration overlay, read 2026-10-19)
 
