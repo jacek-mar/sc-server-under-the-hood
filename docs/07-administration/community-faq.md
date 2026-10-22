@@ -627,6 +627,23 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   database is not created; the database names include the Windows user name.
   Open question Q76 ⚠.
 
+### Official Discord additions (S23, 2026-10-22)
+
+* **I copied my save to another PC and my progress is gone.** The local
+  database names include the Windows user name (`cosmosim_<WindowsUser>`).
+  On a PC with another user name the server opens new, empty databases next
+  to the copied ones. Rename the databases (`mongodump` → `mongorestore
+  --db`) or set `db_name` / `db_stats_name` explicitly
+  ([mongodb](../06-database/mongodb.md) §2). *(static; the explicit-name route
+  is unverified)*
+* **Battle-pass stages 2 and 3 are empty.** In the shipped
+  `data/gamedata/shared/battle_pass.lua` those stages are commented out
+  (`--[[ … ]]`). Remove the comment brackets, run `prepare_shared` (it
+  regenerates `battle_pass.xml`) and restart. Keep the client copy of the file
+  identical. *(file; community)*
+* **Clan influence does not update.** One host reports that it needs Redis
+  (Q77) ⚠.
+
 ## Modding
 
 **Q: I added a new ship or item. Do players need my files?** Yes. Adding or

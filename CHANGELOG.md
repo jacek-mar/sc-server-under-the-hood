@@ -13,6 +13,13 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **New source S23, the game's official Discord (main channel, 9-22
+  October)** ([source register](docs/sources/source-register.md), OD1-OD16).
+  It mostly confirms known findings: undefined stock loot tables (Q45), the
+  Shard's stack overflow on store patches (V-15) and database names that
+  follow the Windows user. New: **Q77** asks which features need Redis.
+  Q71 was amended, and FAQ entries cover moving a save to another PC and
+  the commented-out battle-pass stages.
 - **Digest of Discord batch 017, Steam forum re-crawl 7 and an Outpost
   re-read** ([source register](docs/sources/source-register.md), Y1-Y11,
   SF68-SF73, OP12-OP15): The Outpost knowledge base grew to 114 modules,

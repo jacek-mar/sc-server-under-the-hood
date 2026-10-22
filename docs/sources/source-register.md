@@ -39,6 +39,7 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S22 | Discord forum channel `#mod-releases` of the same server (one thread per release; batch 001: 11 threads, 290 messages, 2026-10-11 → 2026-10-20; EN with some RU) | `random-materials/Star_Conflict_Preservation_Project_001.mod-releases-json-part/` | C | Digest "S22" below (MR1-MR9); Q74; Q71 amended; **batch 002** (`...016.mod-releases-json-part`, 1 thread, 6 msgs, 2026-10-20) -> MR10 |
 | S12/S15 b016 | Batch 016: partial JSON exports `Star_Conflict_Preservation_Project_016.eng-json-part` (38 msgs, all new, 2026-10-20 14:52 → 2026-10-21 04:19; a gap of about seven hours after batch 015) and `...016.ru-json-part` (108 msgs, all new, 2026-10-20 10:31 → 2026-10-21 08:04, continues batch 015) | `random-materials/Star_Conflict_Preservation_Project_016.*-json-part/` | C | Digest "batch 016" below (X1-X9); Q75 new |
 | S12/S15 b017 | Batch 017: partial JSON exports `Star_Conflict_Preservation_Project_017.eng-json-part` (43 msgs, all new, 2026-10-21 10:14 → 2026-10-22 01:48; a gap of about six hours after batch 016) and `...017.ru-json-part` (30 msgs, 29 new, 2026-10-21 08:50 → 17:21, continues batch 016) | `random-materials/Star_Conflict_Preservation_Project_017.*-json-part/` | C | Digest "batch 017" below (Y1-Y11); Q76 new; Q63, Q71 amended |
+| S23 | The game's **official Discord server**, main English channel: batch 001, partial JSON export `Star_Conflict_Official_Discord_001-json-part` (1 802 msgs, 2026-10-08 22:41 → 2026-10-22 12:33; the export carries no role data, so staff messages cannot be told apart reliably) | `random-materials/Star_Conflict_Official_Discord_001-json-part/` | C | Digest "S23" below (OD1-OD16); Q77 new; Q71 amended |
 
 ## Digest of S11 (community wiki)
 
@@ -848,6 +849,46 @@ Not adopted: jokes, a video link, screenshots without text, insults.
 | Storage cap after the last extension step | configuration | Y5 → Q71, I-12 |
 | Non-Latin Windows user name | installation | Y10 → Q76 |
 | Server closes right after MongoDB starts | installation | Y9 → troubleshooting |
+
+## Digest of S23 (official Discord, main channel, batch 001: 2026-10-08 → 2026-10-22)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names, invite links or quotes. Screenshots, attachments
+> and links were not followed. About half of the 1 802 messages are farewells,
+> GIFs, game-history chat and a daily puzzle; the rest overlaps heavily with
+> S12 batches 001-010 (the same first-week discoveries, often by the same
+> modders), so only deltas and confirmations are listed.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| OD1 | A save copied to another PC (the whole MongoDB data folder) shows a fresh account with the tutorial; a reply says the Windows user name does not matter | **Known (static):** the database names carry the Windows user name, so another user name opens other, empty databases ([mongodb](../06-database/mongodb.md) §2; rename the databases or set `db_name` / `db_stats_name`) - the reply is wrong |
+| OD2 | Post-battle search returns "no loot" almost every time: the DS asks for `CommonRanks_1_3` etc., the file defines them with a `_v3` suffix; fix shared: aliases at the end of `loot_tables.lua`, then `prepare_shared` | **Known:** Q45 (the same undefined stock tables, file-verified) |
+| OD3 | Store patches crash `Shard.exe`; the binary seems to expect a larger stack, and the PE header's stack reserve could be raised | **Matches V-15** (stack overflow in the patch path, [http-store-quest-patch](../05-configuration/http-store-quest-patch.md)); a header edit is a binary change, not adopted |
+| OD4 | Without Redis the **clan influence tab does not update**; whether conquest rewards work without it is asked | **New lead** → **Q77**; our docs name Redis only for leaderboards ([architecture](../03-architecture/architecture.md)) |
+| OD5 | Raising storage above 4 096 crashes the server during start-up; "hard-coded in the binary" | Third report → Q71 amended ⚠ |
+| OD6 | Battle-pass stages 2 and 3 are empty and the client logs `invalid type of _G.battle_pass.stages[2]`; fix: remove the comment brackets around those stages in `shared/battle_pass.lua`, then restart MongoDB and the server | **File:** stages 2 and 3 are inside `--[[ … ]]` blocks *(file)*; `battle_pass.xml` is generated (`prepare_shared`, [data-invariants](../05-configuration/data-invariants.md)) |
+| OD7 | A MongoDB GUI fails with "maximum wire version 2, requires MongoDB 3.6" | Known: a 2.6-compatible GUI is needed ([quick-start](../04-installation/quick-start.md)) |
+| OD8 | "Server under heavy load" at login: start MongoDB, then the server, wait, then the client; on Linux a separate Wine prefix fixed it for one host | Known start order; [linux-proton](../04-installation/linux-proton.md) |
+| OD9 | "Incompatible client file" in the first battle after editing files other than the platform Lua; fix: verify the game files | Consistent with the data-drift rule ([config-validation-tools](../07-administration/config-validation-tools.md)); a later claim "the server is authoritative, mismatched `data/` files still connect" ⚠ contradicts it in general |
+| OD10 | Squads cannot start PvP with bots ("searching" forever) while solo works; a co-op fix overrides `special` in `InstantiateQueueTemplate`, which replaces the template's `special` - `coop_vs_ai = 1` must be repeated | Q35 (demand); the `special` overwrite matches our reading of the queue templates ([queue-reference](../05-configuration/queue-reference.md)) ⚠ |
+| OD11 | Raw `adminMail` insert with attachment types 2 (text), 3 (currencies), 5 (module), 7 (free synergy), 8 (premium seconds), 16 (custom element) | Consistent with V-14 and [event-ships-mail-and-clan-ship](../05-configuration/event-ships-mail-and-clan-ship.md) |
+| OD12 | Seed chips: a new `Class` in `cloud/data/autogen.xml` allows chips with up to ten effects; editing coefficients changes chips, value ranges in the Lua seem to have no effect; existing chips are edited in the database | ⚠ unverified; Q68 family |
+| OD13 | File pointers: resource caps `player_stock_limit` in `def/ex/prices_tradegoods.lua`; trade tax `<MailTrading tax>` in `special_values.xml`; `<RaidSchedule>` and `jumpToZonePriceValue` in `aux_limits.xml`; `-lang <LANGUAGE>` start option | **File:** all present *(file)*; note `aux_limits.xml` is generated - edit its Lua source |
+| OD14 | Module identifiers longer than 50 characters break | ⚠ unverified; candidate for a lint rule |
+| OD15 | A moderator answers a question about decompiling the executables: it is covered by the shutdown notice, a specific case would be checked with the legal team; the notice's permission for server files and modification is quoted | Context; [legal notes](../09-community-edition/legal-and-licensing.md) (no legal advice here) |
+| OD16 | Public hosts advertise, describe a multi-region network sharing one database, and warn that "multi-server mod loaders" do not yet fetch any server code | Context; launchers: S-29 |
+
+Not adopted: farewells, game-history chat, GIFs, puzzle results, spam
+reports, server adverts, invite links.
+
+### Demand and problem signals (S23)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Move a local save to another PC | database | OD1 → mongodb §2, FAQ |
+| Features that silently need Redis | installation | OD4 → **Q77** |
+| Battle pass incomplete after re-enabling | configuration | OD6 → FAQ |
+| Squad play against bots in PvP | configuration | OD10 → Q35 |
 
 ## Digest of S22 (`#mod-releases` forum channel, batch 001)
 
