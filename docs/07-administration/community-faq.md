@@ -601,6 +601,32 @@ Details: [verification-log V-9](../04-installation/verification-log.md),
   branch, build 25826043 of 9 October 2026 (Hub 1.99.0.167293); checked
   2026-10-17.
 
+### Batch 017 and Steam forum additions (2026-10-22)
+
+* **My platform-Lua change "does not apply".** A Hub restart re-reads
+  `default_platform_config.lua`; state kept in the database (event and
+  battle-pass progress, account balances) is not reset by it - the file
+  itself warns that a changed event start time counts as a new event
+  ([settings-reload-map](../05-configuration/settings-reload-map.md)). Wiping
+  `%LOCALAPPDATA%\Targem\StarConflict\cloud\mongodb\data` resets everything,
+  including all accounts - only on a test node, with the Hub and MongoDB
+  stopped. *(file; community)*
+* **The Hub logs `OnDisconnect` for a service.** The Hub only reports that
+  the service went away; the cause (for example a Lua error in the
+  ScriptsServer) is in that service's own log under
+  `%LOCALAPPDATA%\Targem\StarConflict\cloud\Hub\logs\`. *(observed; community)*
+* **Longer dreadnought battles.** The 2 000 starting points come from
+  `GameplayDef[ ai.Gameplay.CLANSHIP ]` in `data/gamedata/gameplaysettings.lua`
+  (`tdm_starting_points = 2000`, `tdm_kill_score = 25`). It is a `data/`
+  file, so clients need the same copy. *(file)*
+* **More storage after the last extension step.** Accounts store the reached
+  step, not a size (I-12): append rows after the last `<Extension>` in
+  `special_values.xml` instead of deleting or reordering them; a larger
+  `baseSize` is overridden by the next bought step ⚠ (Q71).
+* **Windows user name with Cyrillic letters.** Hosts report that the
+  database is not created; the database names include the Windows user name.
+  Open question Q76 ⚠.
+
 ## Modding
 
 **Q: I added a new ship or item. Do players need my files?** Yes. Adding or

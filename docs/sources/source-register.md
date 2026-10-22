@@ -38,6 +38,7 @@ by the project (logs/behaviour), **C** = community statement (unverified).
 | S18 | Community tool **SCPatcher / "Star Conflict Mod Manager" v0.1** by Furebel (Python/Tkinter text patcher with 8 bundled mods; released 2026-10-11 in `#general-eng` as `SCModManager_v0_1.zip`, temporary download link, no repository, **no licence stated**) | `random-materials/SCPatcher/` | C (claims) / B (fingerprints and patterns checked against S3/S4 by us) | Review: [community-mod-manager.md](../07-administration/community-mod-manager.md); loot-rule defect (Q45) |
 | S22 | Discord forum channel `#mod-releases` of the same server (one thread per release; batch 001: 11 threads, 290 messages, 2026-10-11 → 2026-10-20; EN with some RU) | `random-materials/Star_Conflict_Preservation_Project_001.mod-releases-json-part/` | C | Digest "S22" below (MR1-MR9); Q74; Q71 amended; **batch 002** (`...016.mod-releases-json-part`, 1 thread, 6 msgs, 2026-10-20) -> MR10 |
 | S12/S15 b016 | Batch 016: partial JSON exports `Star_Conflict_Preservation_Project_016.eng-json-part` (38 msgs, all new, 2026-10-20 14:52 → 2026-10-21 04:19; a gap of about seven hours after batch 015) and `...016.ru-json-part` (108 msgs, all new, 2026-10-20 10:31 → 2026-10-21 08:04, continues batch 015) | `random-materials/Star_Conflict_Preservation_Project_016.*-json-part/` | C | Digest "batch 016" below (X1-X9); Q75 new |
+| S12/S15 b017 | Batch 017: partial JSON exports `Star_Conflict_Preservation_Project_017.eng-json-part` (43 msgs, all new, 2026-10-21 10:14 → 2026-10-22 01:48; a gap of about six hours after batch 016) and `...017.ru-json-part` (30 msgs, 29 new, 2026-10-21 08:50 → 17:21, continues batch 016) | `random-materials/Star_Conflict_Preservation_Project_017.*-json-part/` | C | Digest "batch 017" below (Y1-Y11); Q76 new; Q63, Q71 amended |
 
 ## Digest of S11 (community wiki)
 
@@ -810,6 +811,44 @@ screenshots without text.
 | What a seed chip does, from its icon | administration | X4 -> gap |
 | Account arrays replaced by JSON imports | database | S22 MR10 -> mongodb §3a |
 
+## Digest of batch 017 (partial exports of S12 and S15, 2026-10-21 → 2026-10-22 night)
+
+> Same rules: **leads, not facts**; anonymised and paraphrased; no names, ids,
+> addresses, server names or quotes. Screenshots and links were not followed.
+
+**Scope.** EN: 43 new messages (2026-10-21 10:14 → 2026-10-22 01:48) -
+config changes that "do not apply", deleting accounts, storage limits, a
+negative-balance message, server adverts. RU: 29 new messages (2026-10-21
+08:50 → 17:21) - a start-up failure, a non-Latin Windows user name, off-topic
+chat.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| Y1 | A host testing "on start" events wipes the database and a GUI tool's cached schema each time a platform-Lua change "does not apply"; a reply: a Hub restart already applies the Lua; what survives is state stored in the database (event progress - the config warns that a changed start time makes a new event); wiping the data folder resets events but deletes every account; the GUI's cache is the tool's own and never reaches the server | Consistent with the [settings-reload-map](../05-configuration/settings-reload-map.md) (Lua read at service start) and the battle-pass / event comments in the shipped file *(file)*; the wipe is only for a test node |
+| Y2 | `HubEndpoint::OnDisconnect` for the ScriptsServer is "almost always" a small Lua syntax error; the real error line is in that service's own log under `...\cloud\Hub\logs\` | Consistent with how the Hub reports a dying service (verification log V-15: `OnDisconnect … reason 5`) and with the per-service log layout *(observed)*; "almost always" ⚠ |
+| Y3 | How to delete accounts: all of them - stop the Hub and MongoDB and delete the data folder; one account - stop the Hub, delete its document in `accounts`, then the records with the same uid in other collections | Folder: [mongodb](../06-database/mongodb.md) §2; ⚠ the full list of uid-keyed collections across the six databases is not documented - take a backup first (gap) |
+| Y4 | Squad queues fail even with the default configuration | Demand signal → Q35 |
+| Y5 | Storage: a host gives `baseSize` 50 000 (items) / 5 000 (seed chips) in `special_values.xml` "for new accounts"; a player who bought every extension step asks for more; no database-side cap was found; workaround offered: a new account with the large base and the item arrays copied across in a GUI tool | **File:** shipped base 50 / 10, last step 2 750 (gold) and a commented 3 000 step; accounts store the reached step (`invExtLevel`, I-12) - a raised `baseSize` is not limited to new accounts, but the next bought step sets the size from the first row ⚠ → **Q71** amended |
+| Y6 | After moving to a new account the client reports a **negative Galactic Standards** balance and refuses further account creation; the value set was about 2.3 million | ⚠ unverified; 2.3 million is far below the signed 32-bit limit ([mongodb](../06-database/mongodb.md) §3a, Q52); cause unknown |
+| Y7 | Will players' official progress be recovered on unmodded servers? | No: official accounts were not released; a local database starts empty *(inferred)*, as SF67 |
+| Y8 | Questions about a modded destroyer, a public server's own chat, a corporation recruiting on a public server | Context only; servers not named here |
+| Y9 | RU: MongoDB starts but the server closes at once; suggestions: antivirus/firewall (already off), a broken Lua edit, processes left from the previous run (reboot); the reporter finally started `mongod` on its own, then the game | Known start-order problem (start `mongod` first; check for leftover processes) - [troubleshooting](../04-installation/troubleshooting.md) |
+| Y10 | RU: the Windows user name must be Latin even for the MongoDB part; with a Cyrillic account name the user database is not created | The database names carry the Windows user name *(static)*; supports the I12 hypothesis → **Q76** (new) ⚠ |
+| Y11 | RU: the developers did not answer a list of questions; others see the release as a closing gesture | Context only |
+
+Not adopted: jokes, a video link, screenshots without text, insults.
+
+### Demand and problem signals (batch 017)
+
+| Signal | Kind | Where we help / gap |
+|--------|------|---------------------|
+| Config change "not applied" vs state kept in the database | configuration | Y1 → settings-reload-map |
+| Finding the real error behind `OnDisconnect` | operation | Y2 → per-service logs |
+| Delete one account cleanly | database | Y3 → **gap**: uid-keyed collection list |
+| Storage cap after the last extension step | configuration | Y5 → Q71, I-12 |
+| Non-Latin Windows user name | installation | Y10 → Q76 |
+| Server closes right after MongoDB starts | installation | Y9 → troubleshooting |
+
 ## Digest of S22 (`#mod-releases` forum channel, batch 001)
 
 First export of this channel. Most threads repeat recipes already digested
@@ -932,6 +971,22 @@ modules and their dates are unchanged (newest 19 October). Changes:
 | OP9 | Site renamed to "Star Conflict CE: The Outpost"; the download page points to the Community Edition on Steam | Naming only |
 | OP10 | New **"Game Items (in progress)"** section: one page per item with the source string keys (`ItemSubtype_*`) and an icon; pages "still being styled" | No values to check yet; compare with [item-names](../05-configuration/item-names.md) when the pages carry data |
 | OP11 | Resources: an item-index tool added (W9); the capture-coverage entry (OP8) removed | OP8 dropped from the watch list |
+
+### S17 re-read (2026-10-22) - delta only
+
+The Knowledge Base grew from 30 to **114 modules**; the 84 new ones are dated
+20-21 October. Almost every new module covers one group of cvars or one table
+of `cloud/data/default_platform_config.lua` (question, the function that sets
+it, the snippet, suggested values), plus several "COMBO" recipes (farm-friendly
+localhost, maximum bots, 2-5 players, hardcore PvP). Snippets were not copied
+here.
+
+| # | Item (paraphrased) | Our status |
+|---|--------------------|------------|
+| OP12 | 84 new single-topic modules on the platform Lua (matchmaker queues and brawls, bots and adaptive presets, loot, rewards, damage, events, leaver penalties, chat antispam, universe, tournament, load balancer) | **Spot check:** 17 values (e.g. `store_maxTransactionSum` set twice, `premiumTimeForAccountRank` one day in seconds, `mm_lowOnlineLo/Hi` 250/300, `mm_botsCount` 6, AFK 120 / 3 600 s, `lb_limitPlayersOnShardTo` 800) equal the shipped file *(file)*. Overlaps [cvar-notes](../05-configuration/cvar-notes.md), [queue-reference](../05-configuration/queue-reference.md), [tuning-recipes](../05-configuration/tuning-recipes.md) |
+| OP13 | Two modules show non-stock values as the file's content: seed chips `sv_autogenModulesEnabled = 1`, `sv_dbgAutogenDefs = 2`, and a `ConfigureGlobalEvents` block with `eventDefName = 18` for seven pirate zones | **File:** the shipped file sets both cvars to `0` and has no `eventDefName = 18` block (its commented examples use 2, 7 and 8) - these are one host's changes → Q68 note |
+| OP14 | Storage: "for all players" with `baseSize` 50 000 / 5 000 in `special_values.xml`; a second module points at the stock `baseSize="50"` | → Q71, I-12 caveat (next bought step uses the first row) |
+| OP15 | Site notices: post submission and XML formatting problems "under investigation" | Context |
 
 ### S21 evaluation (sc-proxy, 2026-10-19)
 
@@ -1116,6 +1171,22 @@ than the fifth crawl.
 | SF67 | A player's local server works, but their ships, cosmetics and progress are gone | Expected: official accounts were not released; a local server starts with an empty database, so accounts are new *(inferred)* |
 
 Not adopted: balance-history essays, farewell posts.
+
+### S19 re-crawl (2026-10-22) - delta only
+
+Seventh crawl (threads active since 21 October): 5 threads, 13 posts newer
+than the sixth crawl.
+
+| # | Statement (paraphrased) | Our status |
+|---|-------------------------|------------|
+| SF68 | `premium_on_start = 2147483647` makes premium vanish; a reply: premium time is epoch **milliseconds**, set `premiumTill` (e.g. ten years ahead) in a database GUI or by console | `premiumTill` in milliseconds and the 68-year display limit: Q63 *(static)*; unit of `premium_on_start` not established → Q63 amended ⚠ |
+| SF69 | How to make dreadnought battles last longer than about five minutes (2 000 points)? Self-answer: `tdm_starting_points = 2000` in `gameplaysettings.lua` | **File:** `GameplayDef[ ai.Gameplay.CLANSHIP ]` in `data/gamedata/gameplaysettings.lua` sets `tdm_starting_points = 2000` and `tdm_kill_score = 25` *(file)*; a `data/` file that clients also read - keep client copies identical ([data-drift check](../07-administration/config-validation-tools.md)) |
+| SF70 | With a shared solo-play configuration only a few store packs appear; with the original file every pack in `offers.xml` shows; even `sv_offerEnable = "1,2,3,4,5"` showed the same packs | ⚠ contradicts the cvar's description (a list of enabled `offerId`s, [cvar-notes](../05-configuration/cvar-notes.md)); offer `<Condition>` rows and the client's store cache are candidates *(inferred)*; gap |
+| SF71 | Bots in Bomb the base hold both bombs and never attack; one reply removes mode 11 from the arcade and co-op `levelsDesc` and lists the other modes that work with bots; the asker wants a fix because quests need bombs | Known: **Q61** (bomb quests listed there) |
+| SF72 | How to fill Special Operations with bots? | Demand signal; gap |
+| SF73 | A player lost two destroyers moving to a local server | As SF67 |
+
+Not adopted: farewell posts, an unreadable post.
 
 ## Digest of S20 (public host's configuration overlay, read 2026-10-19)
 

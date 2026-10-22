@@ -13,6 +13,15 @@ verification on Windows, Linux and LAN setups continues.
   translating (playground 011).
 
 ### Added
+- **Digest of Discord batch 017, Steam forum re-crawl 7 and an Outpost
+  re-read** ([source register](docs/sources/source-register.md), Y1-Y11,
+  SF68-SF73, OP12-OP15): The Outpost knowledge base grew to 114 modules,
+  spot-checked against the shipped config; two modules show one host's
+  seed-chip and pirate-event values as stock values. The dreadnought battle's
+  2 000 points were found in `gameplaysettings.lua`. New open question **Q76**
+  covers non-Latin Windows user names and the local database; Q63, Q68 and
+  Q71 were amended. New FAQ entries were added. The community Google
+  document is unchanged.
 - **Digest of Discord batch 016, `#mod-releases` batch 002 and Steam forum
   re-crawl 6** ([source register](docs/sources/source-register.md), X1-X9,
   MR10, SF64-SF67): the unused "Manta" hull checked in the files
